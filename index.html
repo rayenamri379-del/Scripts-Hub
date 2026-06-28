@@ -8,12 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* تم تعديل الألوان لتكون بنفسجية صريحة (بدون ميلان للوردي) */
         :root {
             --bg-color: #05010a;
             --glass-bg: rgba(20, 5, 30, 0.55);
             --glass-border: rgba(157, 0, 255, 0.4);
-            --neon-purple: #9d00ff; /* بنفسجي نقي وساطع */
+            --neon-purple: #9d00ff; 
             --neon-glow: #6a0dad;
             --text-main: #ffffff;
             --text-muted: #b39ddb;
@@ -37,7 +36,92 @@
                 radial-gradient(circle at 85% 30%, rgba(106, 13, 173, 0.15), transparent 25%);
             background-attachment: fixed;
             min-height: 100vh;
+            overflow-x: hidden;
         }
+
+        /* حاوية التطبيق الأساسية (مخفية حتى يتم تسجيل الدخول) */
+        #app-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease-in;
+        }
+        #app-content.visible {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ---------------- Authentication Overlay ---------------- */
+        #auth-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            background-image: radial-gradient(circle at 50% 50%, rgba(157, 0, 255, 0.15), transparent 60%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .auth-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-top: 3px solid var(--neon-purple);
+            padding: 40px;
+            border-radius: 15px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(157, 0, 255, 0.2);
+            text-align: center;
+        }
+
+        .auth-logo {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--neon-purple);
+            text-shadow: 0 0 15px var(--neon-purple);
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .auth-toggle {
+            display: flex;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .auth-toggle button {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 10px;
+            color: var(--text-muted);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .auth-toggle button.active {
+            color: var(--neon-purple);
+            border-bottom: 2px solid var(--neon-purple);
+            text-shadow: 0 0 8px rgba(157, 0, 255, 0.5);
+        }
+
+        .auth-form {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .auth-form.active { display: block; }
+
+        .auth-msg {
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            min-height: 20px;
+            font-weight: 500;
+        }
+        .msg-error { color: var(--danger); text-shadow: 0 0 5px var(--danger); }
+        .msg-success { color: var(--success); text-shadow: 0 0 5px var(--success); }
 
         /* Navbar */
         nav {
@@ -61,47 +145,25 @@
             letter-spacing: 2px;
         }
 
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
+        .nav-links { display: flex; align-items: center; gap: 20px; }
         .nav-links button {
-            background: none;
-            border: none;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: 0.3s;
+            background: none; border: none; color: var(--text-main);
+            font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.3s;
         }
-
         .nav-links button:hover, .nav-links button.active {
-            color: var(--neon-purple);
-            text-shadow: 0 0 8px var(--neon-purple);
+            color: var(--neon-purple); text-shadow: 0 0 8px var(--neon-purple);
         }
 
-        /* زر تسجيل الدخول */
         .login-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--glass-border);
-            padding: 8px 15px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border);
+            padding: 8px 15px; border-radius: 8px; display: flex; align-items: center; gap: 8px;
         }
-        .login-btn:hover { background: var(--neon-purple); color: #fff; }
+        .login-btn:hover { background: var(--danger); border-color: var(--danger); color: #fff; box-shadow: 0 0 15px var(--danger); }
 
-        /* العناصر المخفية افتراضياً */
         .admin-only { display: none !important; }
 
         /* Generic Views */
-        .view-section {
-            display: none;
-            animation: fadeIn 0.4s ease-out;
-        }
+        .view-section { display: none; animation: fadeIn 0.4s ease-out; }
         .view-section.active { display: block; }
 
         @keyframes fadeIn {
@@ -111,6 +173,520 @@
 
         /* Hero Section */
         .hero { text-align: center; padding: 60px 20px; }
+        .hero h1 {
+            font-size: 3.5rem; font-weight: 900; margin-bottom: 15px;
+            background: linear-gradient(45deg, #ffffff, var(--neon-purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 30px auto; }
+
+        /* Categories */
+        .categories { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .cat-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
+            color: white; padding: 8px 20px; border-radius: 20px; cursor: pointer; transition: 0.3s;
+        }
+        .cat-btn.active, .cat-btn:hover { background: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); }
+
+        /* Forms & Inputs */
+        .search-container { max-width: 800px; margin: 0 auto 20px auto; padding: 0 20px; position: relative; }
+        .form-input {
+            width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border);
+            padding: 12px 20px; border-radius: 8px; color: white; font-size: 1rem; outline: none;
+            transition: 0.3s; margin-bottom: 15px;
+        }
+        .form-input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(157, 0, 255, 0.4); background: rgba(0, 0, 0, 0.5); }
+        
+        input[type="file"] { padding: 10px; background: rgba(0,0,0,0.5); color: var(--neon-purple); cursor: pointer; }
+        input[type="file"]::-webkit-file-upload-button {
+            background: var(--neon-purple); color: white; border: none; padding: 8px 15px; border-radius: 5px; margin-right: 15px; cursor: pointer;
+        }
+
+        /* Scripts Grid */
+        .scripts-container {
+            max-width: 1100px; margin: 0 auto; padding: 0 20px 80px 20px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;
+        }
+        .script-card {
+            background: var(--card-bg); border: 1px solid var(--glass-border);
+            border-top: 3px solid var(--neon-purple); border-radius: 12px; padding: 25px; transition: all 0.4s ease;
+        }
+        .script-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(157, 0, 255, 0.3); }
+        .script-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .script-title { font-size: 1.2rem; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .version-badge { background: rgba(255, 255, 255, 0.1); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; color: var(--text-muted); }
+        .script-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; min-height: 60px; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px; }
+        
+        .download-stats { font-size: 0.8rem; color: var(--neon-purple); background: rgba(157, 0, 255, 0.1); padding: 5px 10px; border-radius: 5px;}
+
+        .btn-action {
+            width: 100%; background: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple);
+            padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-action:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 15px var(--neon-purple); }
+        .btn-danger { color: var(--danger); border-color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); }
+
+        .btn-sm { width: auto; padding: 10px 20px; } /* للأزرار الصغيرة مثل التحميل */
+
+        .form-container { max-width: 800px; margin: 40px auto; background: var(--glass-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--glass-border); }
+        .admin-section-box { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--glass-border); }
+        footer { text-align: center; padding: 30px; border-top: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-muted); }
+        .discord-link { color: #5865F2; font-size: 2rem; transition: 0.3s; text-decoration: none; margin-top: 10px; display: inline-block; }
+        .discord-link:hover { color: #fff; text-shadow: 0 0 15px #5865F2; transform: scale(1.1); }
+    </style>
+</head>
+<body>
+
+    <div id="auth-overlay">
+        <div class="auth-container">
+            <div class="auth-logo">KaZzA Scripts</div>
+            
+            <div class="auth-toggle">
+                <button id="toggle-signin" class="active" onclick="switchAuthMode('signin')">Sign In</button>
+                <button id="toggle-signup" onclick="switchAuthMode('signup')">Sign Up</button>
+            </div>
+
+            <div id="auth-msg" class="auth-msg"></div>
+
+            <form id="signin-form" class="auth-form active" onsubmit="handleSignIn(event)">
+                <input type="email" id="in-email" class="form-input" placeholder="Email Address" required>
+                <input type="password" id="in-password" class="form-input" placeholder="Password" required>
+                <button type="submit" class="btn-action"><i class="fas fa-sign-in-alt"></i> Login</button>
+            </form>
+
+            <form id="signup-form" class="auth-form" onsubmit="handleSignUp(event)">
+                <input type="text" id="up-username" class="form-input" placeholder="Username" required>
+                <input type="email" id="up-email" class="form-input" placeholder="Email Address" required>
+                <input type="password" id="up-password" class="form-input" placeholder="New Password" required minlength="6">
+                <button type="submit" class="btn-action"><i class="fas fa-user-plus"></i> Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-content">
+        <nav>
+            <div class="logo">KaZzA Scripts</div>
+            <div class="nav-links">
+                <button onclick="switchTab('home')" id="tab-home" class="active"><i class="fas fa-home"></i> Home</button>
+                <button onclick="switchTab('request')" id="tab-request"><i class="fas fa-envelope"></i> Request</button>
+                <button onclick="switchTab('admin')" id="tab-admin" class="admin-only"><i class="fas fa-cogs"></i> Admin Panel</button>
+                <button class="login-btn" id="logoutBtn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+            </div>
+        </nav>
+
+        <div id="view-home" class="view-section active">
+            <section class="hero">
+                <h1>KaZzA Scripts Hub</h1>
+                <p>The best place for SAMP Monetloader & CLEO Scripts.</p>
+            </section>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" class="form-input search-input" placeholder="Search scripts...">
+            </div>
+
+            <div class="categories" id="categoryFilters"></div>
+            <div class="scripts-container" id="scriptsGrid"></div>
+        </div>
+
+        <div id="view-request" class="view-section">
+            <div class="form-container">
+                <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 20px;"><i class="fas fa-terminal"></i> Request a Script</h2>
+                <form id="requestForm" onsubmit="event.preventDefault(); alert('Request sent successfully!'); this.reset();">
+                    <input type="text" class="form-input" placeholder="Discord Tag" required>
+                    <textarea class="form-input" placeholder="Describe your script..." required style="height: 150px;"></textarea>
+                    <button type="submit" class="btn-action"><i class="fas fa-paper-plane"></i> Send Request</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="view-admin" class="view-section">
+            <div class="form-container" style="max-width: 900px;">
+                <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 30px;"><i class="fas fa-lock"></i> Admin Dashboard</h2>
+                
+                <div class="admin-section-box">
+                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-upload"></i> Upload New Script</h3>
+                    <form id="adminForm">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <input type="text" id="s-title" class="form-input" placeholder="Script Name" required>
+                            <input type="text" id="s-version" class="form-input" placeholder="Version (e.g. v1.0)" required>
+                            <select id="s-category" class="form-input" style="background-color: #14051e;" required></select>
+                            <input type="file" id="s-file" class="form-input" required>
+                        </div>
+                        <textarea id="s-desc" class="form-input" placeholder="Description..." required style="height: 80px;"></textarea>
+                        <button type="submit" class="btn-action btn-sm"><i class="fas fa-cloud-upload-alt"></i> Publish</button>
+                    </form>
+                </div>
+
+                <div class="admin-section-box">
+                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-folder-open"></i> Manage Categories</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="newCategory" class="form-input" placeholder="New Category Name" style="margin-bottom:0;">
+                        <button onclick="addCategory()" class="btn-action btn-sm" style="width: auto;"><i class="fas fa-plus"></i> Add</button>
+                    </div>
+                    <div id="adminCategoriesList" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
+                </div>
+
+                <div class="admin-section-box">
+                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-users-cog"></i> Manage Admins</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="email" id="newAdminEmail" class="form-input" placeholder="Add Admin Gmail..." style="margin-bottom:0;">
+                        <button onclick="addAdmin()" class="btn-action btn-sm" style="width: auto;"><i class="fas fa-user-plus"></i> Add Admin</button>
+                    </div>
+                    <div id="adminUsersList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+
+                <div class="admin-section-box">
+                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-list"></i> Manage Published Scripts</h3>
+                    <div id="adminList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 KaZzA Scripts. All rights reserved.</p>
+            <p style="font-size: 0.8rem; margin-top: 5px;">Created for SAMP & Monetloader</p>
+            <a href="#" class="discord-link" title="Contact me on Discord"><i class="fab fa-discord"></i></a>
+        </footer>
+    </div>
+
+    <script>
+        // --- 1. إعدادات النظام وقاعدة البيانات الوهمية (localStorage) ---
+        let currentFilter = 'All';
+        const mainAdmin = 'rayenamri379@gmail.com'; // الإيميل الأساسي للمالك
+        
+        // بيانات الموقع
+        let adminList = JSON.parse(localStorage.getItem('kazza_admins')) || [mainAdmin];
+        let categoriesDB = JSON.parse(localStorage.getItem('kazza_categories')) || ['UI', 'Utility', 'Admin Tools'];
+        let scriptsDB = JSON.parse(localStorage.getItem('kazza_scripts')) || [];
+        
+        // بيانات الحسابات المضافة حديثاً
+        let usersDB = JSON.parse(localStorage.getItem('kazza_users')) || [];
+
+        // التأكد من وجود حساب الآدمن الرئيسي في الداتا بيس
+        if (!usersDB.find(u => u.email === mainAdmin)) {
+            usersDB.push({ username: 'Owner', email: mainAdmin, password: 'adminpassword' });
+            localStorage.setItem('kazza_users', JSON.stringify(usersDB));
+        }
+
+        // حالة الجلسة الحالية
+        let currentUser = null; 
+        let isUserAdmin = false;
+
+        function saveSiteData() {
+            localStorage.setItem('kazza_admins', JSON.stringify(adminList));
+            localStorage.setItem('kazza_categories', JSON.stringify(categoriesDB));
+            localStorage.setItem('kazza_scripts', JSON.stringify(scriptsDB));
+        }
+
+        function saveUsersData() {
+            localStorage.setItem('kazza_users', JSON.stringify(usersDB));
+        }
+
+        // --- 2. نظام تسجيل الدخول و المصادقة ---
+        function switchAuthMode(mode) {
+            document.querySelectorAll('.auth-toggle button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            
+            document.getElementById('toggle-' + mode).classList.add('active');
+            document.getElementById(mode + '-form').classList.add('active');
+            clearAuthMsg();
+        }
+
+        function showAuthMsg(msg, isError = true) {
+            const msgDiv = document.getElementById('auth-msg');
+            msgDiv.innerText = msg;
+            msgDiv.className = 'auth-msg ' + (isError ? 'msg-error' : 'msg-success');
+        }
+
+        function clearAuthMsg() {
+            document.getElementById('auth-msg').innerText = '';
+        }
+
+        function handleSignUp(e) {
+            e.preventDefault();
+            const username = document.getElementById('up-username').value.trim();
+            const email = document.getElementById('up-email').value.trim().toLowerCase();
+            const password = document.getElementById('up-password').value;
+
+            // التحقق من وجود الحساب مسبقاً
+            if (usersDB.find(u => u.email === email)) {
+                showAuthMsg('Email is already registered! Please Sign In.');
+                return;
+            }
+
+            // إنشاء الحساب
+            const newUser = { username, email, password };
+            usersDB.push(newUser);
+            saveUsersData();
+            
+            showAuthMsg('Account created successfully! You can now log in.', false);
+            document.getElementById('signup-form').reset();
+            setTimeout(() => switchAuthMode('signin'), 1500);
+        }
+
+        function handleSignIn(e) {
+            e.preventDefault();
+            const email = document.getElementById('in-email').value.trim().toLowerCase();
+            const password = document.getElementById('in-password').value;
+
+            // البحث عن الحساب
+            const user = usersDB.find(u => u.email === email);
+
+            if (!user) {
+                showAuthMsg('Account not found! Check your email or Sign Up.');
+                return;
+            }
+
+            if (user.password !== password) {
+                showAuthMsg('Incorrect password! Please try again.');
+                return;
+            }
+
+            // تسجيل الدخول ناجح
+            loginSuccess(user);
+        }
+
+        function loginSuccess(user) {
+            currentUser = user;
+            isUserAdmin = adminList.includes(user.email);
+            
+            document.getElementById('auth-overlay').style.display = 'none';
+            document.getElementById('app-content').classList.add('visible');
+            
+            document.getElementById('logoutBtn').innerHTML = `<i class="fas fa-sign-out-alt"></i> Logout (${user.username})`;
+            
+            updateAdminVisibility();
+            switchTab('home');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            isUserAdmin = false;
+            document.getElementById('app-content').classList.remove('visible');
+            setTimeout(() => {
+                document.getElementById('auth-overlay').style.display = 'flex';
+                document.getElementById('signin-form').reset();
+                clearAuthMsg();
+            }, 300);
+        }
+
+        function updateAdminVisibility() {
+            const adminElements = document.querySelectorAll('.admin-only');
+            adminElements.forEach(el => {
+                el.style.display = isUserAdmin ? 'inline-block' : 'none';
+            });
+            renderScripts(); 
+            if(isUserAdmin) renderAdminPanel();
+        }
+
+        // --- 3. التنقل بين الصفحات ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('view-' + tabId).classList.add('active');
+            const targetBtn = document.getElementById('tab-' + tabId);
+            if(targetBtn) targetBtn.classList.add('active');
+            
+            if(tabId === 'home') renderScripts(); 
+            if(tabId === 'admin' && isUserAdmin) renderAdminPanel(); 
+        }
+
+        // --- 4. إدارة السكريبتات للمستخدمين ---
+        function renderCategoryButtons() {
+            const filterContainer = document.getElementById('categoryFilters');
+            filterContainer.innerHTML = `<button class="cat-btn ${currentFilter === 'All' ? 'active' : ''}" onclick="filterCategory('All', this)">All</button>`;
+            
+            categoriesDB.forEach(cat => {
+                filterContainer.innerHTML += `<button class="cat-btn ${currentFilter === cat ? 'active' : ''}" onclick="filterCategory('${cat}', this)">${cat}</button>`;
+            });
+        }
+
+        function filterCategory(cat, btnElement) {
+            currentFilter = cat;
+            renderScripts();
+        }
+
+        function renderScripts() {
+            renderCategoryButtons();
+            const grid = document.getElementById('scriptsGrid');
+            grid.innerHTML = ''; 
+            
+            let filtered = currentFilter === 'All' ? scriptsDB : scriptsDB.filter(s => s.category === currentFilter);
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<p style="color: var(--text-muted); text-align: center; grid-column: 1 / -1;">No scripts found in this category.</p>`;
+                return;
+            }
+
+            filtered.forEach(script => {
+                const adminStats = isUserAdmin ? `<span class="download-stats"><i class="fas fa-chart-line"></i> ${script.downloads}</span>` : '';
+                
+                grid.innerHTML += `
+                    <div class="script-card">
+                        <div class="script-header">
+                            <h3 class="script-title"><i class="fas fa-file-code"></i> ${script.title}</h3>
+                            <span class="version-badge">${script.version}</span>
+                        </div>
+                        <p class="script-desc">${script.desc}</p>
+                        <div class="card-footer">
+                            <button class="btn-action btn-sm" onclick="simulateDownload(${script.id})"><i class="fas fa-download"></i> Download</button>
+                            ${adminStats}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function simulateDownload(id) {
+            const script = scriptsDB.find(s => s.id === id);
+            if(script) {
+                script.downloads += 1;
+                saveSiteData();
+                renderScripts(); 
+                alert("Downloading " + script.fileName + "...");
+            }
+        }
+
+        // --- 5. لوحة تحكم المشرفين ---
+        function renderAdminPanel() {
+            // تحديث أقسام الإضافة
+            const select = document.getElementById('s-category');
+            select.innerHTML = '';
+            categoriesDB.forEach(cat => { select.innerHTML += `<option value="${cat}">${cat}</option>`; });
+
+            // عرض الأقسام للحذف
+            const catList = document.getElementById('adminCategoriesList');
+            catList.innerHTML = '';
+            categoriesDB.forEach(cat => {
+                catList.innerHTML += `
+                    <div style="background: rgba(157, 0, 255, 0.2); padding: 5px 15px; border-radius: 20px; display: flex; align-items: center; gap: 10px;">
+                        <span>${cat}</span>
+                        <button onclick="deleteCategory('${cat}')" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-times"></i></button>
+                    </div>
+                `;
+            });
+
+            // عرض المشرفين
+            const adminsList = document.getElementById('adminUsersList');
+            adminsList.innerHTML = '';
+            adminList.forEach(admin => {
+                const deleteBtn = admin === mainAdmin ? `<span style="color:var(--text-muted); font-size:0.8rem;">Owner</span>` : `<button onclick="removeAdmin('${admin}')" class="btn-action btn-danger btn-sm" style="padding: 5px 10px;"><i class="fas fa-trash"></i></button>`;
+                adminsList.innerHTML += `
+                    <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items:center;">
+                        <span>${admin}</span>
+                        ${deleteBtn}
+                    </div>
+                `;
+            });
+
+            // عرض السكريبتات
+            const list = document.getElementById('adminList');
+            list.innerHTML = '';
+            scriptsDB.forEach(script => {
+                list.innerHTML += `
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: #fff;">${script.title}</strong> 
+                            <span style="color: var(--text-muted); font-size: 0.8em; margin-left:10px;">(${script.category})</span>
+                        </div>
+                        <button onclick="deleteScript(${script.id})" class="btn-action btn-danger btn-sm" style="padding: 5px 10px;"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+            });
+        }
+
+        // --- وظائف الإدارة ---
+        document.getElementById('adminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fileInput = document.getElementById('s-file');
+            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : "unknown_file.zip";
+
+            const newScript = {
+                id: Date.now(),
+                title: document.getElementById('s-title').value,
+                version: document.getElementById('s-version').value,
+                category: document.getElementById('s-category').value,
+                fileName: fileName,
+                desc: document.getElementById('s-desc').value,
+                downloads: 0
+            };
+            scriptsDB.push(newScript);
+            saveSiteData();
+            this.reset();
+            alert(`✅ Script published!\nAttached File: ${fileName}`);
+            renderAdminPanel();
+        });
+
+        function deleteScript(id) {
+            if(confirm("Delete this script?")) {
+                scriptsDB = scriptsDB.filter(s => s.id !== id);
+                saveSiteData();
+                renderAdminPanel();
+            }
+        }
+
+        function addCategory() {
+            const val = document.getElementById('newCategory').value.trim();
+            if(val && !categoriesDB.includes(val)) {
+                categoriesDB.push(val);
+                saveSiteData();
+                document.getElementById('newCategory').value = '';
+                renderAdminPanel();
+            }
+        }
+
+        function deleteCategory(cat) {
+            if(confirm(`Delete category '${cat}'? (Scripts inside will not be deleted but may be hidden)`)) {
+                categoriesDB = categoriesDB.filter(c => c !== cat);
+                saveSiteData();
+                renderAdminPanel();
+            }
+        }
+
+        function addAdmin() {
+            const email = document.getElementById('newAdminEmail').value.trim().toLowerCase();
+            if(email && !adminList.includes(email)) {
+                adminList.push(email);
+                saveSiteData();
+                document.getElementById('newAdminEmail').value = '';
+                renderAdminPanel();
+                alert(email + " has been added as an admin.");
+                
+                // تحديث صلاحيات المشرف إذا كان موجوداً ضمن المستخدمين
+                if (currentUser && currentUser.email === email) {
+                    isUserAdmin = true;
+                    updateAdminVisibility();
+                }
+            }
+        }
+
+        function removeAdmin(email) {
+            if(email === mainAdmin) return;
+            if(confirm("Remove " + email + " from admins?")) {
+                adminList = adminList.filter(a => a !== email);
+                saveSiteData();
+                renderAdminPanel();
+            }
+        }
+
+        // Live Search
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let cards = document.querySelectorAll('#scriptsGrid .script-card');
+            cards.forEach(card => {
+                let title = card.querySelector('.script-title').innerText.toLowerCase();
+                let desc = card.querySelector('.script-desc').innerText.toLowerCase();
+                card.style.display = (title.includes(filter) || desc.includes(filter)) ? "block" : "none";
+            });
+        });
+
+    </script>
+</body>
+</html>
         .hero h1 {
             font-size: 3.5rem;
             font-weight: 900;
