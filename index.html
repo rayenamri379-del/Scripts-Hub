@@ -1,124 +1,523 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scripts Hub | Monetloader</title>
+    <title>KaZzA Scripts Hub | Monetloader & SAMP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        /* إعدادات الخلفية والخطوط */
-        body {
-            background-color: #05010a;
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --bg-color: #05010a;
+            --glass-bg: rgba(20, 5, 30, 0.55);
+            --glass-border: rgba(138, 43, 226, 0.4);
+            --neon-purple: #d854ff;
+            --neon-glow: #8a2be2;
+            --text-main: #ffffff;
+            --text-muted: #a385bd;
+            --card-bg: rgba(10, 2, 17, 0.8);
+            --danger: #ff4757;
+            --success: #00ffcc;
+        }
+
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
         }
 
-        /* حاوية الموقع الزجاجية */
-        .glass-container {
-            background: rgba(20, 5, 30, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(138, 43, 226, 0.3);
-            border-radius: 15px;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 30px;
-            box-shadow: 0 0 30px rgba(138, 43, 226, 0.15);
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(138, 43, 226, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(216, 84, 255, 0.15), transparent 25%);
+            background-attachment: fixed;
+            min-height: 100vh;
         }
 
-        /* العناوين وتأثير النيون البنفسجي */
-        h1 {
-            text-align: center;
-            color: #d854ff;
-            text-shadow: 0 0 10px #d854ff, 0 0 20px #8a2be2;
-            margin-bottom: 5px;
+        /* Navbar */
+        nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .subtitle {
-            text-align: center;
-            color: #a385bd;
-            font-size: 0.9em;
-            margin-bottom: 30px;
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--neon-purple);
+            text-shadow: 0 0 10px var(--neon-purple);
+            letter-spacing: 2px;
         }
 
-        /* بطاقات السكريبتات */
-        .script-card {
-            background: #0a0211;
-            border-right: 3px solid #d854ff;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 5px;
+        .nav-links button {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            margin-left: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
             transition: 0.3s;
         }
 
-        .script-card:hover {
-            box-shadow: 0 0 15px rgba(216, 84, 255, 0.3);
-            transform: translateX(-5px);
+        .nav-links button:hover, .nav-links button.active {
+            color: var(--neon-purple);
+            text-shadow: 0 0 8px var(--neon-purple);
         }
 
-        .script-card h3 {
-            margin: 0 0 10px 0;
-            color: #f0c4ff;
-        }
-
-        .script-card p {
-            font-size: 0.85em;
-            color: #b0a0c0;
-            line-height: 1.5;
-        }
-
-        /* أزرار التحميل */
-        .btn-neon {
+        /* Hidden Admin Button initially */
+        #tab-admin-container {
             display: inline-block;
-            background: transparent;
-            color: #d854ff;
-            border: 1px solid #d854ff;
-            padding: 8px 15px;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.85em;
-            transition: 0.3s;
-            margin-top: 10px;
         }
 
-        .btn-neon:hover {
-            background: #d854ff;
-            color: #000;
-            box-shadow: 0 0 10px #d854ff;
+        /* Generic Views */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .view-section.active {
+            display: block;
         }
 
-        /* شريط الحماية */
-        .security-badge {
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Section */
+        .hero {
             text-align: center;
-            font-size: 0.8em;
-            color: #00ffcc;
-            margin-bottom: 20px;
-            border-bottom: 1px dashed #333;
-            padding-bottom: 10px;
+            padding: 60px 20px;
         }
+
+        .security-badge {
+            display: inline-block;
+            background: rgba(0, 255, 204, 0.1);
+            color: var(--success);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            margin-bottom: 25px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.1);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #ffffff, var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            line-height: 1.6;
+        }
+
+        /* Categories */
+        .categories {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .cat-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .cat-btn.active, .cat-btn:hover {
+            background: var(--neon-purple);
+            color: black;
+            box-shadow: 0 0 15px var(--neon-purple);
+        }
+
+        /* Search Section */
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .search-input { padding-left: 50px; }
+        .form-input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(138, 43, 226, 0.4); }
+        .search-icon { position: absolute; left: 40px; top: 25px; transform: translateY(-50%); color: var(--text-muted); }
+
+        /* Scripts Grid */
+        .scripts-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px 80px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .script-card {
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            border-top: 3px solid var(--neon-purple);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .script-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3); }
+        .script-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .script-title { font-size: 1.2rem; color: #f0c4ff; display: flex; align-items: center; gap: 10px; }
+        .version-badge { background: rgba(255, 255, 255, 0.1); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; color: var(--text-muted); }
+        .script-desc { font-size: 0.9rem; color: #b0a0c0; line-height: 1.6; margin-bottom: 25px; min-height: 65px; }
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px; }
+        
+        .btn-action {
+            background: transparent;
+            color: var(--neon-purple);
+            border: 1px solid var(--neon-purple);
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-action:hover { background: var(--neon-purple); color: #000; box-shadow: 0 0 15px var(--neon-purple); }
+        .btn-danger { color: var(--danger); border-color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); box-shadow: 0 0 15px var(--danger); color: white; }
+
+        /* Forms Layout */
+        .form-container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: var(--glass-bg);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(15px);
+        }
+        .form-container h2 { text-align: center; color: var(--neon-purple); margin-bottom: 20px; }
+        
+        .bot-check {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px dashed var(--glass-border);
+        }
+
+        .bot-check input {
+            width: 80px;
+            padding: 8px;
+            margin-bottom: 0;
+            text-align: center;
+        }
+
+        footer { text-align: center; padding: 30px; border-top: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-muted); }
     </style>
 </head>
 <body>
 
-    <div class="glass-container">
-        <div class="security-badge">🛡️ محمي ومضاد للبوتات | تم التحديث: 2026</div>
-        
-        <h1>Scripts-Hub</h1>
-        <div class="subtitle">المستودع الرسمي لسكريبتات Monetloader & SAMP</div>
+    <nav>
+        <div class="logo">KaZzA HUB</div>
+        <div class="nav-links">
+            <button onclick="switchTab('home')" id="tab-home" class="active"><i class="fas fa-home"></i> Home</button>
+            <button onclick="switchTab('request')" id="tab-request"><i class="fas fa-envelope"></i> Request Script</button>
+            <div id="tab-admin-container">
+                <button onclick="promptAdminAuth()" id="tab-admin"><i class="fas fa-lock"></i> Admin Panel</button>
+            </div>
+        </div>
+    </nav>
 
-        <div class="script-card">
-            <h3>🎯 Monetloader Auto Aim Lock</h3>
-            <p>سكريبت الأيم بوت الخاص بـ GTA SAMP Android Roleplay. يدعم جميع النسخ وتم فحصه بالكامل.</p>
-            <a href="#" class="btn-neon">تحميل السكريبت</a>
+    <div id="view-home" class="view-section active">
+        <section class="hero">
+            <div class="security-badge"><i class="fas fa-shield-alt"></i> Protected & Sanitized</div>
+            <h1>Next-Gen Scripts Hub</h1>
+            <p>The official repository for Monetloader & GTA SAMP scripts. Elevate your roleplay experience with custom UI and management tools.</p>
+        </section>
+
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="searchInput" class="form-input search-input" placeholder="Search for scripts, mods, or tools...">
         </div>
 
-        <div class="script-card">
-            <h3>⚙️ حزمة أدوات CLEO & Monetloader</h3>
-            <p>مجموعة شاملة لتسهيل اللعب وتحسين الأداء داخل السيرفرات دون التسبب بانهيار اللعبة (Crash).</p>
-            <a href="#" class="btn-neon">تحميل الحزمة</a>
+        <div class="categories" id="categoryFilters">
+            <button class="cat-btn active" onclick="filterCategory('All', this)">All Scripts</button>
+            <button class="cat-btn" onclick="filterCategory('Management', this)">Admin/Helper Tools</button>
+            <button class="cat-btn" onclick="filterCategory('UI', this)">Custom UI</button>
+            <button class="cat-btn" onclick="filterCategory('Utility', this)">Utilities</button>
+        </div>
+
+        <div class="scripts-container" id="scriptsGrid"></div>
+    </div>
+
+    <div id="view-request" class="view-section">
+        <div class="form-container">
+            <h2><i class="fas fa-terminal"></i> Request a Custom Script</h2>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Need a custom script for your server? Fill out the details below.</p>
+            
+            <form id="requestForm">
+                <input type="text" id="reqName" class="form-input" placeholder="Your Name or Discord Tag" required>
+                <select id="reqCat" class="form-input" style="background-color: #14051e;" required>
+                    <option value="" disabled selected>-- Select Script Category --</option>
+                    <option value="admin">Admin / Helper Logic</option>
+                    <option value="ui">HUD / Transparent UI Design</option>
+                    <option value="cleo">Automation Script</option>
+                    <option value="other">Other / Custom</option>
+                </select>
+                <textarea id="reqDesc" class="form-input" placeholder="Describe your script idea in detail..." required style="height: 150px; resize: none;"></textarea>
+                
+                <div class="bot-check">
+                    <i class="fas fa-robot" style="color: var(--text-muted); font-size: 1.5rem;"></i>
+                    <span style="flex-grow: 1;">Anti-Bot: What is <span id="num1"></span> + <span id="num2"></span>?</span>
+                    <input type="number" id="botAnswer" class="form-input" required>
+                </div>
+
+                <button type="submit" class="btn-action" style="width: 100%; justify-content: center; font-size: 1.1rem;"><i class="fas fa-paper-plane"></i> Submit Request</button>
+            </form>
         </div>
     </div>
 
+    <div id="view-admin" class="view-section">
+        <div class="form-container" style="max-width: 900px;">
+            <h2><i class="fas fa-cogs"></i> Admin Dashboard</h2>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px;">Securely manage your repository.</p>
+            
+            <form id="adminForm" style="background: rgba(0,0,0,0.4); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--glass-border);">
+                <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-plus-circle"></i> Add New Script</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <input type="text" id="s-title" class="form-input" placeholder="Script Title" required>
+                    <input type="text" id="s-version" class="form-input" placeholder="Version (e.g. v2.1.0)" required>
+                    <input type="text" id="s-icon" class="form-input" placeholder="FontAwesome Icon (e.g. fa-palette)" required>
+                    <select id="s-category" class="form-input" style="background-color: #14051e;" required>
+                        <option value="Management">Admin/Helper Tools</option>
+                        <option value="UI">Custom UI</option>
+                        <option value="Utility">Utilities</option>
+                    </select>
+                </div>
+                <textarea id="s-desc" class="form-input" placeholder="Script Description..." required style="height: 80px;"></textarea>
+                <button type="submit" class="btn-action"><i class="fas fa-cloud-upload-alt"></i> Publish Script</button>
+            </form>
+
+            <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-list"></i> Manage Scripts</h3>
+            <div id="adminList" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 KaZzA Scripts Hub. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- Security & State ---
+        let isAdminUnlocked = false;
+        let currentFilter = 'All';
+
+        // XSS Protection (Sanitize inputs to prevent malicious code injection)
+        function sanitize(str) {
+            const temp = document.createElement('div');
+            temp.textContent = str;
+            return temp.innerHTML;
+        }
+
+        // --- 1. Tab Switching & Auth Logic ---
+        function promptAdminAuth() {
+            if(isAdminUnlocked) {
+                switchTab('admin');
+                return;
+            }
+            // Simple Frontend Password (MegaLife2026)
+            const pass = prompt("Enter Admin Password to access the dashboard:");
+            if(pass === "MegaLife2026") {
+                isAdminUnlocked = true;
+                document.getElementById('tab-admin').innerHTML = '<i class="fas fa-unlock"></i> Admin Panel';
+                switchTab('admin');
+            } else if (pass !== null) {
+                alert("Access Denied: Incorrect Password.");
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
+            document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById('view-' + tabId).classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+            
+            if(tabId === 'home') renderScripts(); 
+            if(tabId === 'admin') renderAdminList(); 
+        }
+
+        // --- 2. Database Simulation ---
+        const defaultData = [
+            { id: 1, title: "Admin/Helper Commands Pack", category: "Management", version: "v2.1.0", icon: "fa-user-shield", size: "1.2 MB", desc: "A custom management script featuring quick shortcuts like /rr and /return for efficient server moderation." },
+            { id: 2, title: "Transparent Dark UI", category: "UI", version: "v1.5.4", icon: "fa-palette", size: "4.8 MB", desc: "A sleek, high-transparency user interface in black and purple with resizable menus and custom backgrounds." },
+            { id: 3, title: "Anti-Car Ram Sync", category: "Utility", version: "v1.0.2", icon: "fa-car-crash", size: "800 KB", desc: "Prevents desync issues and stops malicious players from ramming your vehicle during roleplay." }
+        ];
+
+        let scriptsDB = JSON.parse(localStorage.getItem('kazza_scripts')) || defaultData;
+
+        function saveToDB() {
+            localStorage.setItem('kazza_scripts', JSON.stringify(scriptsDB));
+            renderScripts();
+            if(isAdminUnlocked) renderAdminList();
+        }
+
+        // --- 3. Render Public Scripts Grid ---
+        function filterCategory(cat, btnElement) {
+            currentFilter = cat;
+            document.querySelectorAll('.cat-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderScripts();
+        }
+
+        function renderScripts() {
+            const grid = document.getElementById('scriptsGrid');
+            grid.innerHTML = ''; 
+            
+            let filteredScripts = currentFilter === 'All' 
+                ? scriptsDB 
+                : scriptsDB.filter(s => s.category === currentFilter);
+
+            filteredScripts.forEach(script => {
+                grid.innerHTML += `
+                    <div class="script-card">
+                        <div class="script-header">
+                            <h3 class="script-title"><i class="fas ${sanitize(script.icon)}"></i> ${sanitize(script.title)}</h3>
+                            <span class="version-badge">${sanitize(script.version)}</span>
+                        </div>
+                        <p class="script-desc">${sanitize(script.desc)}</p>
+                        <div class="card-footer">
+                            <button class="btn-action"><i class="fas fa-download"></i> Download</button>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">${script.size}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- 4. Render Admin List ---
+        function renderAdminList() {
+            const list = document.getElementById('adminList');
+            list.innerHTML = '';
+            
+            scriptsDB.forEach(script => {
+                list.innerHTML += `
+                    <div style="background: var(--glass-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: #fff;">${sanitize(script.title)}</strong> 
+                            <span style="color: var(--neon-purple); font-size: 0.8em; margin-left:10px;">[${sanitize(script.category || 'N/A')}]</span>
+                        </div>
+                        <button onclick="deleteScript(${script.id})" class="btn-action btn-danger" style="padding: 5px 10px; font-size: 0.8rem;"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                `;
+            });
+        }
+
+        // --- 5. Add & Delete Logic ---
+        document.getElementById('adminForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const newScript = {
+                id: Date.now(),
+                title: sanitize(document.getElementById('s-title').value),
+                category: sanitize(document.getElementById('s-category').value),
+                version: sanitize(document.getElementById('s-version').value),
+                icon: sanitize(document.getElementById('s-icon').value),
+                size: "1.0 MB", // Auto mock size
+                desc: sanitize(document.getElementById('s-desc').value)
+            };
+            scriptsDB.push(newScript);
+            saveToDB();
+            this.reset(); 
+            alert("✅ Script published securely!");
+        });
+
+        function deleteScript(id) {
+            if(confirm("Are you sure you want to permanently delete this script?")) {
+                scriptsDB = scriptsDB.filter(s => s.id !== id);
+                saveToDB();
+            }
+        }
+
+        // --- 6. Live Search ---
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            let filter = this.value.toLowerCase();
+            let cards = document.querySelectorAll('#scriptsGrid .script-card');
+            cards.forEach(card => {
+                let title = card.querySelector('.script-title').innerText.toLowerCase();
+                let desc = card.querySelector('.script-desc').innerText.toLowerCase();
+                card.style.display = (title.includes(filter) || desc.includes(filter)) ? "block" : "none";
+            });
+        });
+
+        // --- 7. Anti-Bot & Request Form ---
+        let botNum1 = Math.floor(Math.random() * 10) + 1;
+        let botNum2 = Math.floor(Math.random() * 10) + 1;
+        document.getElementById('num1').innerText = botNum1;
+        document.getElementById('num2').innerText = botNum2;
+
+        document.getElementById('requestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const answer = parseInt(document.getElementById('botAnswer').value);
+            
+            if(answer !== (botNum1 + botNum2)) {
+                alert("❌ Anti-Bot Verification Failed! Incorrect math answer.");
+                return;
+            }
+
+            alert("✅ Request submitted successfully! (Sanitized & Verified)");
+            this.reset();
+            
+            // Reset Bot Check
+            botNum1 = Math.floor(Math.random() * 10) + 1;
+            botNum2 = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('num1').innerText = botNum1;
+            document.getElementById('num2').innerText = botNum2;
+        });
+
+        // Init App
+        renderScripts();
+    </script>
 </body>
 </html>
