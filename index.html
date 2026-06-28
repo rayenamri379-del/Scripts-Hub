@@ -229,7 +229,7 @@
         .btn-danger { color: var(--danger); border-color: var(--danger); }
         .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); }
 
-        .btn-sm { width: auto; padding: 10px 20px; } /* للأزرار الصغيرة مثل التحميل */
+        .btn-sm { width: auto; padding: 10px 20px; } 
 
         .form-container { max-width: 800px; margin: 40px auto; background: var(--glass-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--glass-border); }
         .admin-section-box { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--glass-border); }
@@ -240,6 +240,7 @@
 </head>
 <body>
 
+    <!-- واجهة تسجيل الدخول الإجبارية -->
     <div id="auth-overlay">
         <div class="auth-container">
             <div class="auth-logo">KaZzA Scripts</div>
@@ -251,12 +252,14 @@
 
             <div id="auth-msg" class="auth-msg"></div>
 
+            <!-- فورم تسجيل الدخول -->
             <form id="signin-form" class="auth-form active" onsubmit="handleSignIn(event)">
                 <input type="email" id="in-email" class="form-input" placeholder="Email Address" required>
                 <input type="password" id="in-password" class="form-input" placeholder="Password" required>
                 <button type="submit" class="btn-action"><i class="fas fa-sign-in-alt"></i> Login</button>
             </form>
 
+            <!-- فورم إنشاء الحساب -->
             <form id="signup-form" class="auth-form" onsubmit="handleSignUp(event)">
                 <input type="text" id="up-username" class="form-input" placeholder="Username" required>
                 <input type="email" id="up-email" class="form-input" placeholder="Email Address" required>
@@ -266,6 +269,7 @@
         </div>
     </div>
 
+    <!-- محتوى الموقع (يظهر فقط بعد تسجيل الدخول) -->
     <div id="app-content">
         <nav>
             <div class="logo">KaZzA Scripts</div>
@@ -353,36 +357,28 @@
     </div>
 
     <script>
-        // --- 1. إعدادات النظام وقاعدة البيانات الوهمية (localStorage) ---
+        // --- 1. إعدادات النظام وقاعدة البيانات الوهمية (تم تغيير الأسماء لمسح الحسابات القديمة تلقائياً) ---
         let currentFilter = 'All';
-        const mainAdmin = 'rayenamri379@gmail.com'; // الإيميل الأساسي للمالك
+        const mainAdmin = 'rayenamri379@gmail.com'; 
         
-        // بيانات الموقع
-        let adminList = JSON.parse(localStorage.getItem('kazza_admins')) || [mainAdmin];
-        let categoriesDB = JSON.parse(localStorage.getItem('kazza_categories')) || ['UI', 'Utility', 'Admin Tools'];
-        let scriptsDB = JSON.parse(localStorage.getItem('kazza_scripts')) || [];
-        
-        // بيانات الحسابات المضافة حديثاً
-        let usersDB = JSON.parse(localStorage.getItem('kazza_users')) || [];
-
-        // التأكد من وجود حساب الآدمن الرئيسي في الداتا بيس
-        if (!usersDB.find(u => u.email === mainAdmin)) {
-            usersDB.push({ username: 'Owner', email: mainAdmin, password: 'adminpassword' });
-            localStorage.setItem('kazza_users', JSON.stringify(usersDB));
-        }
+        // استخدام مفاتيح جديدة _v2 للبدء بقاعدة بيانات نظيفة 100%
+        let adminList = JSON.parse(localStorage.getItem('kazza_admins_v2')) || [mainAdmin];
+        let categoriesDB = JSON.parse(localStorage.getItem('kazza_categories_v2')) || ['UI', 'Utility', 'Admin Tools'];
+        let scriptsDB = JSON.parse(localStorage.getItem('kazza_scripts_v2')) || [];
+        let usersDB = JSON.parse(localStorage.getItem('kazza_users_v2')) || [];
 
         // حالة الجلسة الحالية
         let currentUser = null; 
         let isUserAdmin = false;
 
         function saveSiteData() {
-            localStorage.setItem('kazza_admins', JSON.stringify(adminList));
-            localStorage.setItem('kazza_categories', JSON.stringify(categoriesDB));
-            localStorage.setItem('kazza_scripts', JSON.stringify(scriptsDB));
+            localStorage.setItem('kazza_admins_v2', JSON.stringify(adminList));
+            localStorage.setItem('kazza_categories_v2', JSON.stringify(categoriesDB));
+            localStorage.setItem('kazza_scripts_v2', JSON.stringify(scriptsDB));
         }
 
         function saveUsersData() {
-            localStorage.setItem('kazza_users', JSON.stringify(usersDB));
+            localStorage.setItem('kazza_users_v2', JSON.stringify(usersDB));
         }
 
         // --- 2. نظام تسجيل الدخول و المصادقة ---
@@ -451,6 +447,7 @@
 
         function loginSuccess(user) {
             currentUser = user;
+            // يعطيك صلاحيات المشرف تلقائياً إذا كان إيميلك ضمن القائمة
             isUserAdmin = adminList.includes(user.email);
             
             document.getElementById('auth-overlay').style.display = 'none';
@@ -553,12 +550,10 @@
 
         // --- 5. لوحة تحكم المشرفين ---
         function renderAdminPanel() {
-            // تحديث أقسام الإضافة
             const select = document.getElementById('s-category');
             select.innerHTML = '';
             categoriesDB.forEach(cat => { select.innerHTML += `<option value="${cat}">${cat}</option>`; });
 
-            // عرض الأقسام للحذف
             const catList = document.getElementById('adminCategoriesList');
             catList.innerHTML = '';
             categoriesDB.forEach(cat => {
@@ -570,7 +565,6 @@
                 `;
             });
 
-            // عرض المشرفين
             const adminsList = document.getElementById('adminUsersList');
             adminsList.innerHTML = '';
             adminList.forEach(admin => {
@@ -583,7 +577,6 @@
                 `;
             });
 
-            // عرض السكريبتات
             const list = document.getElementById('adminList');
             list.innerHTML = '';
             scriptsDB.forEach(script => {
@@ -656,7 +649,6 @@
                 renderAdminPanel();
                 alert(email + " has been added as an admin.");
                 
-                // تحديث صلاحيات المشرف إذا كان موجوداً ضمن المستخدمين
                 if (currentUser && currentUser.email === email) {
                     isUserAdmin = true;
                     updateAdminVisibility();
@@ -684,476 +676,6 @@
             });
         });
 
-    </script>
-</body>
-</html>
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 900;
-            margin-bottom: 15px;
-            background: linear-gradient(45deg, #ffffff, var(--neon-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 30px auto; }
-
-        /* Categories */
-        .categories {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        .cat-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .cat-btn.active, .cat-btn:hover {
-            background: var(--neon-purple);
-            box-shadow: 0 0 15px var(--neon-purple);
-        }
-
-        /* Forms & Inputs */
-        .search-container { max-width: 800px; margin: 0 auto 20px auto; padding: 0 20px; position: relative; }
-        .form-input {
-            width: 100%;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            padding: 12px 20px;
-            border-radius: 8px;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-            transition: 0.3s;
-            margin-bottom: 15px;
-        }
-        .form-input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(157, 0, 255, 0.4); }
-        
-        /* إدخال الملفات */
-        input[type="file"] {
-            padding: 10px;
-            background: rgba(0,0,0,0.5);
-            color: var(--neon-purple);
-            cursor: pointer;
-        }
-        input[type="file"]::-webkit-file-upload-button {
-            background: var(--neon-purple);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            margin-right: 15px;
-            cursor: pointer;
-        }
-
-        /* Scripts Grid */
-        .scripts-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 20px 80px 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
-        }
-        .script-card {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-top: 3px solid var(--neon-purple);
-            border-radius: 12px;
-            padding: 25px;
-            transition: all 0.4s ease;
-        }
-        .script-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(157, 0, 255, 0.3); }
-        .script-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .script-title { font-size: 1.2rem; color: #fff; display: flex; align-items: center; gap: 10px; }
-        .version-badge { background: rgba(255, 255, 255, 0.1); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; color: var(--text-muted); }
-        .script-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; min-height: 60px; }
-        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px; }
-        
-        .download-stats { font-size: 0.8rem; color: var(--neon-purple); background: rgba(157, 0, 255, 0.1); padding: 5px 10px; border-radius: 5px;}
-
-        .btn-action {
-            background: transparent;
-            color: var(--neon-purple);
-            border: 1px solid var(--neon-purple);
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .btn-action:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 15px var(--neon-purple); }
-        .btn-danger { color: var(--danger); border-color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); }
-
-        .form-container { max-width: 800px; margin: 40px auto; background: var(--glass-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--glass-border); }
-        
-        .admin-section-box { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--glass-border); }
-
-        footer { text-align: center; padding: 30px; border-top: 1px solid var(--glass-border); background: var(--glass-bg); color: var(--text-muted); }
-        .discord-link { color: #5865F2; font-size: 2rem; transition: 0.3s; text-decoration: none; margin-top: 10px; display: inline-block; }
-        .discord-link:hover { color: #fff; text-shadow: 0 0 15px #5865F2; transform: scale(1.1); }
-    </style>
-</head>
-<body>
-
-    <nav>
-        <div class="logo">KaZzA Scripts</div>
-        <div class="nav-links">
-            <button onclick="switchTab('home')" id="tab-home" class="active"><i class="fas fa-home"></i> Home</button>
-            <button onclick="switchTab('request')" id="tab-request"><i class="fas fa-envelope"></i> Request</button>
-            <button onclick="switchTab('admin')" id="tab-admin" class="admin-only"><i class="fas fa-cogs"></i> Admin Panel</button>
-            <button class="login-btn" id="loginBtn" onclick="simulateGoogleLogin()"><i class="fab fa-google"></i> Login</button>
-        </div>
-    </nav>
-
-    <div id="view-home" class="view-section active">
-        <section class="hero">
-            <h1>KaZzA Scripts Hub</h1>
-            <p>The best place for SAMP Monetloader & CLEO Scripts.</p>
-        </section>
-
-        <div class="search-container">
-            <input type="text" id="searchInput" class="form-input search-input" placeholder="Search scripts...">
-        </div>
-
-        <div class="categories" id="categoryFilters">
-            </div>
-
-        <div class="scripts-container" id="scriptsGrid"></div>
-    </div>
-
-    <div id="view-request" class="view-section">
-        <div class="form-container">
-            <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 20px;"><i class="fas fa-terminal"></i> Request a Script</h2>
-            <form id="requestForm">
-                <input type="text" class="form-input" placeholder="Discord Tag" required>
-                <textarea class="form-input" placeholder="Describe your script..." required style="height: 150px;"></textarea>
-                <button type="submit" class="btn-action" style="width: 100%; justify-content: center;"><i class="fas fa-paper-plane"></i> Send Request</button>
-            </form>
-        </div>
-    </div>
-
-    <div id="view-admin" class="view-section">
-        <div class="form-container" style="max-width: 900px;">
-            <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 30px;"><i class="fas fa-lock"></i> Admin Dashboard</h2>
-            
-            <div class="admin-section-box">
-                <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-upload"></i> Upload New Script</h3>
-                <form id="adminForm">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <input type="text" id="s-title" class="form-input" placeholder="Script Name" required>
-                        <input type="text" id="s-version" class="form-input" placeholder="Version (e.g. v1.0)" required>
-                        <select id="s-category" class="form-input" style="background-color: #14051e;" required></select>
-                        <input type="file" id="s-file" class="form-input" required>
-                    </div>
-                    <textarea id="s-desc" class="form-input" placeholder="Description..." required style="height: 80px;"></textarea>
-                    <button type="submit" class="btn-action"><i class="fas fa-cloud-upload-alt"></i> Publish</button>
-                </form>
-            </div>
-
-            <div class="admin-section-box">
-                <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-folder-open"></i> Manage Categories</h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <input type="text" id="newCategory" class="form-input" placeholder="New Category Name" style="margin-bottom:0;">
-                    <button onclick="addCategory()" class="btn-action"><i class="fas fa-plus"></i> Add</button>
-                </div>
-                <div id="adminCategoriesList" style="display:flex; flex-wrap:wrap; gap:10px;"></div>
-            </div>
-
-            <div class="admin-section-box">
-                <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-users-cog"></i> Manage Admins</h3>
-                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                    <input type="email" id="newAdminEmail" class="form-input" placeholder="Add Admin Gmail..." style="margin-bottom:0;">
-                    <button onclick="addAdmin()" class="btn-action"><i class="fas fa-user-plus"></i> Add Admin</button>
-                </div>
-                <div id="adminUsersList" style="display: flex; flex-direction: column; gap: 10px;"></div>
-            </div>
-
-            <div class="admin-section-box">
-                <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-list"></i> Manage Published Scripts</h3>
-                <div id="adminList" style="display: flex; flex-direction: column; gap: 10px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <p>&copy; 2026 KaZzA Scripts. All rights reserved.</p>
-        <p style="font-size: 0.8rem; margin-top: 5px;">Created for SAMP & Monetloader</p>
-        <a href="https://discordapp.com/users/YOUR_DISCORD_ID" target="_blank" class="discord-link" title="Contact me on Discord">
-            <i class="fab fa-discord"></i>
-        </a>
-    </footer>
-
-    <script>
-        // --- 1. إعدادات النظام وقاعدة البيانات الوهمية (localStorage) ---
-        let currentUserEmail = null;
-        let isUserAdmin = false;
-        let currentFilter = 'All';
-
-        // قائمة المشرفين (حسابك الأساسي لا يمكن حذفه)
-        const mainAdmin = 'rayenamri379@gmail.com';
-        let adminList = JSON.parse(localStorage.getItem('kazza_admins')) || [mainAdmin];
-        
-        // الأقسام (الكتلوجات)
-        let categoriesDB = JSON.parse(localStorage.getItem('kazza_categories')) || ['UI', 'Utility', 'Admin Tools'];
-        
-        // السكريبتات
-        let scriptsDB = JSON.parse(localStorage.getItem('kazza_scripts')) || [];
-
-        function saveState() {
-            localStorage.setItem('kazza_admins', JSON.stringify(adminList));
-            localStorage.setItem('kazza_categories', JSON.stringify(categoriesDB));
-            localStorage.setItem('kazza_scripts', JSON.stringify(scriptsDB));
-        }
-
-        // --- 2. محاكاة تسجيل الدخول بحساب جوجل ---
-        function simulateGoogleLogin() {
-            if (currentUserEmail) {
-                // تسجيل خروج
-                currentUserEmail = null;
-                isUserAdmin = false;
-                document.getElementById('loginBtn').innerHTML = '<i class="fab fa-google"></i> Login';
-                updateAdminVisibility();
-                alert("Logged out successfully.");
-                switchTab('home');
-                return;
-            }
-
-            // محاكاة نافذة جوجل (لأنه لا يوجد سيرفر حقيقي حالياً)
-            const email = prompt("Google Login Simulation\nEnter your Gmail:");
-            if (email) {
-                currentUserEmail = email.toLowerCase().trim();
-                isUserAdmin = adminList.includes(currentUserEmail);
-                
-                document.getElementById('loginBtn').innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout (' + currentUserEmail.split('@')[0] + ')';
-                
-                if(isUserAdmin) {
-                    alert("Welcome Admin! Panel unlocked.");
-                } else {
-                    alert("Logged in as standard user.");
-                }
-                updateAdminVisibility();
-            }
-        }
-
-        function updateAdminVisibility() {
-            const adminElements = document.querySelectorAll('.admin-only');
-            adminElements.forEach(el => {
-                el.style.display = isUserAdmin ? 'inline-block' : 'none';
-            });
-            renderScripts(); // إعادة بناء السكريبتات لإظهار/إخفاء عدد التحميلات
-            if(isUserAdmin) {
-                renderAdminPanel();
-            }
-        }
-
-        // --- 3. التنقل بين الصفحات ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
-            document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById('view-' + tabId).classList.add('active');
-            const targetBtn = document.getElementById('tab-' + tabId);
-            if(targetBtn) targetBtn.classList.add('active');
-            
-            if(tabId === 'home') renderScripts(); 
-            if(tabId === 'admin' && isUserAdmin) renderAdminPanel(); 
-        }
-
-        // --- 4. إدارة السكريبتات (عرض للمستخدمين) ---
-        function renderCategoryButtons() {
-            const filterContainer = document.getElementById('categoryFilters');
-            filterContainer.innerHTML = `<button class="cat-btn ${currentFilter === 'All' ? 'active' : ''}" onclick="filterCategory('All', this)">All</button>`;
-            
-            categoriesDB.forEach(cat => {
-                filterContainer.innerHTML += `<button class="cat-btn ${currentFilter === cat ? 'active' : ''}" onclick="filterCategory('${cat}', this)">${cat}</button>`;
-            });
-        }
-
-        function filterCategory(cat, btnElement) {
-            currentFilter = cat;
-            renderCategoryButtons(); // Refresh buttons state
-            renderScripts();
-        }
-
-        function renderScripts() {
-            renderCategoryButtons();
-            const grid = document.getElementById('scriptsGrid');
-            grid.innerHTML = ''; 
-            
-            let filtered = currentFilter === 'All' ? scriptsDB : scriptsDB.filter(s => s.category === currentFilter);
-
-            filtered.forEach(script => {
-                // إظهار عدد التحميلات للمشرفين فقط
-                const adminStats = isUserAdmin ? `<span class="download-stats"><i class="fas fa-chart-line"></i> Downloads: ${script.downloads}</span>` : '';
-                
-                grid.innerHTML += `
-                    <div class="script-card">
-                        <div class="script-header">
-                            <h3 class="script-title"><i class="fas fa-file-code"></i> ${script.title}</h3>
-                            <span class="version-badge">${script.version}</span>
-                        </div>
-                        <p class="script-desc">${script.desc}</p>
-                        <div class="card-footer">
-                            <button class="btn-action" onclick="simulateDownload(${script.id})"><i class="fas fa-download"></i> Download</button>
-                            ${adminStats}
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function simulateDownload(id) {
-            const script = scriptsDB.find(s => s.id === id);
-            if(script) {
-                script.downloads += 1;
-                saveState();
-                renderScripts(); // Refresh UI to update count
-                alert("Downloading " + script.fileName + "...");
-            }
-        }
-
-        // --- 5. لوحة تحكم المشرفين ---
-        function renderAdminPanel() {
-            // تحديث قائمة تصنيفات إضافة السكريبت
-            const select = document.getElementById('s-category');
-            select.innerHTML = '';
-            categoriesDB.forEach(cat => {
-                select.innerHTML += `<option value="${cat}">${cat}</option>`;
-            });
-
-            // عرض الأقسام الحالية للحذف
-            const catList = document.getElementById('adminCategoriesList');
-            catList.innerHTML = '';
-            categoriesDB.forEach(cat => {
-                catList.innerHTML += `
-                    <div style="background: rgba(157, 0, 255, 0.2); padding: 5px 15px; border-radius: 20px; display: flex; align-items: center; gap: 10px;">
-                        <span>${cat}</span>
-                        <button onclick="deleteCategory('${cat}')" style="background:none; border:none; color:var(--danger); cursor:pointer;"><i class="fas fa-times"></i></button>
-                    </div>
-                `;
-            });
-
-            // عرض المشرفين
-            const adminsList = document.getElementById('adminUsersList');
-            adminsList.innerHTML = '';
-            adminList.forEach(admin => {
-                const deleteBtn = admin === mainAdmin ? `<span style="color:var(--text-muted); font-size:0.8rem;">Owner</span>` : `<button onclick="removeAdmin('${admin}')" class="btn-action btn-danger" style="padding: 2px 8px;"><i class="fas fa-trash"></i></button>`;
-                adminsList.innerHTML += `
-                    <div style="background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; display: flex; justify-content: space-between;">
-                        <span>${admin}</span>
-                        ${deleteBtn}
-                    </div>
-                `;
-            });
-
-            // عرض السكريبتات للحذف
-            const list = document.getElementById('adminList');
-            list.innerHTML = '';
-            scriptsDB.forEach(script => {
-                list.innerHTML += `
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <strong style="color: #fff;">${script.title}</strong> 
-                            <span style="color: var(--text-muted); font-size: 0.8em; margin-left:10px;">(${script.category})</span>
-                        </div>
-                        <button onclick="deleteScript(${script.id})" class="btn-action btn-danger" style="padding: 5px 10px;"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-            });
-        }
-
-        // --- وظائف الإدارة ---
-        document.getElementById('adminForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const fileInput = document.getElementById('s-file');
-            const fileName = fileInput.files.length > 0 ? fileInput.files[0].name : "unknown_file.zip";
-
-            const newScript = {
-                id: Date.now(),
-                title: document.getElementById('s-title').value,
-                version: document.getElementById('s-version').value,
-                category: document.getElementById('s-category').value,
-                fileName: fileName,
-                desc: document.getElementById('s-desc').value,
-                downloads: 0 // عدد التحميلات يبدأ من 0
-            };
-            scriptsDB.push(newScript);
-            saveState();
-            this.reset();
-            alert(`✅ Script published!\nAttached File: ${fileName}`);
-            renderAdminPanel();
-        });
-
-        function deleteScript(id) {
-            if(confirm("Delete this script?")) {
-                scriptsDB = scriptsDB.filter(s => s.id !== id);
-                saveState();
-                renderAdminPanel();
-            }
-        }
-
-        function addCategory() {
-            const val = document.getElementById('newCategory').value.trim();
-            if(val && !categoriesDB.includes(val)) {
-                categoriesDB.push(val);
-                saveState();
-                document.getElementById('newCategory').value = '';
-                renderAdminPanel();
-            }
-        }
-
-        function deleteCategory(cat) {
-            if(confirm(`Delete category '${cat}'? (Scripts inside will not be deleted but may be hidden)`)) {
-                categoriesDB = categoriesDB.filter(c => c !== cat);
-                saveState();
-                renderAdminPanel();
-            }
-        }
-
-        function addAdmin() {
-            const email = document.getElementById('newAdminEmail').value.trim().toLowerCase();
-            if(email && !adminList.includes(email)) {
-                adminList.push(email);
-                saveState();
-                document.getElementById('newAdminEmail').value = '';
-                renderAdminPanel();
-                alert(email + " has been added as an admin.");
-            }
-        }
-
-        function removeAdmin(email) {
-            if(email === mainAdmin) return;
-            if(confirm("Remove " + email + " from admins?")) {
-                adminList = adminList.filter(a => a !== email);
-                saveState();
-                renderAdminPanel();
-            }
-        }
-
-        // Live Search
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            let filter = this.value.toLowerCase();
-            let cards = document.querySelectorAll('#scriptsGrid .script-card');
-            cards.forEach(card => {
-                let title = card.querySelector('.script-title').innerText.toLowerCase();
-                let desc = card.querySelector('.script-desc').innerText.toLowerCase();
-                card.style.display = (title.includes(filter) || desc.includes(filter)) ? "block" : "none";
-            });
-        });
-
-        // تهيئة البداية
-        renderScripts();
     </script>
 </body>
 </html>
