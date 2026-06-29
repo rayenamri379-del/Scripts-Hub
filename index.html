@@ -336,7 +336,7 @@
                     </div>
                 </div>
 
-                <div class="admin-section-box">
+                <div class="admin-section-box admin-only">
                     <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-cloud-upload-alt"></i> Publish New Script</h3>
                     <form id="adminForm" onsubmit="uploadScript(event)">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
@@ -357,7 +357,7 @@
                     </form>
                 </div>
 
-                <div class="admin-section-box">
+                <div class="admin-section-box admin-only">
                     <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-list"></i> Manage Scripts</h3>
                     <div id="adminList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
                 </div>
@@ -370,7 +370,6 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, increment, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
-        // استيراد مكتبة Appwrite الويب عبر ESM
         import { Client, Storage, ID } from "https://cdn.jsdelivr.net/npm/appwrite@14.0.1/+esm";
 
         const firebaseConfig = {
@@ -382,13 +381,12 @@
             appId: "1:809255585228:web:e3e233f53792cca40ec969"
         };
 
-        // تهيئة عميل Appwrite ومحرك التخزين بالإعدادات المخصصة لك
         const appwriteClient = new Client()
             .setEndpoint('https://cloud.appwrite.io/v1')
-            .setProject('6a4294fd00231283db19'); // ايدي المشروع الخاص بك
+            .setProject('6a4294fd00231283db19'); 
         
         const appwriteStorage = new Storage(appwriteClient);
-        const BUCKET_ID = '6a4296f40017ac083421'; // ايدي سلة التخزين الخاصة بك
+        const BUCKET_ID = '6a4296f40017ac083421'; 
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -836,11 +834,9 @@
 
         window.deleteRequest = async (id) => { await deleteDoc(doc(db, "requests", id)); showToast("Request marked as done.", "success"); loadAdminPanel(); };
 
-        // تحديث دالة الرفع الأساسية لاستخدام Appwrite بشكل كامل ومباشر
         window.uploadScript = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('uploadBtn');
-            btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading to Appwrite...`; 
             btn.disabled = true;
 
             const title = document.getElementById('s-title').value; 
@@ -851,30 +847,33 @@
             const imageFile = document.getElementById('s-image').files[0];
 
             try {
-                // 1. رفع ملف السكربت الفعلي إلى حاوية Appwrite مباشرة
                 const scriptResponse = await appwriteStorage.createFile(
                     BUCKET_ID,
                     ID.unique(),
-                    scriptFile
+                    scriptFile,
+                    [],
+                    (progress) => {
+                        const percentage = Math.round(progress.progress);
+                        btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> جاري الرفع... ${percentage}%`;
+                    }
                 );
                 
-                // توليد رابط التحميل المباشر للسكربت من Appwrite السحابي
                 const finalScriptUrl = `https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${scriptResponse.$id}/download?project=6a4294fd00231283db19`;
                 const finalScriptName = scriptResponse.name;
 
-                // 2. معالجة رفع الصورة المعاينة إذا تم اختيارها
                 let finalImageUrl = "";
                 if (imageFile) {
+                    btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> جاري رفع الصورة...`;
                     const imageResponse = await appwriteStorage.createFile(
                         BUCKET_ID,
                         ID.unique(),
                         imageFile
                     );
-                    // رابط عرض مباشر للصورة المعاينة
                     finalImageUrl = `https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${imageResponse.$id}/view?project=6a4294fd00231283db19`;
                 }
 
-                // 3. تخزين بيانات السكربت والميتا في قاعدة بيانات Firestore
+                btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> جاري حفظ البيانات...`;
+
                 await addDoc(collection(db, "scripts"), { 
                     title, 
                     version, 
@@ -884,7 +883,7 @@
                     fileName: finalScriptName, 
                     imageUrl: finalImageUrl,
                     downloads: 0, 
-                    creator: "_rayynn", 
+                    creator: "_rayynn",
                     createdAt: new Date() 
                 });
                 
@@ -921,12 +920,12 @@
                 });
                 
                 logToDB("New Request Submitted", `Custom request sent by ${senderName}`, "warning");
-                showToast('Your request has been sent to _rayynn!', 'success'); 
+                showToast('Your request has been sent successfully!', 'success'); 
                 e.target.reset();
                 if(isUserAdmin) loadAdminPanel();
             } catch(error) { 
                 console.error("Firebase request insert error: ", error);
-                showToast('Error sending request. Check database permissions.', 'error'); 
+                showToast(`Error: ${error.message}`, 'error'); 
             } finally {
                 btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Request'; 
                 btn.disabled = false;
