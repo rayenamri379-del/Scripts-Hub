@@ -108,18 +108,34 @@
         .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px; position: relative; z-index: 1;}
         .download-stats { font-size: 0.8rem; color: var(--success); background: rgba(0, 255, 204, 0.1); padding: 5px 10px; border-radius: 5px; display: flex; align-items: center; gap: 5px;}
 
-        /* Buttons & Forms */
+        /* Buttons, Forms & Tables */
         .btn-action { width: 100%; background: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-action:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 15px var(--neon-purple); }
         .btn-danger { color: var(--danger); border-color: var(--danger); }
         .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); }
+        .btn-success { color: var(--success); border-color: var(--success); }
+        .btn-success:hover { background: var(--success); color: #000; box-shadow: 0 0 15px var(--success); }
         .btn-icon { padding: 8px 12px; width: auto; border-radius: 6px; }
-        .form-container { max-width: 800px; margin: 40px auto; background: var(--glass-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .form-container { max-width: 900px; margin: 40px auto; background: var(--glass-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .admin-section-box { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--glass-border); }
         .user-list-item { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items:center; margin-bottom: 10px; transition: 0.3s;}
         .user-list-item:hover { border-color: var(--neon-purple); background: rgba(157,0,255,0.05); }
-        .req-info { display: flex; flex-direction: column; gap: 5px; }
         
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 10px; padding: 20px; text-align: center; }
+        .stat-card h3 { color: var(--text-muted); font-size: 1rem; margin-bottom: 10px; }
+        .stat-card .number { font-size: 2.5rem; font-weight: 900; color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
+
+        .users-table-wrapper { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; color: #fff; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        th { color: var(--neon-purple); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; }
+        tr:hover { background: rgba(255,255,255,0.02); }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+        .badge-admin { background: rgba(0, 255, 204, 0.2); color: var(--success); border: 1px solid var(--success); }
+        .badge-user { background: rgba(255, 255, 255, 0.1); color: #ccc; }
+        .badge-banned { background: rgba(255, 0, 0, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+
         .loading-spinner { display: none; color: var(--neon-purple); margin: 10px auto; font-size: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -131,7 +147,7 @@
     <div id="banned-screen">
         <i class="fas fa-ban" style="font-size: 6rem; margin-bottom: 20px;"></i>
         <h1>ACCESS DENIED</h1>
-        <p style="font-size: 1.2rem;">Your account/device has been permanently banned.</p>
+        <p style="font-size: 1.2rem; max-width: 600px; line-height: 1.6;">Your account has been permanently banned from KaZzA Scripts.<br>If you think this is a mistake, contact the administrator.</p>
     </div>
 
     <div id="auth-overlay">
@@ -174,7 +190,7 @@
             <div class="nav-links">
                 <button onclick="switchTab('home')" id="tab-home" class="active"><i class="fas fa-home"></i> Home</button>
                 <button onclick="switchTab('request')" id="tab-request"><i class="fas fa-envelope"></i> Request</button>
-                <button onclick="switchTab('admin')" id="tab-admin" class="admin-only"><i class="fas fa-cogs"></i> Admin Panel</button>
+                <button onclick="switchTab('admin')" id="tab-admin" class="admin-only"><i class="fas fa-cogs"></i> Dashboard</button>
                 <button class="login-btn" id="logoutBtn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </nav>
@@ -182,7 +198,7 @@
         <div id="view-home" class="view-section active">
             <section class="hero">
                 <h1>KaZzA Scripts Hub</h1>
-                <p>The ultimate library for SAMP Monetloader & CLEO Scripts, developed and maintained by _rayynn.</p>
+                <p>The ultimate library for Custom UI, Monetloader & CLEO Scripts, maintained by _rayynn.</p>
             </section>
             <div class="search-container">
                 <i class="fas fa-search" style="position: absolute; left: 35px; top: 15px; color: var(--text-muted);"></i>
@@ -197,16 +213,50 @@
                 <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 20px;"><i class="fas fa-terminal"></i> Request a Custom Script</h2>
                 <form onsubmit="submitRequest(event)">
                     <input type="text" id="req-discord" class="form-input" placeholder="Your Discord Tag (e.g. user#1234)" required>
-                    <textarea id="req-desc" class="form-input" placeholder="Describe the script you want in detail..." required style="height: 150px; resize: none;"></textarea>
+                    <textarea id="req-desc" class="form-input" placeholder="Describe the script logic or UI design you want in detail..." required style="height: 150px; resize: none;"></textarea>
                     <button type="submit" id="btn-request" class="btn-action"><i class="fas fa-paper-plane"></i> Send Request</button>
                 </form>
             </div>
         </div>
 
         <div id="view-admin" class="view-section">
-            <div class="form-container" style="max-width: 900px;">
-                <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 30px;"><i class="fas fa-shield-alt"></i> Admin Dashboard</h2>
+            <div class="form-container" style="max-width: 1000px;">
+                <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 30px;"><i class="fas fa-shield-alt"></i> Control Panel</h2>
                 
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3><i class="fas fa-users"></i> Total Users</h3>
+                        <div class="number" id="stat-users">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-download"></i> Total Downloads</h3>
+                        <div class="number" id="stat-downloads">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-file-code"></i> Total Scripts</h3>
+                        <div class="number" id="stat-scripts">0</div>
+                    </div>
+                </div>
+
+                <div class="admin-section-box">
+                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-users-cog"></i> Users Management</h3>
+                    <div class="users-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Username / Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="4" style="text-align:center; color:var(--text-muted)">Loading users...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="admin-section-box">
                     <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-cloud-upload-alt"></i> Publish New Script</h3>
                     <form id="adminForm" onsubmit="uploadScript(event)">
@@ -217,20 +267,18 @@
                             <input type="file" id="s-file" class="form-input" style="padding: 9px;" required>
                         </div>
                         <textarea id="s-desc" class="form-input" placeholder="Script Description..." required style="height: 80px; resize: none;"></textarea>
-                        <button type="submit" id="uploadBtn" class="btn-action"><i class="fas fa-rocket"></i> Publish Script</button>
+                        <button type="submit" id="uploadBtn" class="btn-action"><i class="fas fa-rocket"></i> Publish & Notify Discord</button>
                     </form>
                 </div>
 
                 <div class="admin-section-box">
-                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-list"></i> Manage Published Scripts</h3>
+                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-list"></i> Manage Scripts</h3>
                     <div id="adminList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
                 </div>
 
                 <div class="admin-section-box">
                     <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-inbox"></i> User Requests</h3>
-                    <div id="requestsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px;">
-                        <p style="color:var(--text-muted)">Loading requests...</p>
-                    </div>
+                    <div id="requestsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
                 </div>
             </div>
         </div>
@@ -239,33 +287,34 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, increment, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, increment, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
-        // ============== 🔥 إعدادات FIREBASE المحدثة والمصححة 🔥 ==============
+        // ============== 🔥 FIREBASE CONFIG 🔥 ==============
         const firebaseConfig = {
             apiKey: "AIzaSyCP2XATMarqRgF_esuWnMGw-C5GI-nGbMc",
             authDomain: "kazza-scripts-68cb4.firebaseapp.com",
             projectId: "kazza-scripts-68cb4",
             storageBucket: "kazza-scripts-68cb4.firebasestorage.app",
             messagingSenderId: "809255585228",
-            appId: "1:809255585228:web:e3e233f53792cca40ec969",
-            measurementId: "G-4BSKH2WLY5"
+            appId: "1:809255585228:web:e3e233f53792cca40ec969"
         };
 
-        // ============== ⚙️ إعدادات GitHub الخاصة بك ⚙️ ==============
+        // ============== ⚙️ SETTINGS ⚙️ ==============
         const GITHUB_USERNAME = "rayenamri379-del"; 
         const GITHUB_REPO = "kazza-scripts-storage"; 
+        
+        // 🚀 ضع رابط الـ Webhook الخاص بقناة الديسكورد هنا
+        const DISCORD_WEBHOOK_URL = ""; 
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // Variables
         const mainAdmin = 'rayenamri379@gmail.com';
         let currentUser = null;
         let isUserAdmin = false;
         let scriptsDB = [];
-        let categoriesDB = ['UI', 'Utility', 'Admin Tools', 'Roleplay'];
+        let categoriesDB = ['UI Customization', 'Admin & Helper Scripts', 'Utility', 'Roleplay Enhancements'];
         let currentFilter = 'All';
 
         // --- Custom Toast System ---
@@ -276,6 +325,27 @@
             toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`;
             container.appendChild(toast);
             setTimeout(() => toast.remove(), 3000);
+        };
+
+        // --- Discord Webhook Function ---
+        const sendDiscordWebhook = async (title, desc, colorHex, fields = []) => {
+            if (!DISCORD_WEBHOOK_URL) return;
+            try {
+                const payload = {
+                    embeds: [{
+                        title: title,
+                        description: desc,
+                        color: parseInt(colorHex.replace("#", ""), 16),
+                        fields: fields,
+                        timestamp: new Date().toISOString()
+                    }]
+                };
+                await fetch(DISCORD_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            } catch (e) { console.error("Discord Webhook Error:", e); }
         };
 
         // --- Auth Functions ---
@@ -293,12 +363,28 @@
             m.className = 'auth-msg ' + (isError ? 'msg-error' : 'msg-success');
         };
 
+        const registerUserInDB = async (user, username) => {
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+            if (!userSnap.exists()) {
+                await setDoc(userRef, {
+                    email: user.email,
+                    username: username || user.displayName || user.email.split('@')[0],
+                    role: user.email === mainAdmin ? 'admin' : 'user',
+                    isBanned: false,
+                    createdAt: new Date()
+                });
+            }
+        };
+
         window.handleSignUp = async (e) => {
             e.preventDefault();
             document.getElementById('auth-spinner').style.display = 'block';
             try {
+                const username = document.getElementById('up-username').value;
                 const userCred = await createUserWithEmailAndPassword(auth, document.getElementById('up-email').value, document.getElementById('up-password').value);
-                await updateProfile(userCred.user, { displayName: document.getElementById('up-username').value });
+                await updateProfile(userCred.user, { displayName: username });
+                await registerUserInDB(userCred.user, username);
                 showMsg('Account created successfully!', false);
                 showToast('Welcome to KaZzA Scripts!', 'success');
             } catch (error) { showMsg(error.message); }
@@ -317,19 +403,41 @@
 
         window.handleGoogleLogin = async () => {
             try { 
-                await signInWithPopup(auth, new GoogleAuthProvider()); 
+                const userCred = await signInWithPopup(auth, new GoogleAuthProvider()); 
+                await registerUserInDB(userCred.user, userCred.user.displayName);
                 showToast('Google Login successful!', 'success');
             } catch (error) { showMsg(error.message); }
         };
 
         window.handleLogout = () => signOut(auth);
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
-                currentUser = user;
-                isUserAdmin = (user.email && user.email.trim().toLowerCase() === mainAdmin.trim().toLowerCase());
+                // Check if user exists in DB and fetch Ban/Role status
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
                 
+                let isBanned = false;
+                if (userSnap.exists()) {
+                    const userData = userSnap.data();
+                    isBanned = userData.isBanned;
+                    isUserAdmin = userData.role === 'admin' || user.email === mainAdmin;
+                } else {
+                    // Fallback for old users
+                    isUserAdmin = (user.email === mainAdmin);
+                }
+
+                if (isBanned) {
+                    document.getElementById('auth-overlay').style.display = 'none';
+                    document.getElementById('app-content').classList.remove('visible');
+                    document.getElementById('banned-screen').style.display = 'flex';
+                    signOut(auth);
+                    return;
+                }
+
+                currentUser = user;
                 document.getElementById('auth-overlay').style.display = 'none';
+                document.getElementById('banned-screen').style.display = 'none';
                 document.getElementById('app-content').classList.add('visible');
                 
                 let displayName = user.displayName || user.email.split('@')[0];
@@ -342,6 +450,7 @@
                 if(isUserAdmin) loadAdminPanel();
             } else {
                 document.getElementById('app-content').classList.remove('visible');
+                document.getElementById('banned-screen').style.display = 'none';
                 document.getElementById('auth-overlay').style.display = 'flex';
                 currentUser = null;
                 isUserAdmin = false;
@@ -371,9 +480,7 @@
         };
 
         window.copyLink = (url) => {
-            navigator.clipboard.writeText(url).then(() => {
-                showToast("Link copied to clipboard!", "success");
-            });
+            navigator.clipboard.writeText(url).then(() => showToast("Link copied to clipboard!", "success"));
         };
 
         const renderScripts = (searchTerm = '') => {
@@ -382,12 +489,8 @@
             grid.innerHTML = ''; 
             
             let filtered = currentFilter === 'All' ? scriptsDB : scriptsDB.filter(s => s.category === currentFilter);
-            
             if (searchTerm) {
-                filtered = filtered.filter(s => 
-                    s.title.toLowerCase().includes(searchTerm) || 
-                    s.desc.toLowerCase().includes(searchTerm)
-                );
+                filtered = filtered.filter(s => s.title.toLowerCase().includes(searchTerm) || s.desc.toLowerCase().includes(searchTerm));
             }
 
             if(filtered.length === 0) { 
@@ -415,48 +518,36 @@
                                 </button>
                             </div>
                         </div>
-                        ${isUserAdmin ? `<div style="text-align:center; margin-top:10px;"><span class="download-stats" style="justify-content:center;"><i class="fas fa-chart-line"></i> ${script.downloads} Total Downloads</span></div>` : ''}
                     </div>`;
             });
         };
 
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            renderScripts(e.target.value.toLowerCase());
-        });
+        document.getElementById('searchInput').addEventListener('input', (e) => renderScripts(e.target.value.toLowerCase()));
 
         const loadScripts = async () => {
             const q = query(collection(db, "scripts"), orderBy("createdAt", "desc"));
             const querySnapshot = await getDocs(q);
             scriptsDB = [];
-            querySnapshot.forEach((doc) => {
-                scriptsDB.push({ id: doc.id, ...doc.data() });
-            });
+            querySnapshot.forEach((doc) => scriptsDB.push({ id: doc.id, ...doc.data() }));
             renderScripts(document.getElementById('searchInput').value.toLowerCase());
+            
+            // Update Dashboard Stats
+            if (isUserAdmin) {
+                document.getElementById('stat-scripts').innerText = scriptsDB.length;
+                let totalDownloads = scriptsDB.reduce((sum, script) => sum + (script.downloads || 0), 0);
+                document.getElementById('stat-downloads').innerText = totalDownloads;
+            }
         };
 
         window.downloadFile = async (docId, url, fileName) => {
             const btn = document.getElementById(`btn-dl-${docId}`);
             btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i>`;
-            
             try {
-                const response = await fetch(url);
-                const blob = await response.blob();
-                const blobUrl = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = blobUrl;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(blobUrl);
-
+                window.open(url, '_blank');
                 await updateDoc(doc(db, "scripts", docId), { downloads: increment(1) });
                 showToast("Download started!", "success");
                 loadScripts(); 
-            } catch (error) {
-                window.open(url, '_blank');
-                await updateDoc(doc(db, "scripts", docId), { downloads: increment(1) });
-            }
+            } catch (error) { showToast("Error downloading file.", "error"); }
             btn.innerHTML = `<i class="fas fa-download"></i> DL`;
         };
 
@@ -480,15 +571,58 @@
                     </div>`;
             });
 
+            // Load Users
+            const usersTable = document.getElementById('usersTableBody');
+            try {
+                const uq = query(collection(db, "users"), orderBy("createdAt", "desc"));
+                const usersSnap = await getDocs(uq);
+                document.getElementById('stat-users').innerText = usersSnap.size;
+                usersTable.innerHTML = '';
+                
+                usersSnap.forEach(docSnap => {
+                    const u = docSnap.data();
+                    const uid = docSnap.id;
+                    const roleBadge = u.role === 'admin' ? '<span class="badge badge-admin">Admin</span>' : '<span class="badge badge-user">User</span>';
+                    const statusBadge = u.isBanned ? '<span class="badge badge-banned">Banned</span>' : '<span class="badge badge-user" style="color:var(--success)">Active</span>';
+                    
+                    const roleAction = u.role === 'admin' ? 
+                        `<button onclick="toggleRole('${uid}', 'user')" class="btn-action btn-icon" style="border-color:var(--text-muted); color:var(--text-muted)" title="Demote to User"><i class="fas fa-arrow-down"></i></button>` : 
+                        `<button onclick="toggleRole('${uid}', 'admin')" class="btn-action btn-icon btn-success" title="Promote to Admin"><i class="fas fa-arrow-up"></i></button>`;
+                        
+                    const banAction = u.isBanned ? 
+                        `<button onclick="toggleBan('${uid}', false)" class="btn-action btn-icon btn-success" title="Unban"><i class="fas fa-unlock"></i></button>` : 
+                        `<button onclick="toggleBan('${uid}', true)" class="btn-action btn-icon btn-danger" title="Ban User"><i class="fas fa-ban"></i></button>`;
+
+                    // Hide actions for main admin account to prevent self-lockout
+                    const actionsHtml = u.email === mainAdmin ? '<i>Main Admin</i>' : `<div style="display:flex; gap:5px;">${roleAction}${banAction}</div>`;
+
+                    usersTable.innerHTML += `
+                        <tr>
+                            <td>
+                                <div style="display:flex; flex-direction:column;">
+                                    <strong>${u.username}</strong>
+                                    <span style="font-size:0.75rem; color:var(--text-muted)">${u.email}</span>
+                                </div>
+                            </td>
+                            <td>${roleBadge}</td>
+                            <td>${statusBadge}</td>
+                            <td>${actionsHtml}</td>
+                        </tr>
+                    `;
+                });
+            } catch (e) {
+                console.error(e);
+                usersTable.innerHTML = '<tr><td colspan="4" style="color:var(--danger)">Error loading users. (Needs Firestore Setup)</td></tr>';
+            }
+
             // Load User Requests
             const reqList = document.getElementById('requestsList');
             try {
                 const q = query(collection(db, "requests"), orderBy("date", "desc"));
                 const reqSnap = await getDocs(q);
                 reqList.innerHTML = '';
-                if(reqSnap.empty) {
-                    reqList.innerHTML = '<p style="color:var(--text-muted)">No pending requests.</p>';
-                } else {
+                if(reqSnap.empty) reqList.innerHTML = '<p style="color:var(--text-muted)">No pending requests.</p>';
+                else {
                     reqSnap.forEach(docSnap => {
                         const r = docSnap.data();
                         const rDate = r.date ? new Date(r.date.seconds * 1000).toLocaleString() : 'Unknown date';
@@ -500,24 +634,35 @@
                             </div>
                             <p style="font-size:0.9rem; color:#fff; line-height: 1.4;">${r.desc}</p>
                             <div style="width:100%; text-align:right; margin-top:10px;">
-                                <button onclick="deleteRequest('${docSnap.id}')" class="btn-action btn-danger btn-sm" style="padding: 5px 10px;"><i class="fas fa-check"></i> Mark as Done</button>
+                                <button onclick="deleteRequest('${docSnap.id}')" class="btn-action btn-success btn-sm" style="padding: 5px 10px; width:auto;"><i class="fas fa-check"></i> Mark as Done</button>
                             </div>
                         </div>`;
                     });
                 }
-            } catch(e) {
-                console.error("Error loading requests:", e);
-                reqList.innerHTML = '<p style="color:var(--danger)">Error loading requests. Check DB rules.</p>';
+            } catch(e) { console.error(e); }
+        };
+
+        window.toggleBan = async (uid, banStatus) => {
+            if(confirm(`Are you sure you want to ${banStatus ? 'BAN' : 'UNBAN'} this user?`)) {
+                await updateDoc(doc(db, "users", uid), { isBanned: banStatus });
+                showToast(`User ${banStatus ? 'banned' : 'unbanned'} successfully.`, "success");
+                loadAdminPanel();
+            }
+        };
+
+        window.toggleRole = async (uid, newRole) => {
+            if(confirm(`Change this user's role to ${newRole.toUpperCase()}?`)) {
+                await updateDoc(doc(db, "users", uid), { role: newRole });
+                showToast(`User role updated to ${newRole}.`, "success");
+                loadAdminPanel();
             }
         };
 
         window.deleteRequest = async (id) => {
-            if(confirm("Mark this request as resolved and delete it?")) {
-                await deleteDoc(doc(db, "requests", id));
-                showToast("Request removed.", "success");
-                loadAdminPanel();
-            }
-        }
+            await deleteDoc(doc(db, "requests", id));
+            showToast("Request marked as done and removed.", "success");
+            loadAdminPanel();
+        };
 
         window.uploadScript = async (e) => {
             e.preventDefault();
@@ -526,10 +671,7 @@
             
             if (!githubToken) {
                 githubToken = prompt("Enter your GitHub Personal Access Token:");
-                if (!githubToken) {
-                    showToast("Upload cancelled: Token is required.", "error");
-                    return;
-                }
+                if (!githubToken) return showToast("Token required.", "error");
                 sessionStorage.setItem('githubToken', githubToken);
             }
 
@@ -547,66 +689,41 @@
                 try {
                     const base64data = reader.result.split(',')[1];
                     const cleanFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, ''); 
-                    const timestamp = Date.now();
-                    const finalFileName = `${timestamp}_${cleanFileName}`;
+                    const finalFileName = `${Date.now()}_${cleanFileName}`;
                     
                     const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${finalFileName}`;
 
                     const response = await fetch(apiUrl, {
                         method: 'PUT',
-                        headers: {
-                            'Authorization': `token ${githubToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            message: `Upload script: ${title} ${version}`,
-                            content: base64data
-                        })
+                        headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ message: `Upload script: ${title}`, content: base64data })
                     });
 
                     if (!response.ok) {
-                        if (response.status === 401 || response.status === 403 || response.status === 404) {
-                            sessionStorage.removeItem('githubToken');
-                            throw new Error("Invalid or Expired GitHub Token.");
-                        }
-                        const errorData = await response.json();
-                        throw new Error(errorData.message || 'GitHub Upload Failed');
+                        if(response.status === 401) sessionStorage.removeItem('githubToken');
+                        throw new Error('GitHub Upload Failed');
                     }
 
                     const data = await response.json();
                     const fileUrl = data.content.download_url; 
 
-                    // حفظ بيانات السكريبت في Firestore مع توثيق الملكية الحصرية
                     await addDoc(collection(db, "scripts"), {
-                        title, version, category, desc, fileUrl, fileName: finalFileName, 
-                        downloads: 0, 
-                        creator: "_rayynn", // هوية المالك الأصلي مثبتة هنا
-                        createdAt: new Date()
+                        title, version, category, desc, fileUrl, fileName: finalFileName, downloads: 0, creator: "_rayynn", createdAt: new Date()
                     });
                     
+                    // إرسال إشعار للديسكورد
+                    sendDiscordWebhook("🚀 New Script Published!", `**${title} (${version})** has been uploaded to the hub.`, "#9d00ff", [
+                        { name: "Category", value: category, inline: true },
+                        { name: "Description", value: desc }
+                    ]);
+
                     showToast('Script Published Successfully!', 'success');
                     document.getElementById('adminForm').reset();
                     loadScripts(); loadAdminPanel();
-                } catch(err) { 
-                    showToast('Error: ' + err.message, 'error'); 
-                } finally {
-                    btn.innerHTML = `<i class="fas fa-rocket"></i> Publish Script`;
-                    btn.disabled = false;
-                }
+                } catch(err) { showToast('Error: ' + err.message, 'error'); } 
+                finally { btn.innerHTML = `<i class="fas fa-rocket"></i> Publish & Notify Discord`; btn.disabled = false; }
             };
             reader.readAsDataURL(file);
-        };
-
-        window.deleteScript = async (id) => {
-            if(confirm("Are you sure you want to delete this script permanently?")) {
-                try {
-                    await deleteDoc(doc(db, "scripts", id));
-                    showToast("Script deleted successfully.", "success");
-                    loadScripts(); loadAdminPanel();
-                } catch(e) {
-                    showToast("Error deleting script.", "error");
-                }
-            }
         };
 
         window.submitRequest = async (e) => {
@@ -619,11 +736,17 @@
             const desc = document.getElementById('req-desc').value;
             try {
                 await addDoc(collection(db, "requests"), { discord, desc, date: new Date(), by: currentUser.email });
+                
+                // إرسال إشعار للديسكورد
+                sendDiscordWebhook("📨 New Script Request!", `A user requested a custom script.`, "#00ffcc", [
+                    { name: "Discord Tag", value: discord, inline: true },
+                    { name: "Email", value: currentUser.email, inline: true },
+                    { name: "Description", value: desc }
+                ]);
+
                 showToast('Your request has been sent to the admin!', 'success');
                 e.target.reset();
-            } catch(error) {
-                showToast('Error sending request. Try again.', 'error');
-            }
+            } catch(error) { showToast('Error sending request.', 'error'); }
             btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Request';
             btn.disabled = false;
         }
