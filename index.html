@@ -72,7 +72,19 @@
 
         /* Navbar & Views */
         nav { background: var(--glass-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
+        
+        .logo-container { display: flex; align-items: center; gap: 15px; }
         .logo { font-size: 1.5rem; font-weight: 900; color: var(--neon-purple); text-shadow: 0 0 15px var(--neon-purple); letter-spacing: 2px; }
+        
+        /* Discord Pulsing Logo */
+        .discord-pulse { font-size: 1.8rem; color: #b39ddb; text-decoration: none; animation: pulse-discord 2s infinite; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .discord-pulse:hover { transform: scale(1.15); color: #fff; }
+        @keyframes pulse-discord {
+            0% { text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); color: var(--neon-purple); }
+            50% { text-shadow: 0 0 15px var(--success), 0 0 25px var(--success); color: #fff; }
+            100% { text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); color: var(--neon-purple); }
+        }
+
         .nav-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
         .nav-links button { background: none; border: none; color: var(--text-main); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.3s; padding: 5px 10px; border-radius: 5px; }
         .nav-links button:hover, .nav-links button.active { color: var(--neon-purple); text-shadow: 0 0 8px var(--neon-purple); background: rgba(157, 0, 255, 0.1); }
@@ -186,7 +198,12 @@
 
     <div id="app-content">
         <nav>
-            <div class="logo">KaZzA Scripts</div>
+            <div class="logo-container">
+                <div class="logo">KaZzA Scripts</div>
+                <a href="https://discord.com/users/1000058774108782602" target="_blank" class="discord-pulse" title="My Discord Profile">
+                    <i class="fab fa-discord"></i>
+                </a>
+            </div>
             <div class="nav-links">
                 <button onclick="switchTab('home')" id="tab-home" class="active"><i class="fas fa-home"></i> Home</button>
                 <button onclick="switchTab('request')" id="tab-request"><i class="fas fa-envelope"></i> Request</button>
@@ -303,8 +320,8 @@
         const GITHUB_USERNAME = "rayenamri379-del"; 
         const GITHUB_REPO = "kazza-scripts-storage"; 
         
-        // 🚀 ضع رابط الـ Webhook الخاص بقناة الديسكورد هنا
-        const DISCORD_WEBHOOK_URL = ""; 
+        // 🚀 رابط الويب هوك الخاص بك 🚀
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1520995817790640220/GkD5xg4-BGIQHNqYEIL4CoFcWaMX-Qnp_CtoqXczezDn3ZdYZ6pdRIAWhvgOh9nBDtSq"; 
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -327,17 +344,20 @@
             setTimeout(() => toast.remove(), 3000);
         };
 
-        // --- Discord Webhook Function ---
+        // --- Discord Webhook Logs System (Beautiful Rich Embeds) ---
         const sendDiscordWebhook = async (title, desc, colorHex, fields = []) => {
             if (!DISCORD_WEBHOOK_URL) return;
             try {
                 const payload = {
+                    username: "KaZzA Hub Logs",
+                    avatar_url: "https://cdn-icons-png.flaticon.com/512/843/843260.png",
                     embeds: [{
                         title: title,
                         description: desc,
                         color: parseInt(colorHex.replace("#", ""), 16),
                         fields: fields,
-                        timestamp: new Date().toISOString()
+                        timestamp: new Date().toISOString(),
+                        footer: { text: "KaZzA Scripts Hub Automated System" }
                     }]
                 };
                 await fetch(DISCORD_WEBHOOK_URL, {
@@ -374,7 +394,9 @@
                     isBanned: false,
                     createdAt: new Date()
                 });
+                return true; // مستخدم جديد
             }
+            return false; // مستخدم قديم
         };
 
         window.handleSignUp = async (e) => {
@@ -382,9 +404,20 @@
             document.getElementById('auth-spinner').style.display = 'block';
             try {
                 const username = document.getElementById('up-username').value;
-                const userCred = await createUserWithEmailAndPassword(auth, document.getElementById('up-email').value, document.getElementById('up-password').value);
+                const email = document.getElementById('up-email').value;
+                const pass = document.getElementById('up-password').value;
+                
+                const userCred = await createUserWithEmailAndPassword(auth, email, pass);
                 await updateProfile(userCred.user, { displayName: username });
-                await registerUserInDB(userCred.user, username);
+                const isNew = await registerUserInDB(userCred.user, username);
+                
+                if (isNew) {
+                    sendDiscordWebhook("🎉 New User Registration!", `A new user just created an account using **Email**.`, "#00ffcc", [
+                        { name: "👤 Username", value: username, inline: true },
+                        { name: "📧 Email", value: email, inline: true }
+                    ]);
+                }
+
                 showMsg('Account created successfully!', false);
                 showToast('Welcome to KaZzA Scripts!', 'success');
             } catch (error) { showMsg(error.message); }
@@ -404,29 +437,49 @@
         window.handleGoogleLogin = async () => {
             try { 
                 const userCred = await signInWithPopup(auth, new GoogleAuthProvider()); 
-                await registerUserInDB(userCred.user, userCred.user.displayName);
+                const isNew = await registerUserInDB(userCred.user, userCred.user.displayName);
+                
+                if (isNew) {
+                    sendDiscordWebhook("🎉 New User Registration!", `A new user just created an account using **Google**.`, "#00ffcc", [
+                        { name: "👤 Name", value: userCred.user.displayName || "Unknown", inline: true },
+                        { name: "📧 Email", value: userCred.user.email, inline: true }
+                    ]);
+                }
+
                 showToast('Google Login successful!', 'success');
             } catch (error) { showMsg(error.message); }
         };
 
         window.handleLogout = () => signOut(auth);
 
+        // --- الدالة المحدثة التي طلبتها ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Check if user exists in DB and fetch Ban/Role status
+                // التحقق من وجود المستخدم في قاعدة البيانات
                 const userRef = doc(db, "users", user.uid);
                 const userSnap = await getDoc(userRef);
                 
                 let isBanned = false;
+                let userData;
+
                 if (userSnap.exists()) {
-                    const userData = userSnap.data();
-                    isBanned = userData.isBanned;
-                    isUserAdmin = userData.role === 'admin' || user.email === mainAdmin;
+                    userData = userSnap.data();
                 } else {
-                    // Fallback for old users
-                    isUserAdmin = (user.email === mainAdmin);
+                    // السطر السحري: تسجيل الحسابات القديمة (مثل حسابك كأدمن) في قاعدة البيانات تلقائياً بمجرد الدخول
+                    userData = {
+                        email: user.email,
+                        username: user.displayName || user.email.split('@')[0],
+                        role: user.email === mainAdmin ? 'admin' : 'user',
+                        isBanned: false,
+                        createdAt: new Date()
+                    };
+                    await setDoc(userRef, userData);
                 }
 
+                isBanned = userData.isBanned;
+                isUserAdmin = userData.role === 'admin' || user.email === mainAdmin;
+
+                // نظام الطرد الفوري للمحظورين
                 if (isBanned) {
                     document.getElementById('auth-overlay').style.display = 'none';
                     document.getElementById('app-content').classList.remove('visible');
@@ -510,7 +563,7 @@
                         <p class="script-desc">${script.desc}</p>
                         <div class="card-footer">
                             <div style="display:flex; gap: 10px; width: 100%;">
-                                <button class="btn-action btn-sm" style="flex: 1;" onclick="downloadFile('${script.id}', '${script.fileUrl}', '${script.fileName}')" id="btn-dl-${script.id}">
+                                <button class="btn-action btn-sm" style="flex: 1;" onclick="downloadFile('${script.id}', '${script.fileUrl}', '${script.title}')" id="btn-dl-${script.id}">
                                     <i class="fas fa-download"></i> DL
                                 </button>
                                 <button class="btn-action btn-sm" style="flex: 1; border-color: rgba(255,255,255,0.2); color: #fff;" onclick="copyLink('${script.fileUrl}')">
@@ -531,7 +584,6 @@
             querySnapshot.forEach((doc) => scriptsDB.push({ id: doc.id, ...doc.data() }));
             renderScripts(document.getElementById('searchInput').value.toLowerCase());
             
-            // Update Dashboard Stats
             if (isUserAdmin) {
                 document.getElementById('stat-scripts').innerText = scriptsDB.length;
                 let totalDownloads = scriptsDB.reduce((sum, script) => sum + (script.downloads || 0), 0);
@@ -539,12 +591,20 @@
             }
         };
 
-        window.downloadFile = async (docId, url, fileName) => {
+        window.downloadFile = async (docId, url, scriptName) => {
             const btn = document.getElementById(`btn-dl-${docId}`);
             btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i>`;
             try {
                 window.open(url, '_blank');
                 await updateDoc(doc(db, "scripts", docId), { downloads: increment(1) });
+                
+                // إرسال إشعار تحميل للديسكورد
+                let userName = currentUser ? (currentUser.displayName || currentUser.email) : "Unknown User";
+                sendDiscordWebhook("📥 Script Downloaded!", `A script has been successfully downloaded from the hub.`, "#9d00ff", [
+                    { name: "📜 Script Name", value: scriptName, inline: true },
+                    { name: "👤 Downloaded By", value: userName, inline: true }
+                ]);
+
                 showToast("Download started!", "success");
                 loadScripts(); 
             } catch (error) { showToast("Error downloading file.", "error"); }
@@ -557,7 +617,6 @@
             select.innerHTML = '';
             categoriesDB.forEach(cat => select.innerHTML += `<option value="${cat}">${cat}</option>`);
             
-            // Load Scripts Manager
             const list = document.getElementById('adminList');
             list.innerHTML = '';
             scriptsDB.forEach(script => {
@@ -571,7 +630,6 @@
                     </div>`;
             });
 
-            // Load Users
             const usersTable = document.getElementById('usersTableBody');
             try {
                 const uq = query(collection(db, "users"), orderBy("createdAt", "desc"));
@@ -593,7 +651,6 @@
                         `<button onclick="toggleBan('${uid}', false)" class="btn-action btn-icon btn-success" title="Unban"><i class="fas fa-unlock"></i></button>` : 
                         `<button onclick="toggleBan('${uid}', true)" class="btn-action btn-icon btn-danger" title="Ban User"><i class="fas fa-ban"></i></button>`;
 
-                    // Hide actions for main admin account to prevent self-lockout
                     const actionsHtml = u.email === mainAdmin ? '<i>Main Admin</i>' : `<div style="display:flex; gap:5px;">${roleAction}${banAction}</div>`;
 
                     usersTable.innerHTML += `
@@ -612,10 +669,9 @@
                 });
             } catch (e) {
                 console.error(e);
-                usersTable.innerHTML = '<tr><td colspan="4" style="color:var(--danger)">Error loading users. (Needs Firestore Setup)</td></tr>';
+                usersTable.innerHTML = '<tr><td colspan="4" style="color:var(--danger)">Error loading users.</td></tr>';
             }
 
-            // Load User Requests
             const reqList = document.getElementById('requestsList');
             try {
                 const q = query(collection(db, "requests"), orderBy("date", "desc"));
@@ -655,6 +711,14 @@
                 await updateDoc(doc(db, "users", uid), { role: newRole });
                 showToast(`User role updated to ${newRole}.`, "success");
                 loadAdminPanel();
+            }
+        };
+
+        window.deleteScript = async (id) => {
+            if(confirm("Delete this script completely?")) {
+                await deleteDoc(doc(db, "scripts", id));
+                showToast("Script deleted.", "success");
+                loadScripts(); loadAdminPanel();
             }
         };
 
@@ -711,10 +775,11 @@
                         title, version, category, desc, fileUrl, fileName: finalFileName, downloads: 0, creator: "_rayynn", createdAt: new Date()
                     });
                     
-                    // إرسال إشعار للديسكورد
-                    sendDiscordWebhook("🚀 New Script Published!", `**${title} (${version})** has been uploaded to the hub.`, "#9d00ff", [
-                        { name: "Category", value: category, inline: true },
-                        { name: "Description", value: desc }
+                    // إرسال إشعار للديسكورد (رفع سكريبت جديد)
+                    sendDiscordWebhook("🚀 New Script Published!", `**${title}** has been uploaded to the hub by Admin.`, "#9d00ff", [
+                        { name: "🏷️ Version", value: version, inline: true },
+                        { name: "📂 Category", value: category, inline: true },
+                        { name: "📝 Description", value: desc }
                     ]);
 
                     showToast('Script Published Successfully!', 'success');
@@ -737,11 +802,11 @@
             try {
                 await addDoc(collection(db, "requests"), { discord, desc, date: new Date(), by: currentUser.email });
                 
-                // إرسال إشعار للديسكورد
-                sendDiscordWebhook("📨 New Script Request!", `A user requested a custom script.`, "#00ffcc", [
-                    { name: "Discord Tag", value: discord, inline: true },
-                    { name: "Email", value: currentUser.email, inline: true },
-                    { name: "Description", value: desc }
+                // إرسال إشعار للديسكورد (طلب جديد)
+                sendDiscordWebhook("📨 New Script Request!", `A user requested a custom script.`, "#ffaa00", [
+                    { name: "👾 Discord Tag", value: discord, inline: true },
+                    { name: "📧 Email", value: currentUser.email, inline: true },
+                    { name: "📄 Description", value: desc }
                 ]);
 
                 showToast('Your request has been sent to the admin!', 'success');
