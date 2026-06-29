@@ -46,15 +46,27 @@
         .msg-error { color: var(--danger); text-shadow: 0 0 5px var(--danger); }
         .msg-success { color: var(--success); text-shadow: 0 0 5px var(--success); }
 
+        /* Social Login Buttons */
+        .social-login-divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: var(--text-muted); font-size: 0.85rem; }
+        .social-login-divider::before, .social-login-divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .social-login-divider:not(:empty)::before { margin-right: .25em; }
+        .social-login-divider:not(:empty)::after { margin-left: .25em; }
+        .social-btn-group { display: flex; gap: 10px; flex-direction: column; }
+        .btn-social { padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.95rem; border: none; width: 100%; }
+        .btn-google { background: #ffffff; color: #333; }
+        .btn-google:hover { background: #e6e6e6; box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
+
         /* Navbar & Views */
-        nav { background: var(--glass-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        nav { background: var(--glass-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; }
         .logo { font-size: 1.5rem; font-weight: 900; color: var(--neon-purple); text-shadow: 0 0 15px var(--neon-purple); letter-spacing: 2px; }
-        .nav-links { display: flex; align-items: center; gap: 20px; }
+        .nav-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
         .nav-links button { background: none; border: none; color: var(--text-main); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.3s; }
         .nav-links button:hover, .nav-links button.active { color: var(--neon-purple); text-shadow: 0 0 8px var(--neon-purple); }
         .login-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 8px; display: flex; align-items: center; gap: 8px; }
         .login-btn:hover { background: var(--danger); border-color: var(--danger); color: #fff; box-shadow: 0 0 15px var(--danger); }
-        .admin-only { display: none !important; }
+        
+        .admin-only { display: none; }
+        
         .view-section { display: none; animation: fadeIn 0.4s ease-out; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -118,12 +130,14 @@
             <div id="auth-msg" class="auth-msg"></div>
             <i class="fas fa-spinner loading-spinner" id="auth-spinner"></i>
 
+            <!-- Email & Password Login -->
             <form id="signin-form" class="auth-form active" onsubmit="handleSignIn(event)">
                 <input type="email" id="in-email" class="form-input" placeholder="Email Address" required>
                 <input type="password" id="in-password" class="form-input" placeholder="Password" required>
-                <button type="submit" class="btn-action"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <button type="submit" class="btn-action"><i class="fas fa-sign-in-alt"></i> Login with Email</button>
             </form>
 
+            <!-- Email & Password Registration -->
             <form id="signup-form" class="auth-form" onsubmit="handleSignUp(event)">
                 <input type="text" id="up-username" class="form-input" placeholder="Username" required>
                 <input type="email" id="up-email" class="form-input" placeholder="Email Address" required>
@@ -131,9 +145,14 @@
                 <button type="submit" class="btn-action"><i class="fas fa-user-plus"></i> Create Account</button>
             </form>
             
-            <button onclick="handleGoogleLogin()" class="btn-action" style="margin-top: 15px; background: white; color: black; border-color: white;">
-                <i class="fab fa-google"></i> Continue with Google
-            </button>
+            <!-- Social Logins -->
+            <div class="social-login-divider">OR</div>
+            <div class="social-btn-group">
+                <button onclick="handleGoogleLogin()" class="btn-social btn-google">
+                    <i class="fab fa-google"></i> Continue with Google
+                </button>
+            </div>
+            
         </div>
     </div>
 
@@ -154,7 +173,7 @@
                 <p>The best place for SAMP Monetloader & CLEO Scripts.</p>
             </section>
             <div class="search-container">
-                <input type="text" id="searchInput" class="form-input" placeholder="Search scripts...">
+                <input type="text" id="searchInput" class="form-input" placeholder="Search scripts by name or description...">
             </div>
             <div class="categories" id="categoryFilters"></div>
             <div class="scripts-container" id="scriptsGrid"></div>
@@ -199,6 +218,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        // تم حذف FacebookAuthProvider من هنا
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
@@ -213,8 +233,8 @@
         };
 
         // ============== ⚙️ إعدادات GitHub الخاصة بك ⚙️ ==============
-        const GITHUB_USERNAME = "rayenamri379-del"; // تم التحديث هنا تلقائياً
-        const GITHUB_REPO = "kazza-scripts-storage"; // اسم المستودع الذي أنشأته
+        const GITHUB_USERNAME = "rayenamri379-del"; 
+        const GITHUB_REPO = "kazza-scripts-storage"; 
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -252,7 +272,7 @@
             try {
                 const userCred = await createUserWithEmailAndPassword(auth, email, pass);
                 await updateProfile(userCred.user, { displayName: userN });
-                showMsg('Account created!', false);
+                showMsg('Account created successfully!', false);
             } catch (error) { showMsg(error.message); }
             document.getElementById('auth-spinner').style.display = 'none';
         };
@@ -275,15 +295,23 @@
 
         window.handleLogout = () => signOut(auth);
 
-        // Listen for Auth State
+        // Listen for Auth State - تم إصلاح مشكلة الأدمن هنا
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                isUserAdmin = (user.email === mainAdmin);
+                // استخدام trim() و toLowerCase() لضمان تطابق الإيميل حتى لو كان هناك مسافة بالخطأ
+                isUserAdmin = (user.email && user.email.trim().toLowerCase() === mainAdmin.trim().toLowerCase());
+                
                 document.getElementById('auth-overlay').style.display = 'none';
                 document.getElementById('app-content').classList.add('visible');
-                document.getElementById('logoutBtn').innerHTML = `<i class="fas fa-sign-out-alt"></i> Logout (${user.displayName || user.email})`;
-                document.querySelectorAll('.admin-only').forEach(el => el.style.display = isUserAdmin ? 'inline-block' : 'none');
+                
+                // إضافة كلمة (Admin) بجانب الاسم لتتأكد من نجاح العملية
+                let displayName = user.displayName || user.email.split('@')[0];
+                let adminBadge = isUserAdmin ? ' <span style="color:var(--success);">(👑 Admin)</span>' : '';
+                document.getElementById('logoutBtn').innerHTML = `<i class="fas fa-sign-out-alt"></i> Logout (${displayName})${adminBadge}`;
+                
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = isUserAdmin ? 'inline-flex' : 'none');
+                
                 loadScripts();
                 if(isUserAdmin) loadAdminPanel();
             } else {
@@ -311,14 +339,31 @@
             });
         };
 
-        window.filterCategory = (cat) => { currentFilter = cat; renderScripts(); };
+        window.filterCategory = (cat) => { 
+            currentFilter = cat; 
+            renderScripts(document.getElementById('searchInput').value.toLowerCase()); 
+        };
 
-        const renderScripts = () => {
+        // تم إضافة ميزة البحث هنا
+        const renderScripts = (searchTerm = '') => {
             renderCategoryButtons();
             const grid = document.getElementById('scriptsGrid');
             grid.innerHTML = ''; 
+            
             let filtered = currentFilter === 'All' ? scriptsDB : scriptsDB.filter(s => s.category === currentFilter);
-            if(filtered.length === 0) { grid.innerHTML = `<p>No scripts found.</p>`; return; }
+            
+            // فلترة بالبحث إذا تم كتابة شيء في مربع البحث
+            if (searchTerm) {
+                filtered = filtered.filter(s => 
+                    s.title.toLowerCase().includes(searchTerm) || 
+                    s.desc.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            if(filtered.length === 0) { 
+                grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">No scripts found.</p>`; 
+                return; 
+            }
 
             filtered.forEach(script => {
                 grid.innerHTML += `
@@ -338,16 +383,20 @@
             });
         };
 
+        // تشغيل ميزة البحث عند الكتابة
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderScripts(e.target.value.toLowerCase());
+        });
+
         const loadScripts = async () => {
             const querySnapshot = await getDocs(collection(db, "scripts"));
             scriptsDB = [];
             querySnapshot.forEach((doc) => {
                 scriptsDB.push({ id: doc.id, ...doc.data() });
             });
-            renderScripts();
+            renderScripts(document.getElementById('searchInput').value.toLowerCase());
         };
 
-        // نظام التحميل الفوري
         window.downloadFile = async (docId, url, fileName) => {
             const btn = document.getElementById(`btn-dl-${docId}`);
             btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i>`;
@@ -390,22 +439,18 @@
             });
         };
 
-        // نظام الرفع الجديد الآمن مع Prompt & SessionStorage
         window.uploadScript = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('uploadBtn');
             
-            // التحقق من وجود التوكن في الجلسة الحالية
             let githubToken = sessionStorage.getItem('githubToken');
             
-            // إذا لم يكن موجوداً، نطلبه من الأدمن عبر نافذة منبثقة
             if (!githubToken) {
                 githubToken = prompt("Enter your GitHub Personal Access Token:");
                 if (!githubToken) {
                     alert("Upload cancelled: Token is required.");
                     return;
                 }
-                // حفظه في الجلسة حتى لا يطلبه مجدداً ما لم تغلق الصفحة
                 sessionStorage.setItem('githubToken', githubToken);
             }
 
@@ -431,7 +476,7 @@
                     const response = await fetch(apiUrl, {
                         method: 'PUT',
                         headers: {
-                            'Authorization': `token ${githubToken}`, // استخدام التوكن المُدخل
+                            'Authorization': `token ${githubToken}`,
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
@@ -440,10 +485,9 @@
                         })
                     });
 
-                    // إذا كان التوكن خاطئاً أو انتهت صلاحيته
                     if (!response.ok) {
                         if (response.status === 401 || response.status === 403 || response.status === 404) {
-                            sessionStorage.removeItem('githubToken'); // مسح التوكن الخاطئ
+                            sessionStorage.removeItem('githubToken');
                             throw new Error("Invalid or Expired GitHub Token. Please try again.");
                         }
                         const errorData = await response.json();
