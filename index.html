@@ -125,7 +125,6 @@
         .script-card { background: var(--card-bg); border: 1px solid var(--glass-border); border-top: 3px solid var(--neon-purple); border-radius: 12px; padding: 25px; transition: all 0.4s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
         .script-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(157, 0, 255, 0.3); border-color: var(--neon-purple); }
         
-        /* Image Preview Styles */
         .script-preview-img { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: 0.3s; }
         .script-preview-img:hover { border-color: var(--neon-purple); filter: brightness(1.2); }
 
@@ -371,6 +370,9 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, increment, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
+        // استيراد مكتبة Appwrite الويب عبر ESM
+        import { Client, Storage, ID } from "https://cdn.jsdelivr.net/npm/appwrite@14.0.1/+esm";
+
         const firebaseConfig = {
             apiKey: "AIzaSyCP2XATMarqRgF_esuWnMGw-C5GI-nGbMc",
             authDomain: "kazza-scripts-68cb4.firebaseapp.com",
@@ -380,8 +382,13 @@
             appId: "1:809255585228:web:e3e233f53792cca40ec969"
         };
 
-        const GITHUB_USERNAME = "rayenamri379-del"; 
-        const GITHUB_REPO = "kazza-scripts-storage"; 
+        // تهيئة عميل Appwrite ومحرك التخزين بالإعدادات المخصصة لك
+        const appwriteClient = new Client()
+            .setEndpoint('https://cloud.appwrite.io/v1')
+            .setProject('6a4294fd00231283db19'); // ايدي المشروع الخاص بك
+        
+        const appwriteStorage = new Storage(appwriteClient);
+        const BUCKET_ID = '6a4296f40017ac083421'; // ايدي سلة التخزين الخاصة بك
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -829,59 +836,12 @@
 
         window.deleteRequest = async (id) => { await deleteDoc(doc(db, "requests", id)); showToast("Request marked as done.", "success"); loadAdminPanel(); };
 
-        // التعديل الأساسي: استخدام XMLHttpRequest لتتبع نسبة التحميل المئوية حية للملفات الكبيرة
-        const uploadToGitHub = (file, token, onProgress) => {
-            return new Promise((resolve, reject) => {
-                const base64data = file.result.split(',')[1]; 
-                const finalFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '')}`; 
-                
-                const xhr = new XMLHttpRequest();
-                xhr.open('PUT', `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${finalFileName}`, true);
-                xhr.setRequestHeader('Authorization', `token ${token}`);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                
-                // الاستماع لحدث تقدم عملية الرفع وتمرير النسبة
-                xhr.upload.addEventListener('progress', (e) => {
-                    if (e.lengthComputable) {
-                        const percentComplete = Math.round((e.loaded / e.total) * 100);
-                        if (onProgress) onProgress(percentComplete);
-                    }
-                });
-                
-                xhr.onload = () => {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        const data = JSON.parse(xhr.responseText);
-                        resolve({ downloadUrl: data.content.download_url, name: finalFileName });
-                    } else {
-                        if (xhr.status === 401) sessionStorage.removeItem('githubToken');
-                        if (xhr.status === 422) {
-                            reject(new Error('File is too large for GitHub API (Limit: ~20MB raw file)'));
-                        } else {
-                            reject(new Error(`GitHub Upload Failed (Status: ${xhr.status})`));
-                        }
-                    }
-                };
-                
-                xhr.onerror = () => reject(new Error('Network connection error during upload.'));
-                
-                const body = JSON.stringify({ 
-                    message: `Upload via Hub: ${finalFileName}`, 
-                    content: base64data 
-                });
-                xhr.send(body);
-            });
-        };
-
+        // تحديث دالة الرفع الأساسية لاستخدام Appwrite بشكل كامل ومباشر
         window.uploadScript = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('uploadBtn');
-            let githubToken = sessionStorage.getItem('githubToken');
-            if (!githubToken) {
-                openModal({ title: 'GitHub Authentication', desc: 'Enter your GitHub Personal Access Token:', type: 'input', placeholder: 'ghp_xxxxxxxxxxxx', confirmText: 'Save Token', confirmClass: 'btn-success', onConfirm: (token) => { sessionStorage.setItem('githubToken', token); window.uploadScript(e); }});
-                return;
-            }
-
-            btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Initializing...`; btn.disabled = true;
+            btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading to Appwrite...`; 
+            btn.disabled = true;
 
             const title = document.getElementById('s-title').value; 
             const version = document.getElementById('s-version').value; 
@@ -891,45 +851,50 @@
             const imageFile = document.getElementById('s-image').files[0];
 
             try {
-                const readAsDataURL = (file) => new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onloadend = () => resolve({ result: reader.result, name: file.name });
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
+                // 1. رفع ملف السكربت الفعلي إلى حاوية Appwrite مباشرة
+                const scriptResponse = await appwriteStorage.createFile(
+                    BUCKET_ID,
+                    ID.unique(),
+                    scriptFile
+                );
+                
+                // توليد رابط التحميل المباشر للسكربت من Appwrite السحابي
+                const finalScriptUrl = `https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${scriptResponse.$id}/download?project=6a4294fd00231283db19`;
+                const finalScriptName = scriptResponse.name;
 
-                const scriptFileData = await readAsDataURL(scriptFile);
-                
-                // رفع السكريبت مع طباعة النسبة المئوية داخل الزر مباشرة
-                const uploadedScript = await uploadToGitHub(scriptFileData, githubToken, (percent) => {
-                    btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading Script (${percent}%)...`;
-                });
-                
-                let imageUrl = "";
+                // 2. معالجة رفع الصورة المعاينة إذا تم اختيارها
+                let finalImageUrl = "";
                 if (imageFile) {
-                    const imageFileData = await readAsDataURL(imageFile);
-                    const uploadedImage = await uploadToGitHub(imageFileData, githubToken, (percent) => {
-                        btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading Image (${percent}%)...`;
-                    });
-                    imageUrl = uploadedImage.downloadUrl;
+                    const imageResponse = await appwriteStorage.createFile(
+                        BUCKET_ID,
+                        ID.unique(),
+                        imageFile
+                    );
+                    // رابط عرض مباشر للصورة المعاينة
+                    finalImageUrl = `https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${imageResponse.$id}/view?project=6a4294fd00231283db19`;
                 }
 
+                // 3. تخزين بيانات السكربت والميتا في قاعدة بيانات Firestore
                 await addDoc(collection(db, "scripts"), { 
-                    title, version, category, desc, 
-                    fileUrl: uploadedScript.downloadUrl, 
-                    fileName: uploadedScript.name, 
-                    imageUrl: imageUrl,
+                    title, 
+                    version, 
+                    category, 
+                    desc, 
+                    fileUrl: finalScriptUrl, 
+                    fileName: finalScriptName, 
+                    imageUrl: finalImageUrl,
                     downloads: 0, 
                     creator: "_rayynn", 
                     createdAt: new Date() 
                 });
                 
-                logToDB("New Script Published", `${title} (${version}) uploaded by admin.`, "success");
+                logToDB("New Script Published", `${title} (${version}) uploaded via Appwrite.`, "success");
                 showToast('Script Published Successfully!', 'success'); 
                 document.getElementById('adminForm').reset(); 
                 loadScripts(); 
                 loadAdminPanel();
             } catch(err) { 
+                console.error("Appwrite Upload Failure:", err);
                 showToast('Upload Error: ' + err.message, 'error'); 
             } finally { 
                 btn.innerHTML = `<i class="fas fa-rocket"></i> Publish Script`; 
