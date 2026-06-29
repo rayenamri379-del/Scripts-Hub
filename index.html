@@ -6,6 +6,7 @@
     <title>KaZzA Scripts | _rayynn Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     
     <style>
         :root {
@@ -21,16 +22,15 @@
             --success: #00ffcc;
         }
 
-        /* عندما يتم حظر المستخدم، تتغير هذه الألوان برمجياً */
+        /* Banned Theme Overrides */
         body.banned-theme {
-            --bg-color: #0a0101;
-            --glass-bg: rgba(30, 5, 5, 0.8);
+            --bg-color: #0a0000;
+            --glass-bg: rgba(30, 5, 5, 0.7);
             --glass-border: rgba(255, 0, 0, 0.6);
             --neon-purple: #ff0000;
             --neon-glow: #aa0000;
-            --text-muted: #ffb3b3;
-            background-image: none !important;
-            background-color: var(--bg-color);
+            --text-muted: #ff9999;
+            background-image: radial-gradient(circle at 15% 50%, rgba(255, 0, 0, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(170, 0, 0, 0.15), transparent 25%);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
@@ -47,7 +47,6 @@
             transition: background-color 0.5s ease;
         }
 
-        /* Toast Notifications */
         .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: var(--glass-bg); backdrop-filter: blur(10px); border-left: 4px solid var(--neon-purple); border-radius: 8px; padding: 15px 20px; color: #fff; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards; min-width: 250px; }
         .toast.success { border-color: var(--success); }
@@ -55,13 +54,25 @@
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes fadeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
-        /* Banned Screen */
-        #banned-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10000; justify-content: center; align-items: center; flex-direction: column; text-align: center; padding: 20px; background: var(--bg-color); }
-        #banned-screen h1 { font-size: 5rem; text-shadow: 0 0 30px var(--neon-purple); color: var(--neon-purple); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 5px; }
+        /* Custom Modal Design */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-box { background: var(--glass-bg); border: 1px solid var(--glass-border); border-top: 3px solid var(--neon-purple); padding: 30px; border-radius: 15px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: translateY(-20px); transition: transform 0.3s ease; }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-title { font-size: 1.5rem; color: var(--neon-purple); margin-bottom: 15px; font-weight: 700; }
+        .modal-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5; }
+        .modal-buttons { display: flex; gap: 15px; justify-content: center; }
 
-        /* Overlays (Auth & Username) */
-        .full-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .auth-container { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-top: 3px solid var(--neon-purple); padding: 40px; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); text-align: center; }
+        /* Banned Screen */
+        #banned-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9999; justify-content: center; align-items: center; flex-direction: column; color: var(--neon-purple); text-align: center; padding: 20px; backdrop-filter: blur(10px); }
+        #banned-screen h1 { font-size: 5rem; text-shadow: 0 0 30px var(--neon-purple); margin-bottom: 10px; font-weight: 900; letter-spacing: 5px; }
+
+        #app-content { display: none; opacity: 0; transition: opacity 0.5s ease-in; }
+        #app-content.visible { display: block; opacity: 1; }
+
+        /* Auth UI */
+        #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .auth-container { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-top: 3px solid var(--neon-purple); padding: 40px; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 40px rgba(157, 0, 255, 0.2); text-align: center; }
         .auth-logo { font-size: 2rem; font-weight: 900; color: var(--neon-purple); text-shadow: 0 0 15px var(--neon-purple); letter-spacing: 2px; margin-bottom: 30px; }
         .auth-toggle { display: flex; margin-bottom: 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
         .auth-toggle button { flex: 1; background: none; border: none; padding: 10px; color: var(--text-muted); font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
@@ -71,91 +82,110 @@
         .auth-msg { font-size: 0.85rem; margin-bottom: 15px; min-height: 20px; font-weight: 500; }
         .msg-error { color: var(--danger); text-shadow: 0 0 5px var(--danger); }
         .msg-success { color: var(--success); text-shadow: 0 0 5px var(--success); }
-        
         .social-login-divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: var(--text-muted); font-size: 0.85rem; }
         .social-login-divider::before, .social-login-divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
         .btn-social { padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.95rem; border: none; width: 100%; }
         .btn-google { background: #ffffff; color: #333; }
         .btn-google:hover { background: #e6e6e6; box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); transform: translateY(-2px); }
 
-        /* General Forms & UI */
-        .form-input { width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); padding: 12px 20px; border-radius: 8px; color: white; font-size: 1rem; outline: none; transition: 0.3s; margin-bottom: 15px; }
-        .form-input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(157, 0, 255, 0.4); background: rgba(0,0,0,0.5); }
-        .btn-action { width: 100%; background: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-action:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 15px var(--neon-purple); }
-        
-        /* App Content */
-        #app-content { display: none; opacity: 0; transition: opacity 0.5s ease-in; }
-        #app-content.visible { display: block; opacity: 1; }
+        .forgot-pass-link { display: block; margin-top: 15px; font-size: 0.85rem; color: var(--text-muted); text-decoration: none; cursor: pointer; transition: 0.3s; }
+        .forgot-pass-link:hover { color: var(--neon-purple); text-decoration: underline; }
 
-        /* Navbar & Views */
-        nav { background: var(--glass-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; }
+        /* General UI Elements */
+        nav { background: var(--glass-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
         .logo-container { display: flex; align-items: center; gap: 15px; }
         .logo { font-size: 1.5rem; font-weight: 900; color: var(--neon-purple); text-shadow: 0 0 15px var(--neon-purple); letter-spacing: 2px; }
-        
         .discord-pulse { font-size: 1.8rem; color: #b39ddb; text-decoration: none; animation: pulse-discord 2s infinite; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
         .discord-pulse:hover { transform: scale(1.15); color: #fff; }
-        @keyframes pulse-discord {
-            0% { text-shadow: 0 0 5px var(--neon-purple); color: var(--neon-purple); }
-            50% { text-shadow: 0 0 15px var(--success); color: #fff; }
-            100% { text-shadow: 0 0 5px var(--neon-purple); color: var(--neon-purple); }
-        }
-
+        @keyframes pulse-discord { 0% { text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); color: var(--neon-purple); } 50% { text-shadow: 0 0 15px var(--success), 0 0 25px var(--success); color: #fff; } 100% { text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); color: var(--neon-purple); } }
         .nav-links { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
         .nav-links button { background: none; border: none; color: var(--text-main); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.3s; padding: 5px 10px; border-radius: 5px; }
         .nav-links button:hover, .nav-links button.active { color: var(--neon-purple); text-shadow: 0 0 8px var(--neon-purple); background: rgba(157, 0, 255, 0.1); }
         .login-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 8px; display: flex; align-items: center; gap: 8px; }
         .login-btn:hover { background: var(--danger); border-color: var(--danger); color: #fff; box-shadow: 0 0 15px var(--danger); }
         .admin-only { display: none; }
-        
         .view-section { display: none; animation: fadeIn 0.4s ease-out; }
         .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Layout styles for Home, Grid, Admin panel */
         .hero { text-align: center; padding: 60px 20px; }
         .hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 15px; background: linear-gradient(45deg, #ffffff, var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 30px auto; }
+        .categories { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+        .cat-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 8px 20px; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; }
+        .cat-btn.active, .cat-btn:hover { background: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); transform: scale(1.05); }
         .search-container { max-width: 800px; margin: 0 auto 20px auto; padding: 0 20px; position: relative; }
+        
+        .form-input { width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); padding: 12px 20px; border-radius: 8px; color: white; font-size: 1rem; outline: none; transition: 0.3s; margin-bottom: 15px; }
+        .form-input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(157, 0, 255, 0.4); background: rgba(0,0,0,0.5); }
+        
         .scripts-container { max-width: 1100px; margin: 0 auto; padding: 0 20px 80px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
         .script-card { background: var(--card-bg); border: 1px solid var(--glass-border); border-top: 3px solid var(--neon-purple); border-radius: 12px; padding: 25px; transition: all 0.4s ease; position: relative; overflow: hidden; }
+        .script-card::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(157,0,255,0.1) 0%, transparent 70%); opacity: 0; transition: opacity 0.4s; z-index: 0; pointer-events: none;}
+        .script-card:hover::before { opacity: 1; }
         .script-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(157, 0, 255, 0.3); border-color: var(--neon-purple); }
+        .script-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; z-index: 1; }
+        .script-title { font-size: 1.2rem; color: #fff; display: flex; align-items: center; gap: 10px; }
+        .version-badge { background: rgba(157, 0, 255, 0.2); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; color: #fff; border: 1px solid var(--neon-purple);}
+        .script-date { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 15px; display: block; position: relative; z-index: 1;}
+        .script-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; min-height: 60px; position: relative; z-index: 1;}
+        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px; position: relative; z-index: 1;}
+
+        .btn-action { width: 100%; background: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-action:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 15px var(--neon-purple); }
+        .btn-danger { color: var(--danger); border-color: var(--danger); }
+        .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); }
+        .btn-success { color: var(--success); border-color: var(--success); }
+        .btn-success:hover { background: var(--success); color: #000; box-shadow: 0 0 15px var(--success); }
+        .btn-icon { padding: 8px 12px; width: auto; border-radius: 6px; }
+        
         .form-container { max-width: 900px; margin: 40px auto; background: var(--glass-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         .admin-section-box { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--glass-border); }
+        .user-list-item { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items:center; margin-bottom: 10px; transition: 0.3s;}
+        .user-list-item:hover { border-color: var(--neon-purple); background: rgba(157,0,255,0.05); }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 10px; padding: 20px; text-align: center; }
+        .stat-card h3 { color: var(--text-muted); font-size: 1rem; margin-bottom: 10px; }
+        .stat-card .number { font-size: 2.5rem; font-weight: 900; color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
+
+        .users-table-wrapper { overflow-x: auto; margin-top: 15px; }
+        table { width: 100%; border-collapse: collapse; color: #fff; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        th { color: var(--neon-purple); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; }
+        tr:hover { background: rgba(255,255,255,0.02); }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
         .badge-admin { background: rgba(0, 255, 204, 0.2); color: var(--success); border: 1px solid var(--success); }
+        .badge-user { background: rgba(255, 255, 255, 0.1); color: #ccc; }
         .badge-banned { background: rgba(255, 0, 0, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+
         .loading-spinner { display: none; color: var(--neon-purple); margin: 10px auto; font-size: 24px; animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="toast-container" class="toast-container"></div>
 
-    <div id="google-username-overlay" class="full-overlay" style="display: none; z-index: 1001;">
-        <div class="auth-container">
-            <h2 style="color: var(--neon-purple); margin-bottom: 20px;"><i class="fas fa-user-tag"></i> Choose Username</h2>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Welcome! Since this is your first time logging in with Google, please choose a unique username.</p>
-            <form onsubmit="handleGoogleUsernameSubmit(event)">
-                <input type="text" id="google-new-username" class="form-input" placeholder="Enter Username..." required minlength="3">
-                <button type="submit" class="btn-action"><i class="fas fa-check"></i> Complete Registration</button>
-            </form>
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="modal-title" class="modal-title">Title</h2>
+            <p id="modal-desc" class="modal-desc">Description</p>
+            <div id="modal-input-container" style="display: none;">
+                <input type="text" id="modal-input" class="form-input" placeholder="Enter here...">
+            </div>
+            <div class="modal-buttons" id="modal-buttons">
+                </div>
         </div>
     </div>
 
     <div id="banned-screen">
-        <i class="fas fa-ban" style="font-size: 6rem; margin-bottom: 20px;"></i>
+        <i class="fas fa-ban" style="font-size: 6rem; margin-bottom: 20px; color: var(--neon-purple); text-shadow: 0 0 20px var(--neon-purple);"></i>
         <h1>YOU ARE BANNED</h1>
-        <p style="font-size: 1.2rem; max-width: 600px; line-height: 1.6; color: var(--text-muted); margin: 0 auto;">
-            Your account has been permanently banned from KaZzA Scripts due to a violation of our rules.<br><br>
-            If you think this is a mistake, contact the administrator.
-        </p>
-        <button onclick="handleLogout(true)" class="btn-action" style="margin-top: 30px; max-width: 200px; border-color: red; color: red;">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
+        <p style="font-size: 1.2rem; max-width: 600px; line-height: 1.6; color: var(--text-main);">Your account has been permanently restricted.<br>Contact the administrator via Discord.</p>
     </div>
 
-    <div id="auth-overlay" class="full-overlay">
+    <div id="auth-overlay">
         <div class="auth-container">
             <div class="auth-logo">KaZzA Scripts</div>
             
@@ -170,17 +200,15 @@
             <form id="signin-form" class="auth-form active" onsubmit="handleSignIn(event)">
                 <input type="email" id="in-email" class="form-input" placeholder="Email Address" required>
                 <input type="password" id="in-password" class="form-input" placeholder="Password" required>
-                <div style="text-align: right; margin-bottom: 15px;">
-                    <a href="#" onclick="handleResetPassword()" style="color:var(--text-muted); font-size: 0.8rem; text-decoration:none; transition: 0.3s;">Forgot Password?</a>
-                </div>
                 <button type="submit" class="btn-action"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <a class="forgot-pass-link" onclick="handlePasswordReset()">Forgot Password?</a>
             </form>
 
             <form id="signup-form" class="auth-form" onsubmit="handleSignUp(event)">
-                <input type="text" id="up-username" class="form-input" placeholder="Username" required minlength="3">
+                <input type="text" id="up-username" class="form-input" placeholder="Username" required>
                 <input type="email" id="up-email" class="form-input" placeholder="Email Address" required>
                 <input type="password" id="up-password" class="form-input" placeholder="New Password" required minlength="6">
-                <button type="submit" class="btn-action"><i class="fas fa-envelope"></i> Register & Verify Email</button>
+                <button type="submit" class="btn-action"><i class="fas fa-user-plus"></i> Create Account</button>
             </form>
             
             <div class="social-login-divider">OR</div>
@@ -196,15 +224,15 @@
         <nav>
             <div class="logo-container">
                 <div class="logo">KaZzA Scripts</div>
-                <a href="https://discord.com/users/1000058774108782602" target="_blank" class="discord-pulse" title="Contact _rayynn on Discord">
+                <a href="https://discord.com/users/1000058774108782602" target="_blank" class="discord-pulse" title="My Discord Profile">
                     <i class="fab fa-discord"></i>
                 </a>
             </div>
             <div class="nav-links">
                 <button onclick="switchTab('home')" id="tab-home" class="active"><i class="fas fa-home"></i> Home</button>
-                <button onclick="switchTab('request')" id="tab-request"><i class="fas fa-envelope"></i> Request Script</button>
+                <button onclick="switchTab('request')" id="tab-request"><i class="fas fa-envelope"></i> Request</button>
                 <button onclick="switchTab('admin')" id="tab-admin" class="admin-only"><i class="fas fa-cogs"></i> Dashboard</button>
-                <button class="login-btn" id="logoutBtn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <button class="login-btn" id="logoutBtn" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
             </div>
         </nav>
 
@@ -217,6 +245,7 @@
                 <i class="fas fa-search" style="position: absolute; left: 35px; top: 15px; color: var(--text-muted);"></i>
                 <input type="text" id="searchInput" class="form-input" placeholder="Search scripts..." style="padding-left: 45px;">
             </div>
+            <div class="categories" id="categoryFilters"></div>
             <div class="scripts-container" id="scriptsGrid"></div>
         </div>
 
@@ -225,7 +254,7 @@
                 <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 20px;"><i class="fas fa-terminal"></i> Request a Custom Script</h2>
                 <form onsubmit="submitRequest(event)">
                     <input type="text" id="req-discord" class="form-input" placeholder="Your Discord Tag (e.g. user#1234)" required>
-                    <textarea id="req-desc" class="form-input" placeholder="Describe the SA-MP logic or UI design you need..." required style="height: 150px; resize: none;"></textarea>
+                    <textarea id="req-desc" class="form-input" placeholder="Describe the script logic or UI design you want in detail..." required style="height: 150px; resize: none;"></textarea>
                     <button type="submit" id="btn-request" class="btn-action"><i class="fas fa-paper-plane"></i> Send Request</button>
                 </form>
             </div>
@@ -233,47 +262,59 @@
 
         <div id="view-admin" class="view-section">
             <div class="form-container" style="max-width: 1000px;">
-                <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 30px;"><i class="fas fa-shield-alt"></i> Admin Dashboard</h2>
+                <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 30px;"><i class="fas fa-shield-alt"></i> Control Panel</h2>
                 
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3><i class="fas fa-users"></i> Total Users</h3>
+                        <div class="number" id="stat-users">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-download"></i> Total Downloads</h3>
+                        <div class="number" id="stat-downloads">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3><i class="fas fa-file-code"></i> Total Scripts</h3>
+                        <div class="number" id="stat-scripts">0</div>
+                    </div>
+                </div>
+
+                <div class="admin-section-box">
+                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-users-cog"></i> Users Management</h3>
+                    <div class="users-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr><th>Username / Email</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="4" style="text-align:center; color:var(--text-muted)">Loading users...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
                 <div class="admin-section-box">
                     <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-cloud-upload-alt"></i> Publish New Script</h3>
                     <form id="adminForm" onsubmit="uploadScript(event)">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <input type="text" id="s-title" class="form-input" placeholder="Script Name" required>
                             <input type="text" id="s-version" class="form-input" placeholder="Version (e.g. v1.0)" required>
-                            <select id="s-category" class="form-input" style="background-color: #14051e;" required>
-                                <option value="UI Customization">UI Customization</option>
-                                <option value="Admin & Helper Scripts">Admin & Helper Scripts</option>
-                                <option value="Utility">Utility</option>
-                                <option value="Roleplay Enhancements">Roleplay Enhancements</option>
-                            </select>
+                            <select id="s-category" class="form-input" style="background-color: #14051e;" required></select>
                             <input type="file" id="s-file" class="form-input" style="padding: 9px;" required>
                         </div>
                         <textarea id="s-desc" class="form-input" placeholder="Script Description..." required style="height: 80px; resize: none;"></textarea>
-                        <button type="submit" id="uploadBtn" class="btn-action"><i class="fas fa-rocket"></i> Publish & Notify All</button>
+                        <button type="submit" id="uploadBtn" class="btn-action"><i class="fas fa-rocket"></i> Publish & Notify Discord</button>
                     </form>
                 </div>
 
                 <div class="admin-section-box">
-                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-users-cog"></i> Users Management</h3>
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                            <thead>
-                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--neon-purple);">
-                                    <th style="padding: 10px;">User</th>
-                                    <th style="padding: 10px;">Role</th>
-                                    <th style="padding: 10px;">Status</th>
-                                    <th style="padding: 10px;">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="usersTableBody"></tbody>
-                        </table>
-                    </div>
+                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-list"></i> Manage Scripts</h3>
+                    <div id="adminList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
                 </div>
-                
+
                 <div class="admin-section-box">
-                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-inbox"></i> Pending Requests</h3>
-                    <div id="requestsList"></div>
+                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-inbox"></i> User Requests</h3>
+                    <div id="requestsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
                 </div>
             </div>
         </div>
@@ -297,6 +338,14 @@
         const GITHUB_REPO = "kazza-scripts-storage"; 
         const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1520995817790640220/GkD5xg4-BGIQHNqYEIL4CoFcWaMX-Qnp_CtoqXczezDn3ZdYZ6pdRIAWhvgOh9nBDtSq"; 
 
+        // EmailJS Configuration Variables (UPDATED WITH YOUR KEYS)
+        const EMAILJS_SERVICE_ID = "service_jraj9tg";
+        const EMAILJS_TEMPLATE_WELCOME = "template_0mwhlmp";
+        const EMAILJS_TEMPLATE_BAN = "template_m45pbnz";
+        
+        // Initialize EmailJS (UPDATED WITH YOUR PUBLIC KEY)
+        (function(){ emailjs.init("dTBd2z62URQMm0Mvc"); })();
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -305,9 +354,10 @@
         let currentUser = null;
         let isUserAdmin = false;
         let scriptsDB = [];
-        let tempGoogleUser = null; // يحفظ بيانات حساب جوجل مؤقتاً لتسجيل الاسم
+        let categoriesDB = ['UI Customization', 'Admin & Helper Scripts', 'Utility', 'Roleplay Enhancements'];
+        let currentFilter = 'All';
 
-        // --- Custom Toast ---
+        // --- Custom UI Systems ---
         window.showToast = (msg, type = 'success') => {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -317,12 +367,62 @@
             setTimeout(() => toast.remove(), 3000);
         };
 
-        // --- Discord Webhook Fix (CORS Proxy) ---
-        // بما أن ديسكورد يمنع طلبات المتصفح، نستعمل بروكسي موثوق لكسر حاجز CORS
+        // Custom Modal Logic
+        window.openModal = (options) => {
+            const modal = document.getElementById('custom-modal');
+            document.getElementById('modal-title').innerText = options.title;
+            document.getElementById('modal-desc').innerHTML = options.desc;
+            
+            const inputContainer = document.getElementById('modal-input-container');
+            const inputField = document.getElementById('modal-input');
+            if (options.type === 'input') {
+                inputContainer.style.display = 'block';
+                inputField.value = '';
+                inputField.placeholder = options.placeholder || 'Enter value...';
+            } else {
+                inputContainer.style.display = 'none';
+            }
+
+            const btnContainer = document.getElementById('modal-buttons');
+            btnContainer.innerHTML = '';
+            
+            if (options.type === 'alert') {
+                const okBtn = document.createElement('button');
+                okBtn.className = 'btn-action btn-success';
+                okBtn.innerText = 'OK';
+                okBtn.onclick = () => { closeModal(); if(options.onConfirm) options.onConfirm(); };
+                btnContainer.appendChild(okBtn);
+            } else {
+                const cancelBtn = document.createElement('button');
+                cancelBtn.className = 'btn-action';
+                cancelBtn.style.borderColor = 'var(--text-muted)';
+                cancelBtn.style.color = 'var(--text-muted)';
+                cancelBtn.innerText = 'Cancel';
+                cancelBtn.onclick = closeModal;
+                
+                const confirmBtn = document.createElement('button');
+                confirmBtn.className = `btn-action ${options.confirmClass || 'btn-danger'}`;
+                confirmBtn.innerText = options.confirmText || 'Confirm';
+                confirmBtn.onclick = () => {
+                    const val = options.type === 'input' ? inputField.value : null;
+                    if(options.type === 'input' && !val.trim()) return showToast('Input cannot be empty!', 'error');
+                    closeModal();
+                    if(options.onConfirm) options.onConfirm(val);
+                };
+                
+                btnContainer.appendChild(cancelBtn);
+                btnContainer.appendChild(confirmBtn);
+            }
+            modal.classList.add('active');
+        };
+
+        const closeModal = () => document.getElementById('custom-modal').classList.remove('active');
+
+        // Discord Webhook Logs System with CORS Proxy Fix
         const sendDiscordWebhook = async (title, desc, colorHex, fields = []) => {
             if (!DISCORD_WEBHOOK_URL) return;
-            const PROXY_URL = "https://corsproxy.io/?"; 
             try {
+                const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(DISCORD_WEBHOOK_URL);
                 const payload = {
                     username: "KaZzA Hub Logs",
                     avatar_url: "https://cdn-icons-png.flaticon.com/512/843/843260.png",
@@ -335,73 +435,26 @@
                         footer: { text: "KaZzA Scripts Hub Automated System" }
                     }]
                 };
-                
-                await fetch(PROXY_URL + encodeURIComponent(DISCORD_WEBHOOK_URL), {
+                await fetch(proxyUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-            } catch (e) { console.warn("Webhook proxy skipped or failed:", e); }
+            } catch (e) { console.error("Discord Webhook Error:", e); }
         };
 
-        // --- نظام إرسال الإيميلات الأوتوماتيكية عبر Firebase Firestore (Trigger Email) ---
-        const queueEmail = async (toEmail, subject, htmlBody, bccList = []) => {
-            try {
-                const emailData = {
-                    to: toEmail,
-                    message: { subject: subject, html: htmlBody }
-                };
-                if (bccList.length > 0) emailData.bcc = bccList;
-                await addDoc(collection(db, "mail"), emailData);
-            } catch (error) { console.error("Error queuing email:", error); }
+        // EmailJS Trigger Function (UPDATED check)
+        const triggerEmail = (templateId, userEmail, userName, extraParams = {}) => {
+            if(!EMAILJS_SERVICE_ID) return; 
+            const params = {
+                to_email: userEmail,
+                to_name: userName,
+                ...extraParams
+            };
+            emailjs.send(EMAILJS_SERVICE_ID, templateId, params).catch(console.error);
         };
 
-        const sendWelcomeEmail = async (email, username) => {
-            const html = `
-                <div style="font-family: Arial, sans-serif; background-color: #05010a; color: #ffffff; padding: 30px; text-align: center; border: 2px solid #9d00ff; border-radius: 10px;">
-                    <h1 style="color: #9d00ff;">Welcome to KaZzA Scripts Hub!</h1>
-                    <p style="font-size: 16px;">Hello <b>${username}</b>,</p>
-                    <p style="font-size: 15px; line-height: 1.6;">Thank you for joining our community. Here, you'll find the best Custom UI, CLEO, and Roleplay scripts.</p>
-                    <p style="font-size: 15px; color: #00ffcc;">💡 <b>Pro Tip:</b> Make sure to check the "Home" page frequently for new updates.</p>
-                    <hr style="border: 1px solid #333; margin: 20px 0;">
-                    <p style="font-size: 14px;">Need help or a custom script? Contact the owner <b>_rayynn</b> on Discord:</p>
-                    <a href="https://discord.com/users/1000058774108782602" style="display: inline-block; background-color: #9d00ff; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin-top: 10px;">Contact via Discord</a>
-                </div>`;
-            await queueEmail(email, "Welcome to KaZzA Scripts Hub! 🎉", html);
-        };
-
-        const sendBanEmail = async (email, username) => {
-            const html = `
-                <div style="font-family: Arial, sans-serif; background-color: #1a0000; color: #ffffff; padding: 30px; text-align: center; border: 2px solid #ff0000; border-radius: 10px;">
-                    <h1 style="color: #ff0000;">Account Banned</h1>
-                    <p>Hello <b>${username}</b>,</p>
-                    <p>We regret to inform you that your account on KaZzA Scripts Hub has been permanently banned for violating our community guidelines.</p>
-                    <p>If you believe this is a mistake, you can contact the admin via Discord.</p>
-                </div>`;
-            await queueEmail(email, "Important: Your KaZzA Scripts Account Status", html);
-        };
-
-        const notifyAllNewScript = async (scriptTitle, scriptDesc) => {
-            try {
-                const usersSnap = await getDocs(collection(db, "users"));
-                let emails = [];
-                usersSnap.forEach(doc => { 
-                    if(doc.data().email && !doc.data().isBanned) emails.push(doc.data().email); 
-                });
-                const html = `
-                    <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #9d00ff; border-radius: 8px;">
-                        <h2 style="color: #9d00ff;">🚀 New Script Uploaded!</h2>
-                        <h3 style="color: #333;">${scriptTitle}</h3>
-                        <p style="color: #555;">${scriptDesc}</p>
-                        <br>
-                        <a href="https://kazza-scripts-68cb4.firebaseapp.com/" style="background: #9d00ff; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px;">Download Now in Hub</a>
-                    </div>`;
-                await queueEmail("noreply@kazzascripts.com", `New Script Available: ${scriptTitle}`, html, emails);
-            } catch (e) { console.error(e); }
-        };
-
-
-        // --- Authentication Logic ---
+        // --- Auth Functions ---
         window.switchAuthMode = (mode) => {
             document.querySelectorAll('.auth-toggle button').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
@@ -416,20 +469,23 @@
             m.className = 'auth-msg ' + (isError ? 'msg-error' : 'msg-success');
         };
 
-        // Forgot Password
-        window.handleResetPassword = async () => {
-            const email = prompt("Enter your account email address to reset password:");
-            if (email) {
-                try {
-                    await sendPasswordResetEmail(auth, email);
-                    showToast("Password reset link sent to your email!", "success");
-                } catch (err) {
-                    showToast("Error: " + err.message, "error");
-                }
+        const registerUserInDB = async (user, username) => {
+            const userRef = doc(db, "users", user.uid);
+            const userSnap = await getDoc(userRef);
+            if (!userSnap.exists()) {
+                await setDoc(userRef, {
+                    email: user.email,
+                    username: username || user.displayName || user.email.split('@')[0],
+                    role: user.email === mainAdmin ? 'admin' : 'user',
+                    isBanned: false,
+                    createdAt: new Date()
+                });
+                return true; 
             }
+            return false; 
         };
 
-        // Create Account (Email/Pass) - Requires real email
+        // Sign Up with Email Verification
         window.handleSignUp = async (e) => {
             e.preventDefault();
             document.getElementById('auth-spinner').style.display = 'block';
@@ -441,38 +497,63 @@
                 const userCred = await createUserWithEmailAndPassword(auth, email, pass);
                 await updateProfile(userCred.user, { displayName: username });
                 
-                // إرسال كود تفعيل الإيميل لمنع الإيميلات الوهمية
+                // Send verification email via Firebase
                 await sendEmailVerification(userCred.user);
                 
-                await setDoc(doc(db, "users", userCred.user.uid), {
-                    email: email, username: username, role: email === mainAdmin ? 'admin' : 'user', isBanned: false, createdAt: new Date()
-                });
+                await registerUserInDB(userCred.user, username);
                 
-                await sendWelcomeEmail(email, username);
-                sendDiscordWebhook("🎉 New User Registration!", `A new user joined!`, "#00ffcc", [{ name: "👤 User", value: username, inline: true }]);
+                sendDiscordWebhook("🎉 New User Registration!", `A new user just created an account.`, "#00ffcc", [
+                    { name: "👤 Username", value: username, inline: true },
+                    { name: "📧 Email", value: email, inline: true },
+                    { name: "🛡️ Status", value: "Pending Verification", inline: true }
+                ]);
 
-                showMsg('Account created! Please check your email to verify before logging in.', false);
-                showToast('Verification email sent!', 'success');
-                signOut(auth); // طرده حتى يفعل الإيميل
+                // Send Welcome Email via EmailJS
+                triggerEmail(EMAILJS_TEMPLATE_WELCOME, email, username);
+
+                // Force logout until they verify
+                await signOut(auth);
+                
+                showMsg('Account created! Please check your email to verify your account before logging in.', false);
+                showToast('Verification link sent to your email!', 'success');
+                switchAuthMode('signin');
             } catch (error) { showMsg(error.message); }
             document.getElementById('auth-spinner').style.display = 'none';
         };
 
+        // Sign In requires Email Verification
         window.handleSignIn = async (e) => {
             e.preventDefault();
             document.getElementById('auth-spinner').style.display = 'block';
             try { 
-                const cred = await signInWithEmailAndPassword(auth, document.getElementById('in-email').value, document.getElementById('in-password').value); 
-                if (!cred.user.emailVerified && cred.user.email !== mainAdmin) {
-                    signOut(auth);
-                    throw new Error("Please verify your email address first. Check your inbox.");
+                const userCred = await signInWithEmailAndPassword(auth, document.getElementById('in-email').value, document.getElementById('in-password').value); 
+                
+                if (!userCred.user.emailVerified && userCred.user.email !== mainAdmin) {
+                    await signOut(auth);
+                    showMsg('Please verify your email before logging in. Check your inbox.');
+                } else {
+                    showToast('Login successful!', 'success');
                 }
-                showToast('Login successful!', 'success');
             } catch (error) { showMsg('Login Failed: ' + error.message); }
             document.getElementById('auth-spinner').style.display = 'none';
         };
 
-        // Google Login Logic
+        // Forgot Password Logic via Firebase
+        window.handlePasswordReset = async () => {
+            const email = document.getElementById('in-email').value;
+            if (!email) {
+                return showMsg('Please enter your email address in the field above first.');
+            }
+            try {
+                await sendPasswordResetEmail(auth, email);
+                showMsg('Password reset link sent! Check your email.', false);
+                showToast('Reset link sent!', 'success');
+            } catch (error) {
+                showMsg('Error: ' + error.message);
+            }
+        };
+
+        // Google Login with Username Prompt
         window.handleGoogleLogin = async () => {
             try { 
                 const userCred = await signInWithPopup(auth, new GoogleAuthProvider()); 
@@ -480,98 +561,113 @@
                 const userSnap = await getDoc(userRef);
                 
                 if (!userSnap.exists()) {
-                    // حساب جوجل جديد تماماً -> نطلب منه يكتب اسم المستخدم
-                    tempGoogleUser = userCred.user;
-                    document.getElementById('auth-overlay').style.display = 'none';
-                    document.getElementById('google-username-overlay').style.display = 'flex';
+                    // New Google User - Prompt for Username
+                    document.getElementById('auth-overlay').style.display = 'none'; 
+                    openModal({
+                        title: 'Welcome to KaZzA Scripts!',
+                        desc: 'Please choose a unique username for your account:',
+                        type: 'input',
+                        placeholder: 'Your username...',
+                        confirmText: 'Save Username',
+                        confirmClass: 'btn-success',
+                        onConfirm: async (chosenUsername) => {
+                            await registerUserInDB(userCred.user, chosenUsername);
+                            await updateProfile(userCred.user, { displayName: chosenUsername });
+                            sendDiscordWebhook("🎉 New User (Google)!", `A new user registered via Google.`, "#00ffcc", [
+                                { name: "👤 Username", value: chosenUsername, inline: true },
+                                { name: "📧 Email", value: userCred.user.email, inline: true }
+                            ]);
+                            // Send Welcome Email via EmailJS
+                            triggerEmail(EMAILJS_TEMPLATE_WELCOME, userCred.user.email, chosenUsername);
+                            showToast('Welcome aboard!', 'success');
+                            onAuthStateChangedHandler(userCred.user);
+                        }
+                    });
                 } else {
-                    // حساب قديم ومسجل مسبقاً
                     showToast('Google Login successful!', 'success');
                 }
             } catch (error) { showMsg(error.message); }
         };
 
-        // اكمال التسجيل بحساب جوجل (اختيار اسم المستخدم)
-        window.handleGoogleUsernameSubmit = async (e) => {
-            e.preventDefault();
-            if (!tempGoogleUser) return;
-            const username = document.getElementById('google-new-username').value;
-            
-            try {
-                await updateProfile(tempGoogleUser, { displayName: username });
-                await setDoc(doc(db, "users", tempGoogleUser.uid), {
-                    email: tempGoogleUser.email, username: username, role: tempGoogleUser.email === mainAdmin ? 'admin' : 'user', isBanned: false, createdAt: new Date()
-                });
-
-                await sendWelcomeEmail(tempGoogleUser.email, username);
-                sendDiscordWebhook("🎉 New Google Registration!", `A user joined via Google!`, "#00ffcc", [{ name: "👤 User", value: username, inline: true }]);
-
-                document.getElementById('google-username-overlay').style.display = 'none';
-                tempGoogleUser = null;
-                showToast('Registration complete!', 'success');
-                // بما أنه مسجل دخول، onAuthStateChanged ستتولى الباقي
-                window.location.reload(); 
-            } catch (err) { showToast("Error saving profile.", "error"); }
-        }
-
-
-        // اللوج أوت مع سؤال تأكيد
-        window.handleLogout = (force = false) => {
-            if (force || confirm("Are you sure you want to log out?")) {
-                signOut(auth);
-            }
+        // Custom Confirm Logout
+        window.confirmLogout = () => {
+            openModal({
+                title: 'Logout',
+                desc: 'Are you sure you want to log out of your account?',
+                type: 'confirm',
+                confirmText: 'Yes, Logout',
+                confirmClass: 'btn-danger',
+                onConfirm: () => signOut(auth)
+            });
         };
 
-        // المراقب الرئيسي لحالة المستخدم (الدخول والخروج والحظر)
-        onAuthStateChanged(auth, async (user) => {
-            if (user && !tempGoogleUser) {
+        // Auth State Handler (Handles Banned Red Theme)
+        const onAuthStateChangedHandler = async (user) => {
+            if (user) {
+                if (!user.emailVerified && user.providerData[0]?.providerId === 'password' && user.email !== mainAdmin) {
+                    return; 
+                }
+
                 const userRef = doc(db, "users", user.uid);
                 const userSnap = await getDoc(userRef);
                 
-                // إذا لم يؤكد إيميله ولم يكن هو حساب جوجل
-                if (!user.emailVerified && user.providerData[0].providerId === 'password' && user.email !== mainAdmin) {
+                let isBanned = false;
+                let userData;
+
+                if (userSnap.exists()) {
+                    userData = userSnap.data();
+                } else {
+                    userData = {
+                        email: user.email,
+                        username: user.displayName || user.email.split('@')[0],
+                        role: user.email === mainAdmin ? 'admin' : 'user',
+                        isBanned: false,
+                        createdAt: new Date()
+                    };
+                    await setDoc(userRef, userData);
+                }
+
+                isBanned = userData.isBanned;
+                isUserAdmin = userData.role === 'admin' || user.email === mainAdmin;
+
+                // Banned User Logic
+                if (isBanned) {
+                    document.body.classList.add('banned-theme');
+                    document.getElementById('auth-overlay').style.display = 'none';
+                    document.getElementById('app-content').classList.remove('visible');
+                    document.getElementById('banned-screen').style.display = 'flex';
                     signOut(auth);
                     return;
                 }
 
-                if (userSnap.exists()) {
-                    const userData = userSnap.data();
-                    
-                    if (userData.isBanned) {
-                        // تفعيل نظام وشكل الحظر (اللون الأحمر ومنع الواجهة)
-                        document.body.classList.add('banned-theme');
-                        document.getElementById('auth-overlay').style.display = 'none';
-                        document.getElementById('app-content').classList.remove('visible');
-                        document.getElementById('banned-screen').style.display = 'flex';
-                        return;
-                    }
-
-                    // مستخدم طبيعي
-                    currentUser = user;
-                    isUserAdmin = userData.role === 'admin' || user.email === mainAdmin;
-                    
-                    document.body.classList.remove('banned-theme');
-                    document.getElementById('banned-screen').style.display = 'none';
-                    document.getElementById('auth-overlay').style.display = 'none';
-                    document.getElementById('app-content').classList.add('visible');
-                    
-                    document.getElementById('logoutBtn').innerHTML = `<i class="fas fa-sign-out-alt"></i> Logout (${userData.username})`;
-                    document.querySelectorAll('.admin-only').forEach(el => el.style.display = isUserAdmin ? 'inline-flex' : 'none');
-                    
-                    loadScripts();
-                    if(isUserAdmin) loadAdminPanel();
-                }
-            } else if (!tempGoogleUser) {
+                // Normal Login
+                document.body.classList.remove('banned-theme');
+                currentUser = user;
+                document.getElementById('auth-overlay').style.display = 'none';
+                document.getElementById('banned-screen').style.display = 'none';
+                document.getElementById('app-content').classList.add('visible');
+                
+                let displayName = userData.username || user.displayName || user.email.split('@')[0];
+                let adminBadge = isUserAdmin ? ' <span style="color:var(--success);">(👑 Admin)</span>' : '';
+                document.getElementById('logoutBtn').innerHTML = `<i class="fas fa-sign-out-alt"></i> Logout (${displayName})${adminBadge}`;
+                
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = isUserAdmin ? 'inline-flex' : 'none');
+                
+                loadScripts();
+                if(isUserAdmin) loadAdminPanel();
+            } else {
                 document.body.classList.remove('banned-theme');
                 document.getElementById('app-content').classList.remove('visible');
-                document.getElementById('banned-screen').style.display = 'none';
-                document.getElementById('auth-overlay').style.display = 'flex';
+                if(document.getElementById('banned-screen').style.display !== 'flex') {
+                    document.getElementById('auth-overlay').style.display = 'flex';
+                }
                 currentUser = null;
                 isUserAdmin = false;
             }
-        });
+        };
 
-        // --- Navigation & Content ---
+        onAuthStateChanged(auth, onAuthStateChangedHandler);
+
         window.switchTab = (tabId) => {
             document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
             document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
@@ -579,132 +675,332 @@
             document.getElementById('tab-' + tabId).classList.add('active');
         };
 
+        const renderCategoryButtons = () => {
+            const filterContainer = document.getElementById('categoryFilters');
+            filterContainer.innerHTML = `<button class="cat-btn ${currentFilter === 'All' ? 'active' : ''}" onclick="filterCategory('All')">All</button>`;
+            categoriesDB.forEach(cat => {
+                filterContainer.innerHTML += `<button class="cat-btn ${currentFilter === cat ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</button>`;
+            });
+        };
+
+        window.filterCategory = (cat) => { 
+            currentFilter = cat; 
+            renderScripts(document.getElementById('searchInput').value.toLowerCase()); 
+        };
+
+        window.copyLink = (url) => {
+            navigator.clipboard.writeText(url).then(() => showToast("Link copied to clipboard!", "success"));
+        };
+
+        const renderScripts = (searchTerm = '') => {
+            renderCategoryButtons();
+            const grid = document.getElementById('scriptsGrid');
+            grid.innerHTML = ''; 
+            
+            let filtered = currentFilter === 'All' ? scriptsDB : scriptsDB.filter(s => s.category === currentFilter);
+            if (searchTerm) {
+                filtered = filtered.filter(s => s.title.toLowerCase().includes(searchTerm) || s.desc.toLowerCase().includes(searchTerm));
+            }
+
+            if(filtered.length === 0) { 
+                grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-muted); padding: 40px;"><i class="fas fa-folder-open fa-3x mb-3"></i><br><br>No scripts found.</p>`; 
+                return; 
+            }
+
+            filtered.forEach(script => {
+                const date = script.createdAt ? new Date(script.createdAt.seconds * 1000).toLocaleDateString() : 'Recent';
+                grid.innerHTML += `
+                    <div class="script-card">
+                        <div class="script-header">
+                            <h3 class="script-title"><i class="fas fa-file-code" style="color:var(--neon-purple)"></i> ${script.title}</h3>
+                            <span class="version-badge">${script.version}</span>
+                        </div>
+                        <span class="script-date"><i class="far fa-calendar-alt"></i> ${date} &nbsp; | &nbsp; <i class="fas fa-user-edit"></i> ${script.creator || 'Admin'}</span>
+                        <p class="script-desc">${script.desc}</p>
+                        <div class="card-footer">
+                            <div style="display:flex; gap: 10px; width: 100%;">
+                                <button class="btn-action btn-sm" style="flex: 1;" onclick="downloadFile('${script.id}', '${script.fileUrl}', '${script.title}')" id="btn-dl-${script.id}">
+                                    <i class="fas fa-download"></i> DL
+                                </button>
+                                <button class="btn-action btn-sm" style="flex: 1; border-color: rgba(255,255,255,0.2); color: #fff;" onclick="copyLink('${script.fileUrl}')">
+                                    <i class="fas fa-link"></i> Copy
+                                </button>
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        };
+
+        document.getElementById('searchInput').addEventListener('input', (e) => renderScripts(e.target.value.toLowerCase()));
+
         const loadScripts = async () => {
             const q = query(collection(db, "scripts"), orderBy("createdAt", "desc"));
             const querySnapshot = await getDocs(q);
             scriptsDB = [];
             querySnapshot.forEach((doc) => scriptsDB.push({ id: doc.id, ...doc.data() }));
-            renderScripts();
-        };
-
-        const renderScripts = () => {
-            const grid = document.getElementById('scriptsGrid');
-            grid.innerHTML = ''; 
-            const term = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = term ? scriptsDB.filter(s => s.title.toLowerCase().includes(term)) : scriptsDB;
-
-            filtered.forEach(script => {
-                grid.innerHTML += `
-                    <div class="script-card">
-                        <h3 style="color:#fff; margin-bottom:5px;"><i class="fas fa-file-code" style="color:var(--neon-purple)"></i> ${script.title}</h3>
-                        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 15px;">${script.desc}</p>
-                        <button class="btn-action" onclick="window.open('${script.fileUrl}', '_blank')"><i class="fas fa-download"></i> Download ${script.version}</button>
-                    </div>`;
-            });
-        };
-        document.getElementById('searchInput').addEventListener('input', renderScripts);
-
-        // --- Admin Functions ---
-        const loadAdminPanel = async () => {
-            const usersTable = document.getElementById('usersTableBody');
-            usersTable.innerHTML = '';
-            const uq = query(collection(db, "users"), orderBy("createdAt", "desc"));
-            const usersSnap = await getDocs(uq);
+            renderScripts(document.getElementById('searchInput').value.toLowerCase());
             
-            usersSnap.forEach(docSnap => {
-                const u = docSnap.data();
-                const uid = docSnap.id;
-                const rBadge = u.role === 'admin' ? '<span class="badge badge-admin">Admin</span>' : '<span class="badge" style="background:#444;">User</span>';
-                const sBadge = u.isBanned ? '<span class="badge badge-banned">Banned</span>' : '<span class="badge badge-admin">Active</span>';
-                
-                const banBtn = u.isBanned ? 
-                    `<button onclick="toggleBan('${uid}', false, '${u.email}', '${u.username}')" class="btn-action" style="padding: 5px; width:auto; border-color:var(--success); color:var(--success)"><i class="fas fa-unlock"></i> Unban</button>` : 
-                    `<button onclick="toggleBan('${uid}', true, '${u.email}', '${u.username}')" class="btn-action" style="padding: 5px; width:auto; border-color:var(--danger); color:var(--danger)"><i class="fas fa-ban"></i> Ban</button>`;
+            if (isUserAdmin) {
+                document.getElementById('stat-scripts').innerText = scriptsDB.length;
+                let totalDownloads = scriptsDB.reduce((sum, script) => sum + (script.downloads || 0), 0);
+                document.getElementById('stat-downloads').innerText = totalDownloads;
+            }
+        };
 
-                usersTable.innerHTML += `
-                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
-                        <td style="padding:10px;"><b>${u.username}</b><br><small style="color:gray;">${u.email}</small></td>
-                        <td style="padding:10px;">${rBadge}</td>
-                        <td style="padding:10px;">${sBadge}</td>
-                        <td style="padding:10px;">${u.email !== mainAdmin ? banBtn : '<i>Main Admin</i>'}</td>
-                    </tr>`;
+        window.downloadFile = async (docId, url, scriptName) => {
+            const btn = document.getElementById(`btn-dl-${docId}`);
+            btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i>`;
+            try {
+                window.open(url, '_blank');
+                await updateDoc(doc(db, "scripts", docId), { downloads: increment(1) });
+                
+                let userName = currentUser ? (currentUser.displayName || currentUser.email) : "Unknown User";
+                sendDiscordWebhook("📥 Script Downloaded!", `A script has been successfully downloaded from the hub.`, "#9d00ff", [
+                    { name: "📜 Script Name", value: scriptName, inline: true },
+                    { name: "👤 Downloaded By", value: userName, inline: true }
+                ]);
+
+                showToast("Download started!", "success");
+                loadScripts(); 
+            } catch (error) { showToast("Error downloading file.", "error"); }
+            btn.innerHTML = `<i class="fas fa-download"></i> DL`;
+        };
+
+        const loadAdminPanel = async () => {
+            const select = document.getElementById('s-category');
+            select.innerHTML = '';
+            categoriesDB.forEach(cat => select.innerHTML += `<option value="${cat}">${cat}</option>`);
+            
+            const list = document.getElementById('adminList');
+            list.innerHTML = '';
+            scriptsDB.forEach(script => {
+                list.innerHTML += `
+                    <div class="user-list-item">
+                        <div class="req-info">
+                            <strong style="color:#fff;"><i class="fas fa-file-code"></i> ${script.title} <span style="font-size:0.8rem; color:var(--text-muted)">(${script.version})</span></strong>
+                            <span style="font-size: 0.85rem; color: var(--success);"><i class="fas fa-download"></i> ${script.downloads} Downloads</span>
+                        </div>
+                        <button onclick="deleteScript('${script.id}')" class="btn-action btn-danger btn-icon"><i class="fas fa-trash"></i></button>
+                    </div>`;
             });
 
-            // Load Requests
+            const usersTable = document.getElementById('usersTableBody');
+            try {
+                const uq = query(collection(db, "users"), orderBy("createdAt", "desc"));
+                const usersSnap = await getDocs(uq);
+                document.getElementById('stat-users').innerText = usersSnap.size;
+                usersTable.innerHTML = '';
+                
+                usersSnap.forEach(docSnap => {
+                    const u = docSnap.data();
+                    const uid = docSnap.id;
+                    const roleBadge = u.role === 'admin' ? '<span class="badge badge-admin">Admin</span>' : '<span class="badge badge-user">User</span>';
+                    const statusBadge = u.isBanned ? '<span class="badge badge-banned">Banned</span>' : '<span class="badge badge-user" style="color:var(--success)">Active</span>';
+                    
+                    const roleAction = u.role === 'admin' ? 
+                        `<button onclick="toggleRole('${uid}', 'user')" class="btn-action btn-icon" style="border-color:var(--text-muted); color:var(--text-muted)" title="Demote to User"><i class="fas fa-arrow-down"></i></button>` : 
+                        `<button onclick="toggleRole('${uid}', 'admin')" class="btn-action btn-icon btn-success" title="Promote to Admin"><i class="fas fa-arrow-up"></i></button>`;
+                        
+                    const banAction = u.isBanned ? 
+                        `<button onclick="toggleBan('${uid}', '${u.email}', '${u.username}', false)" class="btn-action btn-icon btn-success" title="Unban"><i class="fas fa-unlock"></i></button>` : 
+                        `<button onclick="toggleBan('${uid}', '${u.email}', '${u.username}', true)" class="btn-action btn-icon btn-danger" title="Ban User"><i class="fas fa-ban"></i></button>`;
+
+                    const actionsHtml = u.email === mainAdmin ? '<i>Main Admin</i>' : `<div style="display:flex; gap:5px;">${roleAction}${banAction}</div>`;
+
+                    usersTable.innerHTML += `
+                        <tr>
+                            <td>
+                                <div style="display:flex; flex-direction:column;">
+                                    <strong>${u.username}</strong>
+                                    <span style="font-size:0.75rem; color:var(--text-muted)">${u.email}</span>
+                                </div>
+                            </td>
+                            <td>${roleBadge}</td>
+                            <td>${statusBadge}</td>
+                            <td>${actionsHtml}</td>
+                        </tr>
+                    `;
+                });
+            } catch (e) {
+                console.error(e);
+                usersTable.innerHTML = '<tr><td colspan="4" style="color:var(--danger)">Error loading users.</td></tr>';
+            }
+
             const reqList = document.getElementById('requestsList');
-            reqList.innerHTML = '';
-            const rq = query(collection(db, "requests"), orderBy("date", "desc"));
-            const reqSnap = await getDocs(rq);
-            reqSnap.forEach(rDoc => {
-                const r = rDoc.data();
-                reqList.innerHTML += `
-                    <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:8px; margin-bottom:10px; border:1px solid rgba(255,255,255,0.1);">
-                        <strong style="color:var(--neon-purple);"><i class="fab fa-discord"></i> ${r.discord}</strong>
-                        <p style="font-size:0.9rem; margin-top:5px; color:#fff;">${r.desc}</p>
-                        <button onclick="deleteDoc(doc(db, 'requests', '${rDoc.id}')); showToast('Done!','success'); setTimeout(loadAdminPanel, 500);" class="btn-action" style="margin-top:10px; padding:5px 10px; width:auto;"><i class="fas fa-check"></i> Complete</button>
-                    </div>`;
+            try {
+                const q = query(collection(db, "requests"), orderBy("date", "desc"));
+                const reqSnap = await getDocs(q);
+                reqList.innerHTML = '';
+                if(reqSnap.empty) reqList.innerHTML = '<p style="color:var(--text-muted)">No pending requests.</p>';
+                else {
+                    reqSnap.forEach(docSnap => {
+                        const r = docSnap.data();
+                        const rDate = r.date ? new Date(r.date.seconds * 1000).toLocaleString() : 'Unknown date';
+                        reqList.innerHTML += `
+                        <div class="user-list-item" style="flex-direction:column; align-items:flex-start;">
+                            <div style="display:flex; justify-content:space-between; width:100%; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; margin-bottom: 8px;">
+                                <strong style="color: var(--neon-purple);"><i class="fab fa-discord"></i> ${r.discord}</strong>
+                                <span style="font-size:0.75rem; color:var(--text-muted)">${rDate}</span>
+                            </div>
+                            <p style="font-size:0.9rem; color:#fff; line-height: 1.4;">${r.desc}</p>
+                            <div style="width:100%; text-align:right; margin-top:10px;">
+                                <button onclick="deleteRequest('${docSnap.id}')" class="btn-action btn-success btn-sm" style="padding: 5px 10px; width:auto;"><i class="fas fa-check"></i> Mark as Done</button>
+                            </div>
+                        </div>`;
+                    });
+                }
+            } catch(e) { console.error(e); }
+        };
+
+        // Uses Custom Modal & Sends Ban Email via EmailJS
+        window.toggleBan = (uid, email, username, banStatus) => {
+            openModal({
+                title: banStatus ? 'Ban User' : 'Unban User',
+                desc: `Are you sure you want to ${banStatus ? 'BAN' : 'UNBAN'} this user?`,
+                type: 'confirm',
+                confirmText: banStatus ? 'Yes, Ban' : 'Yes, Unban',
+                confirmClass: banStatus ? 'btn-danger' : 'btn-success',
+                onConfirm: async () => {
+                    await updateDoc(doc(db, "users", uid), { isBanned: banStatus });
+                    showToast(`User ${banStatus ? 'banned' : 'unbanned'} successfully.`, "success");
+                    if(banStatus) triggerEmail(EMAILJS_TEMPLATE_BAN, email, username); // إرسال الإيميل
+                    loadAdminPanel();
+                }
             });
         };
 
-        window.toggleBan = async (uid, banStatus, email, username) => {
-            if(confirm(`Are you sure you want to ${banStatus ? 'BAN' : 'UNBAN'} this user?`)) {
-                await updateDoc(doc(db, "users", uid), { isBanned: banStatus });
-                if(banStatus) await sendBanEmail(email, username);
-                showToast(`User ${banStatus ? 'banned' : 'unbanned'}.`, "success");
-                loadAdminPanel();
-            }
+        window.toggleRole = (uid, newRole) => {
+            openModal({
+                title: 'Change Role',
+                desc: `Change this user's role to ${newRole.toUpperCase()}?`,
+                type: 'confirm',
+                confirmText: 'Yes, Change',
+                confirmClass: 'btn-success',
+                onConfirm: async () => {
+                    await updateDoc(doc(db, "users", uid), { role: newRole });
+                    showToast(`User role updated to ${newRole}.`, "success");
+                    loadAdminPanel();
+                }
+            });
+        };
+
+        window.deleteScript = (id) => {
+            openModal({
+                title: 'Delete Script',
+                desc: 'Are you sure you want to permanently delete this script?',
+                type: 'confirm',
+                confirmText: 'Yes, Delete',
+                confirmClass: 'btn-danger',
+                onConfirm: async () => {
+                    await deleteDoc(doc(db, "scripts", id));
+                    showToast("Script deleted.", "success");
+                    loadScripts(); loadAdminPanel();
+                }
+            });
+        };
+
+        window.deleteRequest = async (id) => {
+            await deleteDoc(doc(db, "requests", id));
+            showToast("Request marked as done and removed.", "success");
+            loadAdminPanel();
         };
 
         window.uploadScript = async (e) => {
             e.preventDefault();
-            let githubToken = sessionStorage.getItem('githubToken') || prompt("Enter GitHub Personal Access Token:");
-            if (!githubToken) return;
-            sessionStorage.setItem('githubToken', githubToken);
-
             const btn = document.getElementById('uploadBtn');
-            btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Publishing...`;
+            let githubToken = sessionStorage.getItem('githubToken');
+            
+            if (!githubToken) {
+                openModal({
+                    title: 'GitHub Authentication',
+                    desc: 'Enter your GitHub Personal Access Token:',
+                    type: 'input',
+                    placeholder: 'ghp_xxxxxxxxxxxx',
+                    confirmText: 'Save Token',
+                    confirmClass: 'btn-success',
+                    onConfirm: (token) => {
+                        sessionStorage.setItem('githubToken', token);
+                        window.uploadScript(e); // Retry upload
+                    }
+                });
+                return;
+            }
+
+            btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading...`;
             btn.disabled = true;
 
             const title = document.getElementById('s-title').value;
             const version = document.getElementById('s-version').value;
+            const category = document.getElementById('s-category').value;
             const desc = document.getElementById('s-desc').value;
             const file = document.getElementById('s-file').files[0];
 
             const reader = new FileReader();
             reader.onloadend = async () => {
                 try {
-                    const finalFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '')}`;
-                    const res = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${finalFileName}`, {
+                    const base64data = reader.result.split(',')[1];
+                    const cleanFileName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, ''); 
+                    const finalFileName = `${Date.now()}_${cleanFileName}`;
+                    
+                    const apiUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/${finalFileName}`;
+
+                    const response = await fetch(apiUrl, {
                         method: 'PUT',
                         headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ message: `Upload script: ${title}`, content: reader.result.split(',')[1] })
+                        body: JSON.stringify({ message: `Upload script: ${title}`, content: base64data })
                     });
-                    if (!res.ok) throw new Error('GitHub Upload Failed');
-                    
-                    const fileUrl = (await res.json()).content.download_url; 
-                    await addDoc(collection(db, "scripts"), { title, version, desc, fileUrl, createdAt: new Date() });
-                    
-                    // إرسال الإيميلات لجميع المستخدمين والديسكورد
-                    await notifyAllNewScript(title, desc);
-                    sendDiscordWebhook("🚀 New Script Published!", `**${title}** has been uploaded.`, "#9d00ff");
 
-                    showToast('Published Successfully!', 'success');
-                    e.target.reset(); loadScripts();
-                } catch(err) { showToast(err.message, 'error'); } 
-                finally { btn.innerHTML = `<i class="fas fa-rocket"></i> Publish & Notify All`; btn.disabled = false; }
+                    if (!response.ok) {
+                        if(response.status === 401) sessionStorage.removeItem('githubToken');
+                        throw new Error('GitHub Upload Failed');
+                    }
+
+                    const data = await response.json();
+                    const fileUrl = data.content.download_url; 
+
+                    await addDoc(collection(db, "scripts"), {
+                        title, version, category, desc, fileUrl, fileName: finalFileName, downloads: 0, creator: "_rayynn", createdAt: new Date()
+                    });
+                    
+                    sendDiscordWebhook("🚀 New Script Published!", `**${title}** has been uploaded to the hub by Admin.`, "#9d00ff", [
+                        { name: "🏷️ Version", value: version, inline: true },
+                        { name: "📂 Category", value: category, inline: true },
+                        { name: "📝 Description", value: desc }
+                    ]);
+
+                    showToast('Script Published Successfully!', 'success');
+                    document.getElementById('adminForm').reset();
+                    loadScripts(); loadAdminPanel();
+                } catch(err) { showToast('Error: ' + err.message, 'error'); } 
+                finally { btn.innerHTML = `<i class="fas fa-rocket"></i> Publish & Notify Discord`; btn.disabled = false; }
             };
             reader.readAsDataURL(file);
         };
 
         window.submitRequest = async (e) => {
             e.preventDefault();
+            const btn = document.getElementById('btn-request');
+            btn.innerHTML = '<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Sending...';
+            btn.disabled = true;
+
             const discord = document.getElementById('req-discord').value;
             const desc = document.getElementById('req-desc').value;
-            await addDoc(collection(db, "requests"), { discord, desc, date: new Date(), by: currentUser.email });
-            sendDiscordWebhook("📨 New Script Request!", `From: ${discord}\nDesc: ${desc}`, "#ffaa00");
-            showToast('Request Sent!', 'success');
-            e.target.reset();
+            try {
+                await addDoc(collection(db, "requests"), { discord, desc, date: new Date(), by: currentUser.email });
+                
+                sendDiscordWebhook("📨 New Script Request!", `A user requested a custom script.`, "#ffaa00", [
+                    { name: "👾 Discord Tag", value: discord, inline: true },
+                    { name: "📧 Email", value: currentUser.email, inline: true },
+                    { name: "📄 Description", value: desc }
+                ]);
+
+                showToast('Your request has been sent to the admin!', 'success');
+                e.target.reset();
+            } catch(error) { showToast('Error sending request.', 'error'); }
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Request';
+            btn.disabled = false;
         }
+
     </script>
 </body>
 </html>
