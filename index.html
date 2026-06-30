@@ -338,7 +338,7 @@
 
                 <div class="admin-section-box admin-only">
                     <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-cloud-upload-alt"></i> Publish New Script</h3>
-                    <form id="adminForm" onsubmit="uploadScript(event)">
+                    <form id="adminForm" onsubmit="window.uploadScript(event)">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                             <input type="text" id="s-title" class="form-input" placeholder="Script Name" required>
                             <input type="text" id="s-version" class="form-input" placeholder="Version (e.g. v1.0)" required>
@@ -365,13 +365,13 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, increment, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
-        import { Client, Storage, ID } from "https://cdn.jsdelivr.net/npm/appwrite@14.0.1/+esm";
-
         const firebaseConfig = {
             apiKey: "AIzaSyCP2XATMarqRgF_esuWnMGw-C5GI-nGbMc",
             authDomain: "kazza-scripts-68cb4.firebaseapp.com",
@@ -381,6 +381,8 @@
             appId: "1:809255585228:web:e3e233f53792cca40ec969"
         };
 
+        // إعداد العميل لـ Appwrite من خلال النطاق العام بعد تحميل مكتبة الـ Script بنجاح
+        const { Client, Storage, ID } = Appwrite;
         const appwriteClient = new Client()
             .setEndpoint('https://cloud.appwrite.io/v1')
             .setProject('6a4294fd00231283db19'); 
@@ -834,19 +836,29 @@
 
         window.deleteRequest = async (id) => { await deleteDoc(doc(db, "requests", id)); showToast("Request marked as done.", "success"); loadAdminPanel(); };
 
+        // جعل دالة الرفع معرفة بـ النطاق العام للـ window لتفادي مشاكل الـ Module Isolation
         window.uploadScript = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('uploadBtn');
+            if (btn.disabled) return; 
             btn.disabled = true;
 
-            const title = document.getElementById('s-title').value; 
-            const version = document.getElementById('s-version').value; 
+            const title = document.getElementById('s-title').value.trim(); 
+            const version = document.getElementById('s-version').value.trim(); 
             const category = document.getElementById('s-category').value; 
-            const desc = document.getElementById('s-desc').value; 
+            const desc = document.getElementById('s-desc').value.trim(); 
             const scriptFile = document.getElementById('s-file').files[0];
             const imageFile = document.getElementById('s-image').files[0];
 
+            if (!scriptFile) {
+                showToast("Please select a script file.", "error");
+                btn.disabled = false;
+                return;
+            }
+
             try {
+                // رفع الملف لـ Appwrite
+                btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading Script... 0%`;
                 const scriptResponse = await appwriteStorage.createFile(
                     BUCKET_ID,
                     ID.unique(),
@@ -854,7 +866,7 @@
                     [],
                     (progress) => {
                         const percentage = Math.round(progress.progress);
-                        btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> جاري الرفع... ${percentage}%`;
+                        btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading... ${percentage}%`;
                     }
                 );
                 
@@ -863,7 +875,7 @@
 
                 let finalImageUrl = "";
                 if (imageFile) {
-                    btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> جاري رفع الصورة...`;
+                    btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading Image...`;
                     const imageResponse = await appwriteStorage.createFile(
                         BUCKET_ID,
                         ID.unique(),
@@ -872,8 +884,9 @@
                     finalImageUrl = `https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${imageResponse.$id}/view?project=6a4294fd00231283db19`;
                 }
 
-                btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> جاري حفظ البيانات...`;
+                btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Saving Data...`;
 
+                // حفظ الداتا بـ Firestore
                 await addDoc(collection(db, "scripts"), { 
                     title, 
                     version, 
@@ -890,8 +903,9 @@
                 logToDB("New Script Published", `${title} (${version}) uploaded via Appwrite.`, "success");
                 showToast('Script Published Successfully!', 'success'); 
                 document.getElementById('adminForm').reset(); 
-                loadScripts(); 
-                loadAdminPanel();
+                
+                await loadScripts(); 
+                await loadAdminPanel();
             } catch(err) { 
                 console.error("Appwrite Upload Failure:", err);
                 showToast('Upload Error: ' + err.message, 'error'); 
@@ -934,3 +948,4 @@
     </script>
 </body>
 </html>
+
