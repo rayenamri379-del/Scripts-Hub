@@ -6,179 +6,241 @@
     <meta name="author" content="_rayynn">
     <meta name="description" content="KaZzA Scripts Hub - Created and developed exclusively by _rayynn.">
     <title>KaZzA Scripts | _rayynn Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
+        /* المتغيرات والتصميم الأساسي */
         :root {
             --bg-color: #05010a;
-            --glass-bg: rgba(20, 5, 30, 0.55);
-            --glass-border: rgba(157, 0, 255, 0.4);
+            --glass-bg: rgba(15, 5, 25, 0.65);
+            --glass-border: rgba(157, 0, 255, 0.3);
             --neon-purple: #9d00ff; 
-            --neon-glow: #6a0dad;
+            --neon-glow: #7a15cc;
+            --neon-light: #c266ff;
             --text-main: #ffffff;
             --text-muted: #b39ddb;
-            --card-bg: rgba(10, 2, 17, 0.8);
-            --danger: #ff3333;
-            --success: #00ffcc;
-            --warning: #ffaa00;
+            --card-bg: rgba(10, 2, 17, 0.85);
+            --danger: #ff3b3b;
+            --success: #00e6b8;
+            --warning: #ffb84d;
         }
 
         body.banned-theme {
-            --bg-color: #0a0000;
-            --glass-bg: rgba(30, 5, 5, 0.7);
-            --glass-border: rgba(255, 0, 0, 0.6);
-            --neon-purple: #ff0000;
-            --neon-glow: #aa0000;
-            --text-muted: #ff9999;
-            background-image: radial-gradient(circle at 15% 50%, rgba(255, 0, 0, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(170, 0, 0, 0.15), transparent 25%);
+            --bg-color: #0d0000;
+            --glass-bg: rgba(25, 5, 5, 0.8);
+            --glass-border: rgba(255, 0, 0, 0.5);
+            --neon-purple: #ff2a2a;
+            --neon-glow: #cc0000;
+            --text-muted: #ffb3b3;
+            background-image: radial-gradient(circle at 50% 50%, rgba(255, 0, 0, 0.1), transparent 60%);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-color); }
-        ::-webkit-scrollbar-thumb { background: var(--neon-glow); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--neon-purple); }
+        ::-webkit-scrollbar-thumb { background: var(--neon-purple); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-light); }
 
         body { 
-            background-color: var(--bg-color); color: var(--text-main); 
-            background-image: radial-gradient(circle at 15% 50%, rgba(157, 0, 255, 0.15), transparent 25%), radial-gradient(circle at 85% 30%, rgba(106, 13, 173, 0.15), transparent 25%); 
-            background-attachment: fixed; min-height: 100vh; overflow-x: hidden; 
-            transition: background-color 0.5s ease;
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(157, 0, 255, 0.15), transparent 40%), 
+                radial-gradient(circle at 90% 80%, rgba(106, 13, 173, 0.15), transparent 40%); 
+            background-attachment: fixed; 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--glass-bg); backdrop-filter: blur(10px); border-left: 4px solid var(--neon-purple); border-radius: 8px; padding: 15px 20px; color: #fff; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards; min-width: 250px; }
+        /* تحسينات الإشعارات (Toasts) */
+        .toast-container { position: fixed; bottom: 25px; right: 25px; z-index: 99999; display: flex; flex-direction: column; gap: 12px; }
+        .toast { 
+            background: rgba(15, 5, 25, 0.9); backdrop-filter: blur(15px); 
+            border-left: 4px solid var(--neon-purple); border-radius: 10px; 
+            padding: 16px 24px; color: #fff; display: flex; align-items: center; gap: 12px; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05); 
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), fadeOut 0.4s ease-in 3.6s forwards; 
+            font-weight: 600; min-width: 280px; 
+        }
         .toast.success { border-color: var(--success); }
         .toast.error { border-color: var(--danger); }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        .toast i { font-size: 1.2rem; }
+        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
 
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(8px); opacity: 0; transition: opacity 0.3s ease; }
+        /* النوافذ المنبثقة (Modals) بطابع زجاجي متقدم */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 10000; justify-content: center; align-items: center; backdrop-filter: blur(12px); opacity: 0; transition: opacity 0.4s ease; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal-box { background: var(--glass-bg); border: 1px solid var(--glass-border); border-top: 3px solid var(--neon-purple); padding: 30px; border-radius: 15px; text-align: center; max-width: 450px; width: 90%; box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: translateY(-20px); transition: transform 0.3s ease; }
-        .modal-overlay.active .modal-box { transform: translateY(0); }
-        .modal-title { font-size: 1.5rem; color: var(--neon-purple); margin-bottom: 15px; font-weight: 700; }
-        .modal-desc { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; line-height: 1.5; }
-        .modal-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .modal-box { 
+            background: linear-gradient(145deg, rgba(20, 5, 35, 0.9), rgba(10, 2, 15, 0.95)); 
+            border: 1px solid var(--glass-border); border-top: 4px solid var(--neon-purple); 
+            padding: 35px; border-radius: 20px; text-align: center; max-width: 480px; width: 92%; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.7), 0 0 20px rgba(157, 0, 255, 0.15); 
+            transform: scale(0.9) translateY(20px); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        .modal-overlay.active .modal-box { transform: scale(1) translateY(0); }
+        .modal-title { font-size: 1.6rem; color: var(--neon-purple); margin-bottom: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .modal-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 25px; line-height: 1.6; }
+        .modal-buttons { display: flex; gap: 15px; justify-content: center; }
 
-        .dl-icon-container { font-size: 3.5rem; color: var(--neon-purple); margin-bottom: 15px; animation: bounce 1.5s infinite; text-shadow: 0 0 20px var(--neon-purple); }
-        .dl-progress-bg { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 20px; position: relative; }
-        .dl-progress-bar { width: 0%; height: 100%; background: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        /* شريط التحميل */
+        .dl-icon-container { font-size: 4rem; color: var(--neon-purple); margin-bottom: 20px; animation: floatIcon 2s ease-in-out infinite; text-shadow: 0 0 25px rgba(157, 0, 255, 0.6); }
+        .dl-progress-bg { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; margin-top: 25px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
+        .dl-progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--neon-purple), var(--neon-light)); box-shadow: 0 0 15px var(--neon-purple); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
 
-        #banned-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: transparent; z-index: 9999; justify-content: center; align-items: center; flex-direction: column; color: var(--neon-purple); text-align: center; padding: 20px; backdrop-filter: blur(10px); }
-        #banned-screen h1 { font-size: 5rem; text-shadow: 0 0 30px var(--neon-purple); margin-bottom: 10px; font-weight: 900; letter-spacing: 5px; }
+        /* شاشة الحظر */
+        #banned-screen { display: none; position: fixed; inset: 0; background: rgba(5,0,0,0.95); z-index: 99999; justify-content: center; align-items: center; flex-direction: column; color: var(--danger); text-align: center; padding: 20px; backdrop-filter: blur(15px); }
+        #banned-screen h1 { font-size: 5.5rem; text-shadow: 0 0 40px rgba(255,0,0,0.6); margin-bottom: 15px; font-weight: 900; letter-spacing: 8px; text-transform: uppercase; }
 
-        #app-content { display: none; opacity: 0; transition: opacity 0.5s ease-in; }
+        #app-content { display: none; opacity: 0; transition: opacity 0.6s ease-in; }
         #app-content.visible { display: block; opacity: 1; }
 
-        #auth-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-        .auth-container { background: var(--glass-bg); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-top: 3px solid var(--neon-purple); padding: 40px; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 40px rgba(157, 0, 255, 0.2); text-align: center; }
-        .auth-logo { font-size: 2rem; font-weight: 900; color: var(--neon-purple); text-shadow: 0 0 15px var(--neon-purple); letter-spacing: 2px; margin-bottom: 30px; }
-        .auth-toggle { display: flex; margin-bottom: 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .auth-toggle button { flex: 1; background: none; border: none; padding: 10px; color: var(--text-muted); font-size: 1rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .auth-toggle button.active { color: var(--neon-purple); border-bottom: 2px solid var(--neon-purple); text-shadow: 0 0 8px rgba(157, 0, 255, 0.5); }
+        /* شاشة تسجيل الدخول */
+        #auth-overlay { position: fixed; inset: 0; background: var(--bg-color); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 20px; background-image: radial-gradient(circle at 50% 0%, rgba(157, 0, 255, 0.1), transparent 70%); }
+        .auth-container { background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--glass-border); padding: 45px; border-radius: 20px; width: 100%; max-width: 420px; box-shadow: 0 15px 50px rgba(0,0,0,0.5), 0 0 30px rgba(157, 0, 255, 0.1); text-align: center; position: relative; overflow: hidden; }
+        .auth-container::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, transparent, var(--neon-purple), transparent); }
+        .auth-logo { font-size: 2.2rem; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--neon-purple); letter-spacing: 2px; margin-bottom: 35px; }
+        .auth-logo span { color: var(--neon-purple); }
+        
+        .auth-toggle { display: flex; margin-bottom: 30px; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 5px; }
+        .auth-toggle button { flex: 1; background: transparent; border: none; padding: 12px; color: var(--text-muted); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; border-radius: 8px; }
+        .auth-toggle button.active { background: var(--neon-purple); color: #fff; box-shadow: 0 4px 15px rgba(157, 0, 255, 0.4); }
+        
         .auth-form { display: none; animation: fadeIn 0.4s ease-out; }
         .auth-form.active { display: block; }
-        .auth-msg { font-size: 0.85rem; margin-bottom: 15px; min-height: 20px; font-weight: 500; }
-        .msg-error { color: var(--danger); text-shadow: 0 0 5px var(--danger); }
-        .msg-success { color: var(--success); text-shadow: 0 0 5px var(--success); }
-        .social-login-divider { display: flex; align-items: center; text-align: center; margin: 20px 0; color: var(--text-muted); font-size: 0.85rem; }
-        .social-login-divider::before, .social-login-divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        .btn-social { padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 8px; font-size: 0.95rem; border: none; width: 100%; }
-        .btn-google { background: #ffffff; color: #333; }
-        .btn-google:hover { background: #e6e6e6; box-shadow: 0 0 15px rgba(255, 255, 255, 0.4); transform: translateY(-2px); }
+        .auth-msg { font-size: 0.9rem; margin-bottom: 15px; min-height: 20px; font-weight: 600; }
+        .msg-error { color: var(--danger); text-shadow: 0 0 8px rgba(255,59,59,0.5); }
+        .msg-success { color: var(--success); text-shadow: 0 0 8px rgba(0,230,184,0.5); }
+        
+        .social-login-divider { display: flex; align-items: center; text-align: center; margin: 25px 0; color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
+        .social-login-divider::before, .social-login-divider::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin: 0 15px; }
+        .btn-social { padding: 14px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 1rem; border: none; width: 100%; background: #fff; color: #111; }
+        .btn-social:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(255,255,255,0.2); }
 
-        nav { background: var(--glass-bg); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); padding: 15px 50px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 15px; box-shadow: 0 4px 30px rgba(0,0,0,0.3); }
-        .logo-container { display: flex; align-items: center; gap: 15px; }
-        .logo { font-size: 1.5rem; font-weight: 900; color: var(--neon-purple); text-shadow: 0 0 15px var(--neon-purple); letter-spacing: 2px; }
-        .discord-pulse { font-size: 1.8rem; color: #b39ddb; text-decoration: none; animation: pulse-discord 2s infinite; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
-        .discord-pulse:hover { transform: scale(1.15); color: #fff; }
-        @keyframes pulse-discord { 0% { text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); color: var(--neon-purple); } 50% { text-shadow: 0 0 15px var(--success), 0 0 25px var(--success); color: #fff; } 100% { text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple); color: var(--neon-purple); } }
-        .nav-links { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
-        .nav-links button { background: none; border: none; color: var(--text-main); font-size: 0.95rem; font-weight: 500; cursor: pointer; transition: 0.3s; padding: 5px 10px; border-radius: 5px; }
-        .nav-links button:hover, .nav-links button.active { color: var(--neon-purple); text-shadow: 0 0 8px var(--neon-purple); background: rgba(157, 0, 255, 0.1); }
-        .login-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--glass-border); padding: 8px 15px; border-radius: 8px; display: flex; align-items: center; gap: 8px; }
-        .login-btn:hover { background: var(--danger); border-color: var(--danger); color: #fff; box-shadow: 0 0 15px var(--danger); }
+        /* القائمة العلوية */
+        nav { background: rgba(10, 2, 15, 0.85); backdrop-filter: blur(25px); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 15px 60px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 5px 30px rgba(0,0,0,0.5); }
+        .logo-container { display: flex; align-items: center; gap: 20px; }
+        .logo { font-size: 1.6rem; font-weight: 900; color: #fff; letter-spacing: 1px; }
+        .logo span { color: var(--neon-purple); text-shadow: 0 0 15px var(--neon-purple); }
+        .discord-pulse { font-size: 1.8rem; color: #b39ddb; text-decoration: none; animation: pulse-discord 2.5s infinite; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .discord-pulse:hover { transform: scale(1.15) rotate(5deg); color: #fff; }
+        @keyframes pulse-discord { 0%, 100% { filter: drop-shadow(0 0 5px var(--neon-purple)); color: var(--neon-light); } 50% { filter: drop-shadow(0 0 15px var(--neon-purple)); color: #fff; } }
+        
+        .nav-links { display: flex; align-items: center; gap: 10px; }
+        .nav-links button { background: transparent; border: 1px solid transparent; color: var(--text-muted); font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; padding: 10px 18px; border-radius: 8px; display: flex; align-items: center; gap: 8px; }
+        .nav-links button:hover, .nav-links button.active { color: #fff; background: rgba(157, 0, 255, 0.15); border-color: rgba(157,0,255,0.3); box-shadow: 0 0 15px rgba(157, 0, 255, 0.1); }
+        .login-btn { background: rgba(255, 59, 59, 0.1) !important; border: 1px solid rgba(255, 59, 59, 0.3) !important; color: #ff8080 !important; }
+        .login-btn:hover { background: var(--danger) !important; color: #fff !important; box-shadow: 0 0 20px rgba(255, 59, 59, 0.4) !important; border-color: var(--danger) !important; }
+        
         .admin-only { display: none !important; }
-        .admin-visible { display: inline-flex !important; }
-        .view-section { display: none; animation: fadeIn 0.4s ease-out; }
+        .admin-visible { display: flex !important; }
+        .view-section { display: none; animation: slideUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); }
         .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        .hero { text-align: center; padding: 60px 20px; }
-        .hero h1 { font-size: 3.5rem; font-weight: 900; margin-bottom: 15px; background: linear-gradient(45deg, #ffffff, var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 30px auto; }
-        .creator-badge { display: inline-block; background: rgba(157,0,255,0.1); border: 1px solid var(--neon-purple); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; color: #fff; margin-bottom: 20px; }
+        /* القسم الرئيسي */
+        .hero { text-align: center; padding: 80px 20px 40px; position: relative; }
+        .hero h1 { font-size: 4rem; font-weight: 900; margin-bottom: 15px; background: linear-gradient(to right, #fff, var(--neon-light), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(157,0,255,0.2)); letter-spacing: -1px; }
+        .hero p { color: var(--text-muted); font-size: 1.15rem; max-width: 650px; margin: 0 auto 30px auto; line-height: 1.6; }
+        .creator-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(20, 5, 30, 0.8); border: 1px solid var(--neon-purple); padding: 8px 25px; border-radius: 30px; font-size: 0.95rem; font-weight: 600; color: #fff; margin-bottom: 25px; box-shadow: 0 0 20px rgba(157, 0, 255, 0.2); backdrop-filter: blur(10px); }
+        .creator-badge strong { color: var(--neon-light); text-shadow: 0 0 8px var(--neon-purple); }
         
-        .categories { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-        .cat-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; padding: 8px 20px; border-radius: 20px; cursor: pointer; transition: all 0.3s ease; }
-        .cat-btn.active, .cat-btn:hover { background: var(--neon-purple); box-shadow: 0 0 15px var(--neon-purple); transform: scale(1.05); }
-        .search-container { max-width: 800px; margin: 0 auto 20px auto; padding: 0 20px; position: relative; }
+        .search-container { max-width: 750px; margin: 0 auto 30px auto; padding: 0 20px; position: relative; }
+        .search-container i { position: absolute; left: 40px; top: 50%; transform: translateY(-50%); color: var(--neon-purple); font-size: 1.2rem; }
         
-        .form-input { width: 100%; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); padding: 12px 20px; border-radius: 8px; color: white; font-size: 1rem; outline: none; transition: 0.3s; margin-bottom: 15px; }
-        .form-input:focus { border-color: var(--neon-purple); box-shadow: 0 0 15px rgba(157, 0, 255, 0.4); background: rgba(0,0,0,0.5); }
+        .form-input { width: 100%; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255,255,255,0.1); padding: 15px 20px; border-radius: 12px; color: white; font-size: 1rem; outline: none; transition: all 0.3s ease; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); margin-bottom: 15px; font-weight: 500; }
+        .form-input:focus { border-color: var(--neon-purple); background: rgba(10,2,15,0.8); box-shadow: 0 0 0 3px rgba(157, 0, 255, 0.15), inset 0 2px 4px rgba(0,0,0,0.3); }
+        .search-container .form-input { padding-left: 55px; border-radius: 30px; font-size: 1.1rem; }
         
-        .scripts-container { max-width: 1100px; margin: 0 auto; padding: 0 20px 80px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-        .script-card { background: var(--card-bg); border: 1px solid var(--glass-border); border-top: 3px solid var(--neon-purple); border-radius: 12px; padding: 25px; transition: all 0.4s ease; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
-        .script-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(157, 0, 255, 0.3); border-color: var(--neon-purple); }
+        .categories { display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; padding: 0 20px; }
+        .cat-btn { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted); padding: 10px 24px; border-radius: 30px; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 600; font-size: 0.95rem; }
+        .cat-btn.active, .cat-btn:hover { background: var(--neon-purple); color: #fff; border-color: var(--neon-purple); box-shadow: 0 5px 20px rgba(157, 0, 255, 0.4); transform: translateY(-3px); }
         
-        .script-preview-img { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; margin-bottom: 15px; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: 0.3s; }
-        .script-preview-img:hover { border-color: var(--neon-purple); filter: brightness(1.2); }
+        /* البطاقات (السكريبتات) */
+        .scripts-container { max-width: 1250px; margin: 0 auto; padding: 0 20px 80px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 30px; }
+        .script-card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 25px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.4); backdrop-filter: blur(10px); }
+        .script-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, transparent, var(--neon-purple), transparent); opacity: 0; transition: 0.4s; }
+        .script-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 30px rgba(157,0,255,0.1); border-color: rgba(157,0,255,0.3); }
+        .script-card:hover::before { opacity: 1; }
+        
+        .script-preview-img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.05); cursor: pointer; transition: 0.4s ease; background-color: rgba(0,0,0,0.5); }
+        .script-preview-img:hover { border-color: var(--neon-purple); filter: brightness(1.1); transform: scale(1.02); }
 
-        .script-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; z-index: 1; }
-        .script-title { font-size: 1.2rem; color: #fff; display: flex; align-items: center; gap: 10px; }
-        .version-badge { background: rgba(157, 0, 255, 0.2); padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; color: #fff; border: 1px solid var(--neon-purple);}
-        .script-date { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 15px; display: block; position: relative; z-index: 1;}
-        .script-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; min-height: 60px; position: relative; z-index: 1;}
-        .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 15px; position: relative; z-index: 1; margin-top: auto;}
+        .script-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .script-title { font-size: 1.3rem; color: #fff; font-weight: 700; line-height: 1.3; }
+        .version-badge { background: rgba(157, 0, 255, 0.15); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; color: var(--neon-light); border: 1px solid rgba(157,0,255,0.3); font-weight: 700; white-space: nowrap; margin-left: 10px; }
+        .script-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: center; gap: 15px; }
+        .script-meta i { color: var(--neon-purple); }
+        .script-desc { font-size: 0.95rem; color: #ccc; line-height: 1.6; margin-bottom: 25px; flex-grow: 1; }
+        
+        .card-footer { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-top: auto; }
+        
+        .btn-action { background: rgba(157,0,255,0.1); color: #fff; border: 1px solid var(--neon-purple); padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 10px; font-size: 0.95rem; width: 100%; }
+        .btn-action:hover:not(:disabled) { background: var(--neon-purple); box-shadow: 0 5px 20px rgba(157, 0, 255, 0.4); transform: translateY(-2px); }
+        .btn-action:disabled { opacity: 0.6; cursor: not-allowed; border-color: #555; background: rgba(255,255,255,0.05); color: #888; }
+        
+        .btn-danger { color: #ff6b6b; border-color: #ff6b6b; background: rgba(255,107,107,0.1); }
+        .btn-danger:hover { background: #ff6b6b; color: #fff; box-shadow: 0 5px 20px rgba(255,107,107,0.4); }
+        .btn-success { color: var(--success); border-color: var(--success); background: rgba(0,230,184,0.1); }
+        .btn-success:hover { background: var(--success); color: #000; box-shadow: 0 5px 20px rgba(0,230,184,0.4); }
+        .btn-secondary { color: var(--text-muted); border-color: rgba(255,255,255,0.2); background: transparent; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: #fff; }
+        .btn-icon { padding: 10px; width: auto; border-radius: 8px; }
 
-        .btn-action { width: 100%; background: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-action:hover { background: var(--neon-purple); color: #fff; box-shadow: 0 0 15px var(--neon-purple); }
-        .btn-danger { color: var(--danger); border-color: var(--danger); }
-        .btn-danger:hover { background: var(--danger); color: white; box-shadow: 0 0 15px var(--danger); }
-        .btn-success { color: var(--success); border-color: var(--success); }
-        .btn-success:hover { background: var(--success); color: #000; box-shadow: 0 0 15px var(--success); }
-        .btn-icon { padding: 8px 12px; width: auto; border-radius: 6px; }
+        /* النماذج ولوحة التحكم */
+        .form-container { max-width: 900px; margin: 40px auto; background: var(--card-bg); padding: 45px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: 0 15px 40px rgba(0,0,0,0.5); backdrop-filter: blur(15px); }
+        .form-container h2 { font-size: 2rem; font-weight: 800; text-align: center; margin-bottom: 30px; color: #fff; }
+        .form-container h2 i { color: var(--neon-purple); margin-right: 10px; }
         
-        .form-container { max-width: 900px; margin: 40px auto; background: var(--glass-bg); padding: 40px; border-radius: 15px; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .admin-section-box { background: rgba(0,0,0,0.4); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--glass-border); overflow-x: auto; }
-        .user-list-item { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items:center; margin-bottom: 10px; transition: 0.3s;}
-        .user-list-item:hover { border-color: var(--neon-purple); background: rgba(157,0,255,0.05); }
+        .admin-section-box { background: rgba(0,0,0,0.3); padding: 30px; border-radius: 16px; margin-bottom: 35px; border: 1px solid rgba(255,255,255,0.05); }
+        .admin-section-box h3 { margin-bottom: 20px; color: #fff; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .admin-section-box h3 i { color: var(--neon-purple); }
         
-        .log-item { background: rgba(0,0,0,0.3); border-left: 3px solid var(--text-muted); padding: 12px 15px; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 5px; }
+        .user-list-item { background: rgba(20,5,30,0.5); padding: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.03); display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: 0.3s; }
+        .user-list-item:hover { border-color: rgba(157,0,255,0.3); background: rgba(157,0,255,0.08); transform: translateX(5px); }
+        
+        .log-item { background: rgba(10,2,15,0.6); border-left: 4px solid var(--text-muted); padding: 15px 20px; border-radius: 8px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; transition: 0.3s; }
+        .log-item:hover { background: rgba(20,5,30,0.8); }
         .log-item.success { border-left-color: var(--success); }
         .log-item.warning { border-left-color: var(--warning); }
         .log-item.danger { border-left-color: var(--danger); }
         .log-item.info { border-left-color: var(--neon-purple); }
-        .log-header { display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; color: #fff; }
-        .log-desc { font-size: 0.85rem; color: var(--text-muted); }
+        .log-header { display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 700; color: #fff; }
+        .log-time { font-weight: 500; font-size: 0.8rem; color: var(--text-muted); }
+        .log-desc { font-size: 0.9rem; color: #ccc; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); border-radius: 10px; padding: 20px; text-align: center; }
-        .stat-card h3 { color: var(--text-muted); font-size: 1rem; margin-bottom: 10px; }
-        .stat-card .number { font-size: 2.5rem; font-weight: 900; color: var(--neon-purple); text-shadow: 0 0 10px var(--neon-purple); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .stat-card { background: linear-gradient(135deg, rgba(20,5,30,0.6), rgba(5,1,10,0.8)); border: 1px solid rgba(157,0,255,0.2); border-radius: 16px; padding: 25px; text-align: center; position: relative; overflow: hidden; transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(157,0,255,0.15); border-color: var(--neon-purple); }
+        .stat-card::after { content: '\f080'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: -20px; bottom: -20px; font-size: 6rem; opacity: 0.03; color: #fff; }
+        .stat-card h3 { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 15px; font-weight: 600; }
+        .stat-card .number { font-size: 3rem; font-weight: 900; color: #fff; text-shadow: 0 0 20px var(--neon-purple); }
 
-        .users-table-wrapper { overflow-x: auto; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; color: #fff; min-width: 500px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        th { color: var(--neon-purple); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; }
-        tr:hover { background: rgba(255,255,255,0.02); }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
-        .badge-admin { background: rgba(0, 255, 204, 0.2); color: var(--success); border: 1px solid var(--success); }
-        .badge-user { background: rgba(255, 255, 255, 0.1); color: #ccc; }
-        .badge-banned { background: rgba(255, 0, 0, 0.2); color: var(--danger); border: 1px solid var(--danger); }
+        .users-table-wrapper { overflow-x: auto; margin-top: 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        table { width: 100%; border-collapse: collapse; color: #fff; min-width: 600px; background: rgba(0,0,0,0.2); }
+        th, td { padding: 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        th { background: rgba(157,0,255,0.1); color: var(--neon-light); font-weight: 700; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px; }
+        tr:hover { background: rgba(157,0,255,0.05); }
+        
+        .badge { padding: 6px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .badge-admin { background: rgba(0, 230, 184, 0.15); color: var(--success); border: 1px solid rgba(0,230,184,0.3); }
+        .badge-user { background: rgba(255, 255, 255, 0.05); color: #ccc; border: 1px solid rgba(255,255,255,0.1); }
+        .badge-banned { background: rgba(255, 59, 59, 0.15); color: var(--danger); border: 1px solid rgba(255,59,59,0.3); }
 
-        .loading-spinner { display: none; color: var(--neon-purple); margin: 10px auto; font-size: 24px; animation: spin 1s linear infinite; }
+        .loading-spinner { display: none; color: var(--neon-purple); margin: 15px auto; font-size: 28px; animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         @media (max-width: 768px) {
-            nav { padding: 15px 20px; flex-direction: column; }
-            .nav-links { justify-content: center; }
-            .form-container { padding: 20px; margin: 20px; }
-            .script-card { padding: 15px; }
+            nav { padding: 15px 20px; flex-direction: column; gap: 15px; }
+            .nav-links { justify-content: center; flex-wrap: wrap; }
+            .hero h1 { font-size: 2.8rem; }
+            .form-container { padding: 25px; margin: 20px; }
+            .script-card { padding: 20px; }
+            .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -189,10 +251,11 @@
     <div id="download-modal" class="modal-overlay">
         <div class="modal-box">
             <div class="dl-icon-container">
-                <i class="fas fa-cloud-download-alt"></i>
+                <i class="fas fa-rocket"></i>
             </div>
-            <h2 style="color: #fff; margin-bottom: 5px; font-size: 1.3rem;">Preparing Download</h2>
-            <p id="dl-script-name" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">script.zip</p>
+            <h2 style="color: #fff; margin-bottom: 10px; font-size: 1.5rem; font-weight: 800;">جاري توجيهك...</h2>
+            <p id="dl-script-name" style="color: var(--text-muted); font-size: 1rem; margin-bottom: 20px;">script_name</p>
+            <p style="font-size: 0.85rem; color: #888;">سيتم فتح الرابط الخارجي (MediaFire) في نافذة جديدة.</p>
             <div class="dl-progress-bg">
                 <div id="dl-progress-bar" class="dl-progress-bar"></div>
             </div>
@@ -203,7 +266,7 @@
         <div class="modal-box">
             <h2 id="modal-title" class="modal-title">Title</h2>
             <p id="modal-desc" class="modal-desc">Description</p>
-            <div id="modal-input-container" style="display: none; margin-bottom: 15px;">
+            <div id="modal-input-container" style="display: none; margin-bottom: 25px;">
                 <input type="text" id="modal-input" class="form-input" placeholder="Enter here...">
             </div>
             <div class="modal-buttons" id="modal-buttons"></div>
@@ -211,40 +274,41 @@
     </div>
 
     <div id="banned-screen">
-        <i class="fas fa-ban" style="font-size: 6rem; margin-bottom: 20px; color: var(--neon-purple); text-shadow: 0 0 20px var(--neon-purple);"></i>
-        <h1>YOU ARE BANNED</h1>
-        <p style="font-size: 1.2rem; max-width: 600px; line-height: 1.6; color: var(--text-main);">Your account has been permanently restricted.<br>Contact Admin _rayynn via Discord.</p>
+        <i class="fas fa-ban" style="font-size: 7rem; margin-bottom: 30px; color: var(--danger); filter: drop-shadow(0 0 30px rgba(255,0,0,0.5));"></i>
+        <h1>محظور</h1>
+        <p style="font-size: 1.3rem; max-width: 600px; line-height: 1.8; color: #fff;">لقد تم تقييد حسابك بشكل دائم لانتهاك الشروط.<br>للاعتراض، تواصل مع المطور <strong>_rayynn</strong> عبر الديسكورد.</p>
     </div>
 
     <div id="auth-overlay">
         <div class="auth-container">
-            <div class="auth-logo">KaZzA Scripts</div>
+            <div class="auth-logo">KaZzA <span>Scripts</span></div>
             
             <div class="auth-toggle">
-                <button id="toggle-signin" class="active" onclick="switchAuthMode('signin')">Sign In</button>
-                <button id="toggle-signup" onclick="switchAuthMode('signup')">Sign Up</button>
+                <button id="toggle-signin" class="active" onclick="switchAuthMode('signin')">تسجيل دخول</button>
+                <button id="toggle-signup" onclick="switchAuthMode('signup')">حساب جديد</button>
             </div>
 
             <div id="auth-msg" class="auth-msg"></div>
-            <i class="fas fa-spinner loading-spinner" id="auth-spinner"></i>
+            <i class="fas fa-circle-notch loading-spinner" id="auth-spinner"></i>
 
             <form id="signin-form" class="auth-form active" onsubmit="handleSignIn(event)">
-                <input type="text" id="in-username" class="form-input" placeholder="Username" required>
-                <input type="password" id="in-password" class="form-input" placeholder="Password" required>
-                <button type="submit" class="btn-action"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <input type="text" id="in-username" class="form-input" placeholder="اسم المستخدم" required>
+                <input type="password" id="in-password" class="form-input" placeholder="كلمة المرور" required>
+                <button type="submit" class="btn-action"><i class="fas fa-sign-in-alt"></i> دخول</button>
             </form>
 
             <form id="signup-form" class="auth-form" onsubmit="handleSignUp(event)">
-                <input type="text" id="up-username" class="form-input" placeholder="Username" required>
-                <input type="password" id="up-password" class="form-input" placeholder="Password" required minlength="6">
-                <input type="password" id="up-confirm-password" class="form-input" placeholder="Confirm Password" required minlength="6">
-                <button type="submit" class="btn-action"><i class="fas fa-user-plus"></i> Create Account</button>
+                <input type="text" id="up-username" class="form-input" placeholder="اسم المستخدم" required>
+                <input type="password" id="up-password" class="form-input" placeholder="كلمة المرور" required minlength="6">
+                <input type="password" id="up-confirm-password" class="form-input" placeholder="تأكيد كلمة المرور" required minlength="6">
+                <button type="submit" class="btn-action"><i class="fas fa-user-plus"></i> إنشاء حساب</button>
             </form>
             
-            <div class="social-login-divider">OR</div>
+            <div class="social-login-divider">أو</div>
             <div class="social-btn-group">
-                <button onclick="handleGoogleLogin()" class="btn-social btn-google">
-                    <i class="fab fa-google"></i> Continue with Google
+                <button onclick="handleGoogleLogin()" class="btn-social">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" style="width: 20px;"> 
+                    المتابعة باستخدام Google
                 </button>
             </div>
         </div>
@@ -253,125 +317,143 @@
     <div id="app-content">
         <nav>
             <div class="logo-container">
-                <div class="logo">KaZzA Scripts</div>
-                <a href="https://discord.com/users/1000058774108782602" target="_blank" class="discord-pulse" title="Admin Discord">
+                <div class="logo">KaZzA <span>Scripts</span></div>
+                <a href="https://discord.com/users/1000058774108782602" target="_blank" class="discord-pulse" title="تواصل مع المطور _rayynn">
                     <i class="fab fa-discord"></i>
                 </a>
             </div>
             <div class="nav-links">
-                <button onclick="switchTab('home')" id="tab-home" class="active"><i class="fas fa-home"></i> Home</button>
-                <button onclick="switchTab('request')" id="tab-request"><i class="fas fa-envelope"></i> Request</button>
-                <button onclick="switchTab('admin')" id="tab-admin" class="admin-only"><i class="fas fa-cogs"></i> Dashboard</button>
-                <button class="login-btn" id="logoutBtn" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                <button onclick="switchTab('home')" id="tab-home" class="active"><i class="fas fa-home"></i> الرئيسية</button>
+                <button onclick="switchTab('request')" id="tab-request"><i class="fas fa-paper-plane"></i> طلب سكريبت</button>
+                <button onclick="switchTab('admin')" id="tab-admin" class="admin-only"><i class="fas fa-terminal"></i> لوحة التحكم</button>
+                <button class="login-btn" id="logoutBtn" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> خروج</button>
             </div>
         </nav>
 
         <div id="view-home" class="view-section active">
             <section class="hero">
-                <h1>KaZzA Scripts Hub</h1>
-                <div class="creator-badge"><i class="fas fa-code"></i> Created & Developed by <strong>_rayynn</strong> | <i class="fab fa-whatsapp"></i> +216</div>
-                <p>The ultimate library for Custom UI, Monetloader & CLEO Scripts.</p>
+                <h1>مكتبة KaZzA Scripts</h1>
+                <div class="creator-badge">
+                    <i class="fas fa-code"></i> تم التصميم والتطوير بواسطة <strong>_rayynn</strong> | <i class="fab fa-whatsapp" style="color:var(--success)"></i> +216
+                </div>
+                <p>المكتبة الأضخم والأكثر تطوراً لسكربتات Custom UI و Monetloader و CLEO. جميع السكربتات موثوقة ومجانية.</p>
             </section>
+            
             <div class="search-container">
-                <i class="fas fa-search" style="position: absolute; left: 35px; top: 15px; color: var(--text-muted);"></i>
-                <input type="text" id="searchInput" class="form-input" placeholder="Search scripts..." style="padding-left: 45px;">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" class="form-input" placeholder="ابحث عن السكربتات (اسم، وصف، فئة)...">
             </div>
+            
             <div class="categories" id="categoryFilters"></div>
             <div class="scripts-container" id="scriptsGrid"></div>
         </div>
 
         <div id="view-request" class="view-section">
             <div class="form-container">
-                <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 20px;"><i class="fas fa-terminal"></i> Request a Custom Script</h2>
+                <h2><i class="fas fa-bolt"></i> طلب سكريبت مخصص</h2>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 25px;">قم بوصف الفكرة البرمجية أو التصميم الذي تريده بدقة وسيقوم المطور بمراجعته.</p>
                 <form onsubmit="submitRequest(event)">
-                    <input type="text" id="req-discord" class="form-input" placeholder="Your Discord Tag (e.g. user)" required>
-                    <textarea id="req-desc" class="form-input" placeholder="Describe the script logic or UI design you want in detail..." required style="height: 150px; resize: none;"></textarea>
-                    <button type="submit" id="btn-request" class="btn-action"><i class="fas fa-paper-plane"></i> Send Request</button>
+                    <label style="font-size:0.85rem; color:var(--text-muted); margin-bottom:5px; display:block; margin-left:5px;">حساب الديسكورد للتواصل:</label>
+                    <input type="text" id="req-discord" class="form-input" placeholder="مثال: _rayynn" required>
+                    <label style="font-size:0.85rem; color:var(--text-muted); margin-bottom:5px; display:block; margin-left:5px;">تفاصيل السكريبت:</label>
+                    <textarea id="req-desc" class="form-input" placeholder="اشرح فكرتك بالتفصيل (الأزرار، الألوان، الوظائف)..." required style="height: 180px; resize: none;"></textarea>
+                    <button type="submit" id="btn-request" class="btn-action"><i class="fas fa-paper-plane"></i> إرسال الطلب للمطور</button>
                 </form>
             </div>
         </div>
 
         <div id="view-admin" class="view-section">
-            <div class="form-container" style="max-width: 1000px;">
-                <h2 style="color: var(--neon-purple); text-align:center; margin-bottom: 30px;"><i class="fas fa-shield-alt"></i> Control Panel (_rayynn Only)</h2>
+            <div class="form-container" style="max-width: 1100px;">
+                <h2><i class="fas fa-shield-alt"></i> مركز القيادة (_rayynn)</h2>
                 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <h3><i class="fas fa-users"></i> Total Users</h3>
+                        <h3><i class="fas fa-users"></i> إجمالي المستخدمين</h3>
                         <div class="number" id="stat-users">0</div>
                     </div>
                     <div class="stat-card">
-                        <h3><i class="fas fa-download"></i> Total Downloads</h3>
+                        <h3><i class="fas fa-download"></i> إجمالي التحميلات</h3>
                         <div class="number" id="stat-downloads">0</div>
                     </div>
                     <div class="stat-card">
-                        <h3><i class="fas fa-file-code"></i> Total Scripts</h3>
+                        <h3><i class="fas fa-file-code"></i> عدد السكربتات</h3>
                         <div class="number" id="stat-scripts">0</div>
                     </div>
                 </div>
 
-                <div class="admin-section-box">
-                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-clipboard-list"></i> System Logs</h3>
-                    <div id="adminLogs" style="display: flex; flex-direction: column; max-height: 250px; overflow-y: auto; padding-right: 10px;">
-                        <p style="color:var(--text-muted); text-align:center;">Loading logs...</p>
-                    </div>
-                </div>
-
-                <div class="admin-section-box">
-                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-inbox"></i> User Requests</h3>
-                    <div id="requestsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
-                </div>
-
-                <div class="admin-section-box">
-                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-users-cog"></i> Users Management</h3>
-                    <div class="users-table-wrapper">
-                        <table>
-                            <thead>
-                                <tr><th>Username</th><th>Role</th><th>Status</th><th>Actions</th></tr>
-                            </thead>
-                            <tbody id="usersTableBody">
-                                <tr><td colspan="4" style="text-align:center; color:var(--text-muted)">Loading users...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
                 <div class="admin-section-box admin-only">
-                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-cloud-upload-alt"></i> Publish New Script</h3>
+                    <h3><i class="fas fa-cloud-upload-alt"></i> نشر سكريبت جديد (عبر رابط خارجي)</h3>
                     <form id="adminForm" onsubmit="window.uploadScript(event)">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                            <input type="text" id="s-title" class="form-input" placeholder="Script Name" required>
-                            <input type="text" id="s-version" class="form-input" placeholder="Version (e.g. v1.0)" required>
-                            <select id="s-category" class="form-input" style="background-color: #14051e;" required></select>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
                             <div>
-                                <label style="font-size:0.75rem; color:var(--text-muted)">Script File (.zip/.lua):</label>
-                                <input type="file" id="s-file" class="form-input" style="padding: 9px;" required>
+                                <label style="font-size:0.8rem; color:var(--text-muted); margin-left:5px;">اسم السكريبت:</label>
+                                <input type="text" id="s-title" class="form-input" placeholder="مثال: Admin Panel UI" required>
                             </div>
                             <div>
-                                <label style="font-size:0.75rem; color:var(--text-muted)">Preview Image (Optional):</label>
-                                <input type="file" id="s-image" class="form-input" style="padding: 9px;" accept="image/*">
+                                <label style="font-size:0.8rem; color:var(--text-muted); margin-left:5px;">الإصدار:</label>
+                                <input type="text" id="s-version" class="form-input" placeholder="مثال: v2.1" required>
+                            </div>
+                            <div>
+                                <label style="font-size:0.8rem; color:var(--text-muted); margin-left:5px;">التصنيف:</label>
+                                <select id="s-category" class="form-input" style="background-color: rgba(0,0,0,0.5);" required></select>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <label style="font-size:0.8rem; color:var(--text-muted); margin-left:5px;">رابط التحميل الخارجي (MediaFire, Github, الخ): <span style="color:var(--danger)">*مطلوب</span></label>
+                                <input type="url" id="s-link" class="form-input" placeholder="https://www.mediafire.com/file/..." required>
+                            </div>
+                            <div style="grid-column: 1 / -1;">
+                                <label style="font-size:0.8rem; color:var(--text-muted); margin-left:5px;">رابط صورة المعاينة (اختياري، رابط مباشر للصورة):</label>
+                                <input type="url" id="s-image-link" class="form-input" placeholder="https://i.imgur.com/...png">
                             </div>
                         </div>
-                        <textarea id="s-desc" class="form-input" placeholder="Script Description..." required style="height: 80px; resize: none;"></textarea>
-                        <button type="submit" id="uploadBtn" class="btn-action"><i class="fas fa-rocket"></i> Publish Script</button>
+                        <div style="margin-top: 15px;">
+                            <label style="font-size:0.8rem; color:var(--text-muted); margin-left:5px;">الوصف التفصيلي:</label>
+                            <textarea id="s-desc" class="form-input" placeholder="أدخل تفاصيل ومميزات السكريبت..." required style="height: 100px; resize: none;"></textarea>
+                        </div>
+                        <button type="submit" id="uploadBtn" class="btn-action" style="margin-top:10px;"><i class="fas fa-rocket"></i> نشر السكريبت الآن</button>
                     </form>
                 </div>
 
                 <div class="admin-section-box admin-only">
-                    <h3 style="margin-bottom: 15px; color: #fff;"><i class="fas fa-list"></i> Manage Scripts</h3>
-                    <div id="adminList" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 10px;"></div>
+                    <h3><i class="fas fa-list"></i> إدارة مكتبة السكريبتات</h3>
+                    <div id="adminList" style="display: flex; flex-direction: column; gap: 12px; max-height: 350px; overflow-y: auto; padding-right: 5px;"></div>
+                </div>
+
+                <div class="admin-section-box">
+                    <h3><i class="fas fa-inbox"></i> طلبات السكريبتات الواردة</h3>
+                    <div id="requestsList" style="display: flex; flex-direction: column; gap: 15px; max-height: 350px; overflow-y: auto; padding-right: 5px;"></div>
+                </div>
+
+                <div class="admin-section-box">
+                    <h3><i class="fas fa-clipboard-list"></i> سجلات وحركات النظام</h3>
+                    <div id="adminLogs" style="display: flex; flex-direction: column; max-height: 300px; overflow-y: auto; padding-right: 5px;">
+                        <p style="color:var(--text-muted); text-align:center;">جاري تحميل السجلات...</p>
+                    </div>
+                </div>
+
+                <div class="admin-section-box">
+                    <h3><i class="fas fa-users-cog"></i> إدارة وحظر المستخدمين</h3>
+                    <div class="users-table-wrapper">
+                        <table>
+                            <thead>
+                                <tr><th>المستخدم</th><th>الصلاحية</th><th>الحالة</th><th>الإجراءات</th></tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr><td colspan="4" style="text-align:center; color:var(--text-muted)">جاري تحميل المستخدمين...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.1"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, setDoc, getDoc, increment, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
         
+        // إعدادات Firebase الخاصة بك (بقيت كما هي)
         const firebaseConfig = {
             apiKey: "AIzaSyCP2XATMarqRgF_esuWnMGw-C5GI-nGbMc",
             authDomain: "kazza-scripts-68cb4.firebaseapp.com",
@@ -381,34 +463,27 @@
             appId: "1:809255585228:web:e3e233f53792cca40ec969"
         };
 
-        // إعداد العميل لـ Appwrite من خلال النطاق العام بعد تحميل مكتبة الـ Script بنجاح
-        const { Client, Storage, ID } = Appwrite;
-        const appwriteClient = new Client()
-            .setEndpoint('https://cloud.appwrite.io/v1')
-            .setProject('6a4294fd00231283db19'); 
-        
-        const appwriteStorage = new Storage(appwriteClient);
-        const BUCKET_ID = '6a4296f40017ac083421'; 
-
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // بيانات المطور الثابتة (لا يمكن تجاوزها)
         const mainAdminUsername = '_rayynn';
         const mainAdminEmail = 'rayenamri379@gmail.com'; 
         let currentUser = null;
         let isUserAdmin = false;
         let scriptsDB = [];
-        let categoriesDB = ['UI Customization', 'Admin & Helper Scripts', 'Utility', 'Roleplay Enhancements'];
+        let categoriesDB = ['UI Customization', 'Admin & Helper Scripts', 'Utility', 'Roleplay Enhancements', 'CLEO Mods'];
         let currentFilter = 'All';
 
+        // وظائف الـ UI العامة (Toasts & Modals)
         window.showToast = (msg, type = 'success') => {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i> ${msg}`;
+            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i> <span>${msg}</span>`;
             container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            setTimeout(() => { if(toast.parentElement) toast.remove(); }, 4000);
         };
 
         window.openModal = (options) => {
@@ -423,6 +498,7 @@
                 inputField.value = '';
                 inputField.type = options.inputType || 'text';
                 inputField.placeholder = options.placeholder || 'Enter value...';
+                inputField.focus();
             } else {
                 inputContainer.style.display = 'none';
             }
@@ -433,23 +509,21 @@
             if (options.type === 'alert') {
                 const okBtn = document.createElement('button');
                 okBtn.className = 'btn-action btn-success';
-                okBtn.innerText = 'OK';
+                okBtn.innerHTML = '<i class="fas fa-check"></i> حسناً';
                 okBtn.onclick = () => { closeModal(); if(options.onConfirm) options.onConfirm(); };
                 btnContainer.appendChild(okBtn);
             } else {
                 const cancelBtn = document.createElement('button');
-                cancelBtn.className = 'btn-action';
-                cancelBtn.style.borderColor = 'var(--text-muted)';
-                cancelBtn.style.color = 'var(--text-muted)';
-                cancelBtn.innerText = 'Cancel';
+                cancelBtn.className = 'btn-action btn-secondary';
+                cancelBtn.innerHTML = '<i class="fas fa-times"></i> إلغاء';
                 cancelBtn.onclick = closeModal;
                 
                 const confirmBtn = document.createElement('button');
                 confirmBtn.className = `btn-action ${options.confirmClass || 'btn-danger'}`;
-                confirmBtn.innerText = options.confirmText || 'Confirm';
+                confirmBtn.innerHTML = `<i class="fas ${options.type==='input'?'fa-save':'fa-exclamation'}"></i> ${options.confirmText || 'تأكيد'}`;
                 confirmBtn.onclick = () => {
                     const val = options.type === 'input' ? inputField.value : null;
-                    if(options.type === 'input' && !val.trim()) return showToast('Input cannot be empty!', 'error');
+                    if(options.type === 'input' && !val.trim()) return showToast('الحقل لا يمكن أن يكون فارغاً!', 'error');
                     closeModal();
                     if(options.onConfirm) options.onConfirm(val);
                 };
@@ -463,11 +537,11 @@
         const closeModal = () => document.getElementById('custom-modal').classList.remove('active');
 
         const logToDB = async (title, desc, category = 'info') => {
-            try {
-                await addDoc(collection(db, "logs"), { title, desc, category, timestamp: new Date() });
-            } catch(e) { console.error("Error saving log:", e); }
+            try { await addDoc(collection(db, "logs"), { title, desc, category, timestamp: new Date() }); } 
+            catch(e) { console.error("Error saving log:", e); }
         };
 
+        // وظائف المصادقة (Auth)
         window.switchAuthMode = (mode) => {
             document.querySelectorAll('.auth-toggle button').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
@@ -500,51 +574,42 @@
 
         window.handleSignUp = async (e) => {
             e.preventDefault();
-            document.getElementById('auth-spinner').style.display = 'block';
+            document.getElementById('auth-spinner').style.display = 'inline-block';
             try {
                 const username = document.getElementById('up-username').value.trim();
                 const pass = document.getElementById('up-password').value;
                 const confirmPass = document.getElementById('up-confirm-password').value;
                 
-                if (pass !== confirmPass) {
-                    showMsg('Passwords do not match!');
-                    document.getElementById('auth-spinner').style.display = 'none';
-                    return;
-                }
+                if (pass !== confirmPass) { showMsg('كلمتا المرور غير متطابقتين!'); return; }
 
                 const usersQuery = query(collection(db, "users"), where("username", "==", username));
                 const querySnapshot = await getDocs(usersQuery);
-                if (!querySnapshot.empty) {
-                    showMsg('Username is already taken!');
-                    document.getElementById('auth-spinner').style.display = 'none';
-                    return;
-                }
+                if (!querySnapshot.empty) { showMsg('اسم المستخدم مأخوذ مسبقاً!'); return; }
 
                 const fakeEmail = `${username.toLowerCase()}@kazza.local`;
                 const userCred = await createUserWithEmailAndPassword(auth, fakeEmail, pass);
                 await updateProfile(userCred.user, { displayName: username });
                 
                 await registerUserInDB(userCred.user, username);
-                logToDB("New User Registered", `${username} has created an account.`, "success");
+                logToDB("مستخدم جديد", `${username} قام بإنشاء حساب جديد.`, "success");
                 
-                showToast('Account created successfully!', 'success');
+                showToast('تم إنشاء الحساب بنجاح!', 'success');
                 switchAuthMode('signin');
-            } catch (error) { showMsg(error.message); }
-            document.getElementById('auth-spinner').style.display = 'none';
+            } catch (error) { showMsg('حدث خطأ أثناء التسجيل: ' + error.message); }
+            finally { document.getElementById('auth-spinner').style.display = 'none'; }
         };
 
         window.handleSignIn = async (e) => {
             e.preventDefault();
-            document.getElementById('auth-spinner').style.display = 'block';
+            document.getElementById('auth-spinner').style.display = 'inline-block';
             try { 
                 const username = document.getElementById('in-username').value.trim();
                 const pass = document.getElementById('in-password').value;
-                
                 const fakeEmail = `${username.toLowerCase()}@kazza.local`;
                 await signInWithEmailAndPassword(auth, fakeEmail, pass); 
-                showToast('Login successful!', 'success');
-            } catch (error) { showMsg('Login Failed: Invalid username or password.'); }
-            document.getElementById('auth-spinner').style.display = 'none';
+                showToast('تم تسجيل الدخول بنجاح!', 'success');
+            } catch (error) { showMsg('فشل الدخول: تحقق من اسم المستخدم أو كلمة المرور.'); }
+            finally { document.getElementById('auth-spinner').style.display = 'none'; }
         };
 
         window.handleGoogleLogin = async () => {
@@ -556,26 +621,26 @@
                 if (!userSnap.exists()) {
                     document.getElementById('auth-overlay').style.display = 'none'; 
                     openModal({
-                        title: 'Welcome to KaZzA Scripts!',
-                        desc: 'Please choose a unique username for your account:',
-                        type: 'input', placeholder: 'Your username...', confirmText: 'Save Username', confirmClass: 'btn-success',
+                        title: 'أهلاً بك في KaZzA Scripts!',
+                        desc: 'يرجى اختيار اسم مستخدم فريد لحسابك:',
+                        type: 'input', placeholder: 'اسم المستخدم...', confirmText: 'حفظ الاسم', confirmClass: 'btn-success',
                         onConfirm: async (chosenUsername) => {
                             const cleanName = chosenUsername.trim();
                             await registerUserInDB(userCred.user, cleanName);
                             await updateProfile(userCred.user, { displayName: cleanName });
-                            logToDB("New User (Google)", `${cleanName} registered via Google.`, "success");
-                            showToast('Welcome aboard!', 'success');
+                            logToDB("مستخدم جديد (Google)", `${cleanName} سجل عبر جوجل.`, "success");
+                            showToast('أهلاً بك في عالمنا!', 'success');
                             onAuthStateChangedHandler(userCred.user);
                         }
                     });
-                } else { showToast('Google Login successful!', 'success'); }
-            } catch (error) { showMsg(error.message); }
+                } else { showToast('تم تسجيل الدخول بواسطة جوجل!', 'success'); }
+            } catch (error) { showMsg('فشل تسجيل الدخول بجوجل.'); }
         };
 
         window.confirmLogout = () => {
             openModal({
-                title: 'Logout', desc: 'Are you sure you want to log out of your account?', type: 'confirm',
-                confirmText: 'Yes, Logout', confirmClass: 'btn-danger', onConfirm: () => signOut(auth)
+                title: 'تسجيل الخروج', desc: 'هل أنت متأكد أنك تريد تسجيل الخروج؟', type: 'confirm',
+                confirmText: 'نعم، خروج', confirmClass: 'btn-danger', onConfirm: () => signOut(auth)
             });
         };
 
@@ -615,16 +680,12 @@
                 document.getElementById('app-content').classList.add('visible');
                 
                 let displayName = userData.username;
-                let adminBadge = isUserAdmin ? ' <span style="color:var(--success);">(👑 Admin)</span>' : '';
-                document.getElementById('logoutBtn').innerHTML = `<i class="fas fa-sign-out-alt"></i> Logout (${displayName})${adminBadge}`;
+                let adminBadge = isUserAdmin ? ' <span style="color:var(--success); font-weight:800; text-shadow:0 0 5px var(--success)">(المطور)</span>' : '';
+                document.getElementById('logoutBtn').innerHTML = `<i class="fas fa-sign-out-alt"></i> خروج (${displayName})${adminBadge}`;
                 
                 document.querySelectorAll('.admin-only').forEach(el => {
-                    if (isUserAdmin) {
-                        el.classList.add('admin-visible');
-                    } else {
-                        el.classList.remove('admin-visible');
-                        el.style.display = 'none';
-                    }
+                    if (isUserAdmin) el.classList.add('admin-visible');
+                    else el.classList.remove('admin-visible');
                 });
                 
                 loadScripts();
@@ -639,26 +700,28 @@
 
         onAuthStateChanged(auth, onAuthStateChangedHandler);
 
+        // واجهة المستخدم للمكتبة
         window.switchTab = (tabId) => {
             document.querySelectorAll('.view-section').forEach(view => view.classList.remove('active'));
             document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
             document.getElementById('view-' + tabId).classList.add('active');
             document.getElementById('tab-' + tabId).classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         const renderCategoryButtons = () => {
             const filterContainer = document.getElementById('categoryFilters');
-            filterContainer.innerHTML = `<button class="cat-btn ${currentFilter === 'All' ? 'active' : ''}" onclick="filterCategory('All')">All</button>`;
+            filterContainer.innerHTML = `<button class="cat-btn ${currentFilter === 'All' ? 'active' : ''}" onclick="filterCategory('All')">الكل</button>`;
             categoriesDB.forEach(cat => filterContainer.innerHTML += `<button class="cat-btn ${currentFilter === cat ? 'active' : ''}" onclick="filterCategory('${cat}')">${cat}</button>`);
         };
 
         window.filterCategory = (cat) => { currentFilter = cat; renderScripts(document.getElementById('searchInput').value.toLowerCase()); };
-        window.copyLink = (url) => { navigator.clipboard.writeText(url).then(() => showToast("Link copied to clipboard!", "success")); };
+        window.copyLink = (url) => { navigator.clipboard.writeText(url).then(() => showToast("تم نسخ رابط التحميل!", "success")); };
         
         window.previewImageModal = (url, title) => {
             openModal({
-                title: title + " - View",
-                desc: `<img src="${url}" style="width:100%; max-height:300px; object-fit:contain; border-radius:8px; border:1px solid var(--glass-border);" />`,
+                title: title,
+                desc: `<img src="${url}" style="width:100%; max-height:400px; object-fit:contain; border-radius:12px; border:1px solid var(--glass-border); box-shadow:0 10px 30px rgba(0,0,0,0.5);" onerror="this.src='https://via.placeholder.com/600x400/100/fff?text=No+Preview'"/>`,
                 type: 'alert'
             });
         };
@@ -669,30 +732,30 @@
             grid.innerHTML = ''; 
             
             let filtered = currentFilter === 'All' ? scriptsDB : scriptsDB.filter(s => s.category === currentFilter);
-            if (searchTerm) filtered = filtered.filter(s => s.title.toLowerCase().includes(searchTerm) || s.desc.toLowerCase().includes(searchTerm));
+            if (searchTerm) filtered = filtered.filter(s => s.title.toLowerCase().includes(searchTerm) || s.desc.toLowerCase().includes(searchTerm) || s.category.toLowerCase().includes(searchTerm));
 
-            if(filtered.length === 0) return grid.innerHTML = `<p style="text-align:center; grid-column: 1/-1; color: var(--text-muted); padding: 40px;"><i class="fas fa-folder-open fa-3x mb-3"></i><br><br>No scripts found.</p>`; 
+            if(filtered.length === 0) return grid.innerHTML = `<div style="text-align:center; grid-column: 1/-1; color: var(--text-muted); padding: 60px; background:rgba(0,0,0,0.3); border-radius:20px; border:1px dashed rgba(255,255,255,0.1);"><i class="fas fa-ghost fa-4x mb-3" style="opacity:0.5; margin-bottom:15px; display:block;"></i><br><h3 style="color:#fff;">لم يتم العثور على سكربتات.</h3></div>`; 
 
             filtered.forEach(script => {
-                const date = script.createdAt ? new Date(script.createdAt.seconds * 1000).toLocaleDateString() : 'Recent';
-                const imgHtml = script.imageUrl ? `<img src="${script.imageUrl}" class="script-preview-img" onclick="previewImageModal('${script.imageUrl}', '${script.title}')" title="Click to view full image" alt="Preview"/>` : '';
+                const date = script.createdAt ? new Date(script.createdAt.seconds * 1000).toLocaleDateString('en-GB') : 'حديث';
+                const imgSrc = script.imageUrl ? script.imageUrl : 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80'; // صورة افتراضية كود
                 
                 grid.innerHTML += `
                     <div class="script-card">
-                        <div>
-                            ${imgHtml}
-                            <div class="script-header">
-                                <h3 class="script-title"><i class="fas fa-file-code" style="color:var(--neon-purple)"></i> ${script.title}</h3>
-                                <span class="version-badge">${script.version}</span>
-                            </div>
-                            <span class="script-date"><i class="far fa-calendar-alt"></i> ${date} &nbsp; | &nbsp; <i class="fas fa-user-edit"></i> ${script.creator || '_rayynn'}</span>
-                            <p class="script-desc">${script.desc}</p>
+                        <img src="${imgSrc}" class="script-preview-img" onclick="previewImageModal('${imgSrc}', '${script.title}')" title="اضغط لتكبير الصورة" alt="Preview" onerror="this.src='https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80'"/>
+                        <div class="script-header">
+                            <h3 class="script-title"><i class="fas fa-terminal" style="color:var(--neon-purple); font-size:1.1rem;"></i> ${script.title}</h3>
+                            <span class="version-badge">${script.version}</span>
                         </div>
+                        <div class="script-meta">
+                            <span><i class="far fa-calendar-alt"></i> ${date}</span>
+                            <span><i class="fas fa-user-shield"></i> ${script.creator || '_rayynn'}</span>
+                            <span><i class="fas fa-layer-group"></i> ${script.category}</span>
+                        </div>
+                        <p class="script-desc">${script.desc}</p>
                         <div class="card-footer">
-                            <div style="display:flex; gap: 10px; width: 100%;">
-                                <button class="btn-action btn-sm" style="flex: 1;" onclick="downloadFile('${script.id}', '${script.fileUrl}', '${script.fileName}', '${script.title}')"><i class="fas fa-download"></i> Download</button>
-                                <button class="btn-action btn-sm" style="flex: 1; border-color: rgba(255,255,255,0.2); color: #fff;" onclick="copyLink('${script.fileUrl}')"><i class="fas fa-link"></i> Copy</button>
-                            </div>
+                            <button class="btn-action" style="flex: 2;" onclick="downloadFile('${script.id}', '${script.fileUrl}', '${script.title}')"><i class="fas fa-cloud-download-alt"></i> تحميل (${script.downloads || 0})</button>
+                            <button class="btn-action btn-secondary btn-icon" style="flex: 0.5;" title="نسخ الرابط" onclick="copyLink('${script.fileUrl}')"><i class="fas fa-link"></i></button>
                         </div>
                     </div>`;
             });
@@ -715,7 +778,8 @@
             } catch(e) { console.error("Error loading scripts:", e); }
         };
 
-        window.downloadFile = async (docId, url, scriptFileName, scriptTitle) => {
+        // دالة التحميل المحدثة (التي توجه للرابط الخارجي مباشرة)
+        window.downloadFile = async (docId, url, scriptTitle) => {
             const modal = document.getElementById('download-modal');
             const progress = document.getElementById('dl-progress-bar');
             document.getElementById('dl-script-name').innerText = scriptTitle;
@@ -723,62 +787,72 @@
             modal.classList.add('active');
             progress.style.width = '0%';
             
-            setTimeout(() => { progress.style.width = '100%'; }, 100);
+            // حركة شريط التقدم الوهمية للمظهر
+            setTimeout(() => { progress.style.width = '100%'; }, 50);
 
             setTimeout(async () => {
                 try {
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = scriptFileName || 'script_download';
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
+                    // فتح الرابط الخارجي للميديا فاير في نافذة جديدة
+                    window.open(url, '_blank');
 
+                    // تحديث عداد التحميلات في الداتابيز
                     await updateDoc(doc(db, "scripts", docId), { downloads: increment(1) });
                     let userName = currentUser ? currentUser.username : "Unknown";
                     
-                    logToDB("Script Downloaded", `${scriptTitle} downloaded by ${userName}.`, "info"); 
+                    logToDB("عملية تحميل", `قام ${userName} بالتوجه لتحميل السكريبت: ${scriptTitle}.`, "info"); 
+                    showToast("تم تحويلك لصفحة التحميل!", "success"); 
                     
-                    showToast("Download Complete!", "success"); 
-                    loadScripts();
+                    loadScripts(); // إعادة التحميل لتحديث العداد محلياً
                 } catch (error) { 
-                    showToast("Error downloading file.", "error"); 
+                    showToast("حدث خطأ أثناء معالجة طلب التحميل.", "error"); 
                 }
                 modal.classList.remove('active');
-                setTimeout(() => { progress.style.width = '0%'; }, 300); 
-            }, 1600); 
+                setTimeout(() => { progress.style.width = '0%'; }, 400); 
+            }, 1800); 
         };
 
+        // لوحة الإدارة
         const loadAdminPanel = async () => {
             const select = document.getElementById('s-category');
             select.innerHTML = ''; categoriesDB.forEach(cat => select.innerHTML += `<option value="${cat}">${cat}</option>`);
             
+            // جلب السجلات (Logs)
             const logsList = document.getElementById('adminLogs');
             try {
                 const lq = query(collection(db, "logs"), orderBy("timestamp", "desc"));
                 const logsSnap = await getDocs(lq);
                 logsList.innerHTML = '';
                 if (logsSnap.empty) {
-                    logsList.innerHTML = '<p style="color:var(--text-muted); text-align:center;">No recent activity.</p>';
+                    logsList.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">لا توجد سجلات حالياً.</p>';
                 } else {
                     logsSnap.forEach(docSnap => {
                         const l = docSnap.data();
-                        const time = l.timestamp ? new Date(l.timestamp.seconds * 1000).toLocaleString() : 'Unknown';
+                        const time = l.timestamp ? new Date(l.timestamp.seconds * 1000).toLocaleString('en-GB') : 'Unknown';
                         logsList.innerHTML += `
                         <div class="log-item ${l.category}">
-                            <div class="log-header"><span>${l.title}</span><span style="font-weight:400; font-size:0.75rem; opacity:0.7;">${time}</span></div>
+                            <div class="log-header"><span>${l.title}</span><span class="log-time">${time}</span></div>
                             <div class="log-desc">${l.desc}</div>
                         </div>`;
                     });
                 }
-            } catch(e) { logsList.innerHTML = '<p style="color:var(--danger)">Error loading logs.</p>'; }
+            } catch(e) { logsList.innerHTML = '<p style="color:var(--danger)">خطأ في تحميل السجلات.</p>'; }
 
+            // جلب السكربتات للحذف/التعديل
             const list = document.getElementById('adminList');
             list.innerHTML = '';
+            if(scriptsDB.length === 0) list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">لا توجد سكربتات مرفوعة.</p>';
             scriptsDB.forEach(script => {
-                list.innerHTML += `<div class="user-list-item"><div class="req-info"><strong style="color:#fff;"><i class="fas fa-file-code"></i> ${script.title} <span style="font-size:0.8rem; color:var(--text-muted)">(${script.version})</span></strong><br><span style="font-size: 0.85rem; color: var(--success);"><i class="fas fa-download"></i> ${script.downloads} Downloads</span></div><button onclick="deleteScript('${script.id}')" class="btn-action btn-danger btn-icon" style="min-width: 40px; padding: 10px;"><i class="fas fa-trash"></i></button></div>`;
+                list.innerHTML += `
+                <div class="user-list-item">
+                    <div class="req-info">
+                        <strong style="color:#fff; font-size:1.1rem;"><i class="fas fa-file-code" style="color:var(--neon-purple)"></i> ${script.title} <span style="font-size:0.8rem; color:var(--neon-light)">(${script.version})</span></strong><br>
+                        <span style="font-size: 0.85rem; color: var(--success);"><i class="fas fa-download"></i> ${script.downloads} تحميلات</span> | <span style="font-size: 0.85rem; color: var(--text-muted);"><i class="fas fa-link"></i> رابط خارجي</span>
+                    </div>
+                    <button onclick="deleteScript('${script.id}')" class="btn-action btn-danger btn-icon" style="padding: 12px;" title="حذف السكريبت نهائياً"><i class="fas fa-trash-alt"></i></button>
+                </div>`;
             });
 
+            // جلب المستخدمين
             const usersTable = document.getElementById('usersTableBody');
             try {
                 const uq = query(collection(db, "users"), orderBy("createdAt", "desc"));
@@ -788,33 +862,38 @@
                 
                 usersSnap.forEach(docSnap => {
                     const u = docSnap.data(); const uid = docSnap.id;
-                    const roleBadge = u.role === 'admin' ? '<span class="badge badge-admin">Admin</span>' : '<span class="badge badge-user">User</span>';
-                    const statusBadge = u.isBanned ? '<span class="badge badge-banned">Banned</span>' : '<span class="badge badge-user" style="color:var(--success)">Active</span>';
-                    const roleAction = u.role === 'admin' ? `<button onclick="toggleRole('${uid}', 'user')" class="btn-action btn-icon" style="border-color:var(--text-muted); color:var(--text-muted)" title="Demote to User"><i class="fas fa-arrow-down"></i></button>` : `<button onclick="toggleRole('${uid}', 'admin')" class="btn-action btn-icon btn-success" title="Promote to Admin"><i class="fas fa-arrow-up"></i></button>`;
-                    const banAction = u.isBanned ? `<button onclick="toggleBan('${uid}', '${u.username}', false)" class="btn-action btn-icon btn-success" title="Unban"><i class="fas fa-unlock"></i></button>` : `<button onclick="toggleBan('${uid}', '${u.username}', true)" class="btn-action btn-icon btn-danger" title="Ban User"><i class="fas fa-ban"></i></button>`;
-                    const actionsHtml = u.username.toLowerCase() === mainAdminUsername.toLowerCase() ? '<i>Main Admin</i>' : `<div style="display:flex; gap:5px;">${roleAction}${banAction}</div>`;
-                    usersTable.innerHTML += `<tr><td><div style="display:flex; flex-direction:column;"><strong>${u.username}</strong></div></td><td>${roleBadge}</td><td>${statusBadge}</td><td>${actionsHtml}</td></tr>`;
+                    const isMainOwner = u.username.toLowerCase() === mainAdminUsername.toLowerCase();
+                    const roleBadge = u.role === 'admin' ? '<span class="badge badge-admin"><i class="fas fa-crown"></i> Admin</span>' : '<span class="badge badge-user">User</span>';
+                    const statusBadge = u.isBanned ? '<span class="badge badge-banned"><i class="fas fa-ban"></i> Banned</span>' : '<span class="badge badge-user" style="color:var(--success); border-color:var(--success)"><i class="fas fa-check"></i> Active</span>';
+                    
+                    const roleAction = u.role === 'admin' ? `<button onclick="toggleRole('${uid}', 'user')" class="btn-action btn-secondary btn-icon" title="تنزيل لمستخدم عادي"><i class="fas fa-arrow-down"></i></button>` : `<button onclick="toggleRole('${uid}', 'admin')" class="btn-action btn-success btn-icon" title="ترقية لأدمن"><i class="fas fa-arrow-up"></i></button>`;
+                    const banAction = u.isBanned ? `<button onclick="toggleBan('${uid}', '${u.username}', false)" class="btn-action btn-success btn-icon" title="فك الحظر"><i class="fas fa-unlock"></i></button>` : `<button onclick="toggleBan('${uid}', '${u.username}', true)" class="btn-action btn-danger btn-icon" title="حظر المستخدم"><i class="fas fa-ban"></i></button>`;
+                    
+                    const actionsHtml = isMainOwner ? '<i class="fas fa-shield-alt" style="color:var(--neon-purple); font-size:1.2rem;" title="المالك الأساسي"></i>' : `<div style="display:flex; gap:8px;">${roleAction}${banAction}</div>`;
+                    
+                    usersTable.innerHTML += `<tr><td><strong style="font-size:1.05rem;">${u.username}</strong></td><td>${roleBadge}</td><td>${statusBadge}</td><td>${actionsHtml}</td></tr>`;
                 });
-            } catch (e) { usersTable.innerHTML = '<tr><td colspan="4" style="color:var(--danger)">Error loading users.</td></tr>'; }
+            } catch (e) { usersTable.innerHTML = '<tr><td colspan="4" style="color:var(--danger); text-align:center;">حدث خطأ في تحميل الأعضاء.</td></tr>'; }
 
+            // جلب طلبات السكربتات
             const reqList = document.getElementById('requestsList');
             try {
                 const q = query(collection(db, "requests"), orderBy("date", "desc"));
                 const reqSnap = await getDocs(q); reqList.innerHTML = '';
-                if(reqSnap.empty) reqList.innerHTML = '<p style="color:var(--text-muted); text-align:center;">No pending requests.</p>';
+                if(reqSnap.empty) reqList.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding:20px;">لا توجد طلبات جديدة.</p>';
                 else {
                     reqSnap.forEach(docSnap => {
-                        const r = docSnap.data(); const rDate = r.date ? new Date(r.date.seconds * 1000).toLocaleString() : 'Unknown date';
+                        const r = docSnap.data(); const rDate = r.date ? new Date(r.date.seconds * 1000).toLocaleString('en-GB') : 'Unknown';
                         reqList.innerHTML += `
-                        <div class="user-list-item" style="flex-direction:column; align-items:flex-start; border-left: 3px solid var(--warning);">
-                            <div style="display:flex; justify-content:space-between; width:100%; margin-bottom: 8px;">
-                                <strong style="color: #fff;"><i class="fab fa-discord" style="color:var(--neon-purple)"></i> ${r.discord}</strong>
-                                <span style="font-size:0.75rem; color:var(--text-muted)">${rDate}</span>
+                        <div class="user-list-item" style="flex-direction:column; align-items:flex-start; border-left: 4px solid var(--neon-light);">
+                            <div style="display:flex; justify-content:space-between; width:100%; margin-bottom: 12px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:10px;">
+                                <strong style="color: #fff; font-size:1.1rem;"><i class="fab fa-discord" style="color:#5865F2;"></i> ${r.discord}</strong>
+                                <span style="font-size:0.8rem; color:var(--text-muted); background:rgba(0,0,0,0.5); padding:4px 8px; border-radius:4px;">${rDate}</span>
                             </div>
-                            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom: 10px;"><i class="fas fa-user"></i> Requested By: ${r.by}</div>
-                            <p style="font-size:0.9rem; color:#ddd; line-height: 1.5; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; width: 100%;">${r.desc}</p>
-                            <div style="width:100%; text-align:right; margin-top:10px;">
-                                <button onclick="deleteRequest('${docSnap.id}')" class="btn-action btn-success btn-sm" style="padding: 6px 12px; width:auto; border-color: transparent;"><i class="fas fa-check-circle"></i> Mark Done</button>
+                            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 10px;"><i class="fas fa-user-tag"></i> بواسطة: <strong>${r.by}</strong></div>
+                            <div style="font-size:0.95rem; color:#fff; line-height: 1.6; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; width: 100%; border:1px solid rgba(255,255,255,0.02); margin-bottom: 15px;">${r.desc.replace(/\n/g, '<br>')}</div>
+                            <div style="width:100%; text-align:left;">
+                                <button onclick="deleteRequest('${docSnap.id}')" class="btn-action btn-success" style="width:auto; padding:8px 16px;"><i class="fas fa-check-double"></i> إنهاء الطلب</button>
                             </div>
                         </div>`;
                     });
@@ -823,20 +902,20 @@
         };
 
         window.toggleBan = (uid, username, banStatus) => {
-            openModal({ title: banStatus ? 'Ban User' : 'Unban User', desc: `Are you sure you want to ${banStatus ? 'BAN' : 'UNBAN'} ${username}?`, type: 'confirm', confirmText: banStatus ? 'Yes, Ban' : 'Yes, Unban', confirmClass: banStatus ? 'btn-danger' : 'btn-success', onConfirm: async () => { await updateDoc(doc(db, "users", uid), { isBanned: banStatus }); showToast(`User ${banStatus ? 'banned' : 'unbanned'} successfully.`, "success"); logToDB("User Ban Updated", `${username} has been ${banStatus ? 'banned' : 'unbanned'}.`, banStatus ? "danger" : "success"); loadAdminPanel(); }});
+            openModal({ title: banStatus ? 'حظر مستخدم' : 'فك الحظر', desc: `هل أنت متأكد من ${banStatus ? 'حظر' : 'فك حظر'} المستخدم: <strong>${username}</strong>؟`, type: 'confirm', confirmText: banStatus ? 'تأكيد الحظر' : 'فك الحظر', confirmClass: banStatus ? 'btn-danger' : 'btn-success', onConfirm: async () => { await updateDoc(doc(db, "users", uid), { isBanned: banStatus }); showToast(`تم ${banStatus ? 'حظر' : 'فك حظر'} المستخدم بنجاح.`, "success"); logToDB("تحديث حالة مستخدم", `تم ${banStatus ? 'حظر' : 'فك حظر'} المستخدم ${username}.`, banStatus ? "danger" : "success"); loadAdminPanel(); }});
         };
 
         window.toggleRole = (uid, newRole) => {
-            openModal({ title: 'Change Role', desc: `Change this user's role to ${newRole.toUpperCase()}?`, type: 'confirm', confirmText: 'Yes, Change', confirmClass: 'btn-success', onConfirm: async () => { await updateDoc(doc(db, "users", uid), { role: newRole }); showToast(`User role updated to ${newRole}.`, "success"); loadAdminPanel(); }});
+            openModal({ title: 'تغيير الصلاحية', desc: `هل تريد تغيير صلاحية هذا المستخدم إلى <strong>${newRole.toUpperCase()}</strong>؟`, type: 'confirm', confirmText: 'تأكيد التغيير', confirmClass: 'btn-success', onConfirm: async () => { await updateDoc(doc(db, "users", uid), { role: newRole }); showToast(`تم ترقية المستخدم إلى ${newRole}.`, "success"); loadAdminPanel(); }});
         };
 
         window.deleteScript = (id) => {
-            openModal({ title: 'Delete Script', desc: 'Are you sure you want to permanently delete this script?', type: 'confirm', confirmText: 'Yes, Delete', confirmClass: 'btn-danger', onConfirm: async () => { await deleteDoc(doc(db, "scripts", id)); showToast("Script deleted.", "success"); loadScripts(); loadAdminPanel(); }});
+            openModal({ title: 'حذف السكريبت', desc: 'هل أنت متأكد من حذف هذا السكريبت بشكل نهائي من القاعدة؟ لا يمكن التراجع عن هذا الإجراء.', type: 'confirm', confirmText: 'نعم، احذف', confirmClass: 'btn-danger', onConfirm: async () => { await deleteDoc(doc(db, "scripts", id)); showToast("تم مسح السكريبت نهائياً.", "success"); loadScripts(); loadAdminPanel(); }});
         };
 
-        window.deleteRequest = async (id) => { await deleteDoc(doc(db, "requests", id)); showToast("Request marked as done.", "success"); loadAdminPanel(); };
+        window.deleteRequest = async (id) => { await deleteDoc(doc(db, "requests", id)); showToast("تم تعليم الطلب كمنتهي وإزالته.", "success"); loadAdminPanel(); };
 
-        // جعل دالة الرفع معرفة بـ النطاق العام للـ window لتفادي مشاكل الـ Module Isolation
+        // دالة الرفع المحدثة (التي تحفظ فقط الرابط الخارجي)
         window.uploadScript = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('uploadBtn');
@@ -846,71 +925,44 @@
             const title = document.getElementById('s-title').value.trim(); 
             const version = document.getElementById('s-version').value.trim(); 
             const category = document.getElementById('s-category').value; 
+            const externalLink = document.getElementById('s-link').value.trim(); // رابط MediaFire
+            const imageLink = document.getElementById('s-image-link').value.trim(); // رابط الصورة
             const desc = document.getElementById('s-desc').value.trim(); 
-            const scriptFile = document.getElementById('s-file').files[0];
-            const imageFile = document.getElementById('s-image').files[0];
 
-            if (!scriptFile) {
-                showToast("Please select a script file.", "error");
+            // التحقق من صحة الرابط الأساسي
+            if (!externalLink || !externalLink.startsWith("http")) {
+                showToast("يرجى إدخال رابط تحميل خارجي صحيح يبدأ بـ http/https", "error");
                 btn.disabled = false;
                 return;
             }
 
             try {
-                // رفع الملف لـ Appwrite
-                btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading Script... 0%`;
-                const scriptResponse = await appwriteStorage.createFile(
-                    BUCKET_ID,
-                    ID.unique(),
-                    scriptFile,
-                    [],
-                    (progress) => {
-                        const percentage = Math.round(progress.progress);
-                        btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading... ${percentage}%`;
-                    }
-                );
-                
-                const finalScriptUrl = `https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${scriptResponse.$id}/download?project=6a4294fd00231283db19`;
-                const finalScriptName = scriptResponse.name;
+                btn.innerHTML = `<i class="fas fa-circle-notch loading-spinner" style="display:inline-block"></i> جاري تسجيل البيانات بالخادم...`;
 
-                let finalImageUrl = "";
-                if (imageFile) {
-                    btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Uploading Image...`;
-                    const imageResponse = await appwriteStorage.createFile(
-                        BUCKET_ID,
-                        ID.unique(),
-                        imageFile
-                    );
-                    finalImageUrl = `https://cloud.appwrite.io/v1/storage/buckets/${BUCKET_ID}/files/${imageResponse.$id}/view?project=6a4294fd00231283db19`;
-                }
-
-                btn.innerHTML = `<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Saving Data...`;
-
-                // حفظ الداتا بـ Firestore
+                // حفظ البيانات مباشرة بـ Firestore (بدون Appwrite)
                 await addDoc(collection(db, "scripts"), { 
                     title, 
                     version, 
                     category, 
                     desc, 
-                    fileUrl: finalScriptUrl, 
-                    fileName: finalScriptName, 
-                    imageUrl: finalImageUrl,
+                    fileUrl: externalLink, 
+                    imageUrl: imageLink || "", 
                     downloads: 0, 
                     creator: "_rayynn",
                     createdAt: new Date() 
                 });
                 
-                logToDB("New Script Published", `${title} (${version}) uploaded via Appwrite.`, "success");
-                showToast('Script Published Successfully!', 'success'); 
+                logToDB("نشر سكريبت جديد", `تم إصدار ${title} (${version}) بالمكتبة.`, "success");
+                showToast('تم نشر السكريبت وربطه بنجاح!', 'success'); 
                 document.getElementById('adminForm').reset(); 
                 
                 await loadScripts(); 
                 await loadAdminPanel();
             } catch(err) { 
-                console.error("Appwrite Upload Failure:", err);
-                showToast('Upload Error: ' + err.message, 'error'); 
+                console.error("Firebase DB Error:", err);
+                showToast('حدث خطأ في قاعدة البيانات: ' + err.message, 'error'); 
             } finally { 
-                btn.innerHTML = `<i class="fas fa-rocket"></i> Publish Script`; 
+                btn.innerHTML = `<i class="fas fa-rocket"></i> نشر السكريبت الآن`; 
                 btn.disabled = false; 
             }
         };
@@ -918,12 +970,12 @@
         window.submitRequest = async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-request'); 
-            btn.innerHTML = '<i class="fas fa-spinner loading-spinner" style="display:inline-block"></i> Sending...'; 
+            btn.innerHTML = '<i class="fas fa-circle-notch loading-spinner" style="display:inline-block"></i> جاري الإرسال...'; 
             btn.disabled = true;
             
             const discord = document.getElementById('req-discord').value; 
             const desc = document.getElementById('req-desc').value;
-            const senderName = currentUser ? currentUser.username : "Guest User";
+            const senderName = currentUser ? currentUser.username : "ضيف غير مسجل";
 
             try {
                 await addDoc(collection(db, "requests"), { 
@@ -933,15 +985,15 @@
                     by: senderName 
                 });
                 
-                logToDB("New Request Submitted", `Custom request sent by ${senderName}`, "warning");
-                showToast('Your request has been sent successfully!', 'success'); 
+                logToDB("طلب سكريبت جديد", `طلب مخصص جديد من ${senderName}`, "warning");
+                showToast('تم إرسال طلبك بنجاح للمطور _rayynn!', 'success'); 
                 e.target.reset();
                 if(isUserAdmin) loadAdminPanel();
             } catch(error) { 
-                console.error("Firebase request insert error: ", error);
-                showToast(`Error: ${error.message}`, 'error'); 
+                console.error("Firebase request error: ", error);
+                showToast(`خطأ في الإرسال: ${error.message}`, 'error'); 
             } finally {
-                btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Request'; 
+                btn.innerHTML = '<i class="fas fa-paper-plane"></i> إرسال الطلب للمطور'; 
                 btn.disabled = false;
             }
         };
