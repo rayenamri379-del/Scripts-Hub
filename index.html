@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="author" content="_rayynn">
     <meta name="description" content="KaZzA Scripts Hub — The most advanced script library. Created exclusively by _rayynn.">
+    <meta name="theme-color" content="#030009">
+    <link rel="canonical" href="https://scripts-hub.rayenamri379.workers.dev/">
+    <meta property="og:title" content="KaZzA Scripts | _rayynn Hub">
+    <meta property="og:description" content="The most advanced, trusted, and feature-rich collection of Custom UI, Monetloader, and CLEO scripts. Free. Verified. Always up to date.">
+    <meta property="og:url" content="https://scripts-hub.rayenamri379.workers.dev/">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80">
+    <meta name="twitter:card" content="summary_large_image">
     <title>KaZzA Scripts | _rayynn Hub</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -13,8 +21,8 @@
    ROOT VARIABLES & RESET
 ═══════════════════════════════════════════════════════════════ */
 :root {
-    --bg:          #04010c;
-    --bg2:         #070112;
+    --bg:          #030009;
+    --bg2:         #06010e;
     --glass:       rgba(12, 3, 22, 0.72);
     --glass2:      rgba(20, 5, 38, 0.85);
     --border:      rgba(140, 0, 255, 0.28);
@@ -23,20 +31,24 @@
     --p2:          #6b00cc;
     --p3:          #c266ff;
     --p4:          #e0aaff;
-    --cyan:        #00e5ff;
-    --pink:        #ff006e;
-    --green:       #00e6b8;
-    --warn:        #ffb84d;
+    /* These four keep their original variable names for compatibility with every
+       existing usage site, but now resolve to purple/black/white only — no green,
+       cyan, pink, or amber hues remain anywhere in the palette. */
+    --cyan:        #b388ff;   /* secondary lavender accent (was cyan) */
+    --pink:        #7a1fd6;   /* deep violet accent (was pink) */
+    --green:       #d4aaff;   /* bright lilac "positive" accent (was green) */
+    --warn:        #b06fff;   /* mid-purple "warning" accent (was amber) */
     --red:         #ff3b3b;
     --text:        #ffffff;
     --muted:       #a98dc8;
     --card:        rgba(8, 1, 16, 0.92);
     --glow-p:      rgba(157,0,255,0.55);
-    --glow-c:      rgba(0,229,255,0.35);
-    --glow-pk:     rgba(255,0,110,0.35);
+    --glow-c:      rgba(179,136,255,0.35);
+    --glow-pk:     rgba(122,31,214,0.4);
     --radius:      16px;
     --radius-lg:   24px;
     --transition:  all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    --ios-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -165,8 +177,8 @@ body.banned-theme {
     height: 3px; background: linear-gradient(90deg, var(--p1), var(--p3));
     animation: toastTimer 4s linear forwards;
 }
-.toast.success { border-left-color: var(--green); box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 0 20px rgba(0,230,184,0.25); }
-.toast.success::after { background: linear-gradient(90deg, var(--green), #00ffcc); }
+.toast.success { border-left-color: var(--green); box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 0 20px rgba(157,0,255,0.3); }
+.toast.success::after { background: linear-gradient(90deg, var(--green), #ecd4ff); }
 .toast.error   { border-left-color: var(--red); box-shadow: 0 12px 40px rgba(0,0,0,0.7), 0 0 20px rgba(255,59,59,0.25); }
 .toast.error::after { background: linear-gradient(90deg, var(--red), #ff6b6b); }
 .toast i { font-size: 1.25rem; }
@@ -323,7 +335,7 @@ body.banned-theme {
 
 .auth-msg { font-size: 0.88rem; margin-bottom: 12px; min-height: 22px; font-weight: 600; letter-spacing: 0.3px; }
 .msg-error   { color: var(--red); text-shadow: 0 0 8px rgba(255,59,59,0.4); }
-.msg-success { color: var(--green); text-shadow: 0 0 8px rgba(0,230,184,0.4); }
+.msg-success { color: var(--green); text-shadow: 0 0 8px rgba(157,0,255,0.4); }
 
 .divider-line {
     display: flex; align-items: center; margin: 24px 0;
@@ -401,12 +413,12 @@ body.banned-theme {
 
 .btn-danger  { color: #ff7070; border-color: #ff6b6b; background: rgba(255,107,107,0.1); }
 .btn-danger:hover:not(:disabled)  { background: linear-gradient(135deg, #ff4444, #cc0000) !important; border-color: transparent !important; box-shadow: 0 6px 24px rgba(255,59,59,0.4) !important; }
-.btn-success { color: var(--green); border-color: var(--green); background: rgba(0,230,184,0.08); }
-.btn-success:hover:not(:disabled) { background: linear-gradient(135deg, #00e6b8, #00b899) !important; color: #000 !important; border-color: transparent !important; box-shadow: 0 6px 24px rgba(0,230,184,0.4) !important; }
+.btn-success { color: var(--green); border-color: var(--green); background: rgba(157,0,255,0.1); }
+.btn-success:hover:not(:disabled) { background: linear-gradient(135deg, #c266ff, #8a2be2) !important; color: #fff !important; border-color: transparent !important; box-shadow: 0 6px 24px rgba(157,0,255,0.4) !important; }
 .btn-ghost   { color: var(--muted); border-color: rgba(255,255,255,0.15); background: transparent; }
 .btn-ghost:hover:not(:disabled) { background: rgba(255,255,255,0.08) !important; color: #fff !important; border-color: rgba(255,255,255,0.3) !important; box-shadow: none !important; }
-.btn-cyan    { color: var(--cyan); border-color: var(--cyan); background: rgba(0,229,255,0.08); }
-.btn-cyan:hover:not(:disabled)   { background: linear-gradient(135deg, var(--cyan), #0099cc) !important; color: #000 !important; border-color: transparent !important; box-shadow: 0 6px 24px rgba(0,229,255,0.35) !important; }
+.btn-cyan    { color: var(--cyan); border-color: var(--cyan); background: rgba(179,136,255,0.1); }
+.btn-cyan:hover:not(:disabled)   { background: linear-gradient(135deg, var(--cyan), #7a3fd1) !important; color: #fff !important; border-color: transparent !important; box-shadow: 0 6px 24px rgba(179,136,255,0.35) !important; }
 .btn-icon    { padding: 11px 14px; width: auto; border-radius: 10px; }
 .btn-sm      { padding: 9px 18px; font-size: 0.85rem; }
 
@@ -498,7 +510,7 @@ nav {
     display: flex; align-items: center; gap: 7px;
     font-size: 0.75rem; color: var(--green);
     font-family: 'JetBrains Mono', monospace; font-weight: 700;
-    background: rgba(0,230,184,0.08); border: 1px solid rgba(0,230,184,0.2);
+    background: rgba(157,0,255,0.1); border: 1px solid rgba(157,0,255,0.25);
     padding: 5px 12px; border-radius: 20px;
     letter-spacing: 0.5px;
 }
@@ -551,7 +563,7 @@ nav {
     background: linear-gradient(135deg, var(--cyan) 0%, var(--p3) 60%, #fff 100%);
     -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     background-clip: text;
-    filter: drop-shadow(0 0 30px rgba(0,229,255,0.3));
+    filter: drop-shadow(0 0 30px rgba(157,0,255,0.3));
 }
 
 .hero-sub {
@@ -679,12 +691,32 @@ nav {
 
 .script-img {
     width: 100%; height: 190px; object-fit: cover;
-    border-radius: 12px; margin-bottom: 22px;
+    border-radius: 12px;
     border: 1px solid rgba(255,255,255,0.05);
     cursor: pointer; transition: var(--transition);
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.5); display: block;
 }
 .script-img:hover { border-color: var(--p1); filter: brightness(1.12) saturate(1.1); transform: scale(1.03); }
+
+.card-img-wrap { position: relative; margin-bottom: 22px; }
+.card-fav-btn {
+    position: absolute; top: 12px; right: 12px;
+    width: 38px; height: 38px; border-radius: 50%;
+    background: rgba(10,2,18,0.78); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 3; transition: var(--ios-spring) 0.3s;
+    font-size: 0.92rem;
+}
+.card-fav-btn:hover { transform: scale(1.14); background: rgba(255,30,100,0.22); border-color: #ff1e64; }
+.card-fav-btn.active { color: #ff1e64; background: rgba(255,30,100,0.2); border-color: #ff1e64; }
+.card-fav-btn.active i { animation: heartPop 0.5s var(--ios-spring); }
+
+.script-meta .rating-pill { color: var(--p3); }
+.script-meta .rating-pill i { color: var(--p1); }
+
+.script-title.clickable { cursor: pointer; transition: 0.2s; }
+.script-title.clickable:hover { color: var(--p3); }
 
 .script-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 8px; }
 .script-title { font-size: 1.2rem; color: #fff; font-weight: 700; line-height: 1.35; font-family: 'Inter', sans-serif; }
@@ -698,10 +730,10 @@ nav {
     font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px;
 }
 .new-badge {
-    background: rgba(0,229,255,0.14); border-color: rgba(0,229,255,0.35);
+    background: rgba(179,136,255,0.16); border-color: rgba(179,136,255,0.4);
     color: var(--cyan); animation: newBadgePulse 2s infinite;
 }
-@keyframes newBadgePulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,229,255,0.3);} 50%{box-shadow:0 0 0 5px rgba(0,229,255,0);} }
+@keyframes newBadgePulse { 0%,100%{box-shadow:0 0 0 0 rgba(179,136,255,0.35);} 50%{box-shadow:0 0 0 5px rgba(179,136,255,0);} }
 
 .script-meta {
     font-size: 0.78rem; color: var(--muted);
@@ -813,10 +845,10 @@ tr:last-child td { border-bottom: none; }
     letter-spacing: 0.8px; text-transform: uppercase;
     font-family: 'JetBrains Mono', monospace; display: inline-flex; align-items: center; gap: 5px;
 }
-.badge-admin  { background: rgba(0,230,184,0.14); color: var(--green); border: 1px solid rgba(0,230,184,0.3); }
+.badge-admin  { background: rgba(157,0,255,0.16); color: var(--green); border: 1px solid rgba(157,0,255,0.35); }
 .badge-user   { background: rgba(255,255,255,0.04); color: #aaa; border: 1px solid rgba(255,255,255,0.1); }
 .badge-banned { background: rgba(255,59,59,0.14); color: var(--red); border: 1px solid rgba(255,59,59,0.3); }
-.badge-active { background: rgba(0,230,184,0.1); color: var(--green); border: 1px solid rgba(0,230,184,0.25); }
+.badge-active { background: rgba(157,0,255,0.1); color: var(--green); border: 1px solid rgba(157,0,255,0.28); }
 
 /* Log items */
 .log-item {
@@ -900,7 +932,266 @@ tr:last-child td { border-bottom: none; }
 }
 .footer-brand { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 800; color: #fff; }
 .footer-brand span { color: var(--p1); }
-.footer-copy { font-size: 0.78rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.footer-copy { font-size: 0.78rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; line-height: 1.6; }
+
+/* ═══════════════════════════════════════════════════════════════
+   iOS-26 STYLE SPRING TRANSITIONS
+═══════════════════════════════════════════════════════════════ */
+.view-section#view-detail.active { animation: detailMorphIn 0.55s var(--ios-spring); }
+@keyframes detailMorphIn {
+    from { opacity: 0; transform: scale(0.94) translateY(18px); filter: blur(8px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+
+.ios-press { transition: transform 0.18s var(--ios-spring), opacity 0.18s ease; }
+.ios-press:active { transform: scale(0.93); opacity: 0.85; }
+
+/* ═══════════════════════════════════════════════════════════════
+   BACK BUTTON
+═══════════════════════════════════════════════════════════════ */
+.back-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    color: var(--muted); padding: 10px 20px; border-radius: 30px;
+    cursor: pointer; font-weight: 600; font-size: 0.88rem;
+    transition: var(--transition); margin-bottom: 26px;
+    font-family: 'Inter', sans-serif;
+}
+.back-btn:hover { background: rgba(157,0,255,0.12); border-color: var(--border); color: #fff; transform: translateX(-4px); }
+
+/* ═══════════════════════════════════════════════════════════════
+   DETAIL HEADER
+═══════════════════════════════════════════════════════════════ */
+.detail-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    flex-wrap: wrap; gap: 18px; margin-bottom: 24px;
+}
+.detail-title-wrap { flex: 1; min-width: 260px; }
+.detail-title {
+    font-size: clamp(1.7rem, 3.4vw, 2.6rem); font-weight: 900;
+    color: #fff; font-family: 'Orbitron', sans-serif; line-height: 1.15;
+    margin-bottom: 10px; letter-spacing: -0.5px;
+}
+.detail-title i { color: var(--p1); margin-right: 10px; font-size: 0.85em; }
+.detail-meta-row {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    font-size: 0.85rem; color: var(--muted); font-family: 'JetBrains Mono', monospace;
+}
+.detail-meta-row span { display: flex; align-items: center; gap: 6px; }
+.detail-meta-row i { color: var(--p1); }
+
+.detail-actions { display: flex; gap: 10px; flex-shrink: 0; }
+
+/* Favorite heart button */
+.fav-btn {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    color: var(--muted); font-size: 1.25rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--ios-spring) 0.35s; position: relative;
+}
+.fav-btn:hover { background: rgba(255,59,110,0.1); border-color: rgba(255,59,110,0.3); color: #ff5599; transform: scale(1.08); }
+.fav-btn.active { background: rgba(255,30,100,0.16); border-color: #ff1e64; color: #ff1e64; }
+.fav-btn.active i { animation: heartPop 0.5s var(--ios-spring); }
+.fav-btn.pulse-burst::before {
+    content: '';
+    position: absolute; inset: -8px; border-radius: 50%;
+    border: 2px solid #ff1e64; opacity: 1;
+    animation: heartBurst 0.6s ease-out forwards;
+}
+@keyframes heartPop { 0%{transform:scale(1);} 35%{transform:scale(1.4);} 60%{transform:scale(0.9);} 100%{transform:scale(1);} }
+@keyframes heartBurst { to { inset: -22px; opacity: 0; } }
+
+/* Share button */
+.share-btn {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+    color: var(--muted); font-size: 1.1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--ios-spring) 0.35s;
+}
+.share-btn:hover { background: rgba(157,0,255,0.12); border-color: var(--border); color: #fff; transform: scale(1.08) rotate(-8deg); }
+
+/* ═══════════════════════════════════════════════════════════════
+   GALLERY (Play-Store style horizontal swipe)
+═══════════════════════════════════════════════════════════════ */
+.gallery-wrap { position: relative; margin-bottom: 30px; }
+.gallery-track {
+    display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding-bottom: 6px; scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+}
+.gallery-track::-webkit-scrollbar { height: 6px; }
+.gallery-slide {
+    flex: 0 0 auto; width: min(640px, 88vw); height: 360px;
+    border-radius: 20px; overflow: hidden; scroll-snap-align: start;
+    position: relative; background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+}
+.gallery-slide img, .gallery-slide iframe {
+    width: 100%; height: 100%; object-fit: cover; border: none; display: block;
+    cursor: pointer; transition: transform 0.5s var(--ios-spring);
+}
+.gallery-slide img:hover { transform: scale(1.03); }
+.gallery-slide .video-badge {
+    position: absolute; top: 14px; left: 14px;
+    background: rgba(0,0,0,0.65); backdrop-filter: blur(8px);
+    color: #fff; padding: 6px 14px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; gap: 6px;
+    border: 1px solid rgba(255,255,255,0.15); pointer-events: none;
+}
+.gallery-dots { display: flex; justify-content: center; gap: 7px; margin-top: 16px; }
+.gallery-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: rgba(255,255,255,0.18); transition: var(--ios-spring) 0.35s;
+    cursor: pointer; border: none; padding: 0;
+}
+.gallery-dot.active { background: var(--p1); width: 22px; border-radius: 5px; box-shadow: 0 0 10px var(--glow-p); }
+
+.gallery-arrow {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px; border-radius: 50%;
+    background: rgba(10,2,18,0.8); backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.15); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; z-index: 5; transition: var(--ios-spring) 0.3s;
+    opacity: 0;
+}
+.gallery-wrap:hover .gallery-arrow { opacity: 1; }
+.gallery-arrow:hover { background: var(--p1); transform: translateY(-50%) scale(1.1); }
+.gallery-arrow.prev { left: 14px; }
+.gallery-arrow.next { right: 14px; }
+@media (max-width: 700px) { .gallery-arrow { display: none; } }
+
+/* ═══════════════════════════════════════════════════════════════
+   ENGAGEMENT BAR (like / dislike / stars / downloads)
+═══════════════════════════════════════════════════════════════ */
+.engage-bar {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    background: var(--card); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 18px; padding: 20px 24px; margin-bottom: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.like-dislike-group { display: flex; align-items: center; gap: 4px; background: rgba(0,0,0,0.35); border-radius: 14px; padding: 5px; border: 1px solid rgba(255,255,255,0.06); }
+.ld-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: transparent; border: none; color: var(--muted);
+    padding: 9px 16px; border-radius: 10px; cursor: pointer;
+    font-weight: 700; font-size: 0.9rem; transition: var(--ios-spring) 0.3s;
+    font-family: 'JetBrains Mono', monospace;
+}
+.ld-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.ld-btn.like.active { background: rgba(157,0,255,0.18); color: var(--p3); }
+.ld-btn.dislike.active { background: rgba(255,59,59,0.16); color: #ff6b6b; }
+.ld-btn i { transition: transform 0.3s var(--ios-spring); }
+.ld-btn.bump i { animation: ldBump 0.4s var(--ios-spring); }
+@keyframes ldBump { 0%{transform:scale(1);} 50%{transform:scale(1.35) rotate(-8deg);} 100%{transform:scale(1);} }
+
+.divider-v { width: 1px; height: 28px; background: rgba(255,255,255,0.08); }
+
+/* Star rating */
+.star-rating-display { display: flex; align-items: center; gap: 10px; }
+.star-rating-display .stars-avg { display: flex; gap: 2px; }
+.star-rating-display .stars-avg i { color: var(--p1); font-size: 1rem; filter: drop-shadow(0 0 6px var(--glow-p)); }
+.star-rating-display .avg-num { font-weight: 800; color: #fff; font-family: 'JetBrains Mono', monospace; font-size: 1rem; }
+.star-rating-display .rating-count { color: var(--muted); font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; }
+
+.your-rating-prompt { display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; }
+.your-rating-prompt .label-sm { font-size: 0.78rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
+.star-picker { display: flex; gap: 4px; }
+.star-picker i {
+    font-size: 1.35rem; color: rgba(255,255,255,0.18); cursor: pointer;
+    transition: var(--ios-spring) 0.25s;
+}
+.star-picker i:hover, .star-picker i.hovered { transform: scale(1.25); }
+.star-picker i.filled { color: var(--p1); filter: drop-shadow(0 0 8px var(--glow-p)); }
+.star-picker i.user-rated { animation: starPop 0.4s var(--ios-spring); }
+@keyframes starPop { 0%{transform:scale(1);} 50%{transform:scale(1.5) rotate(15deg);} 100%{transform:scale(1);} }
+
+/* ═══════════════════════════════════════════════════════════════
+   DESCRIPTION BLOCK
+═══════════════════════════════════════════════════════════════ */
+.detail-desc-box {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 18px; padding: 28px; margin-bottom: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.detail-desc-box h3 { font-size: 1.05rem; color: #fff; margin-bottom: 14px; display: flex; align-items: center; gap: 9px; font-weight: 700; }
+.detail-desc-box h3 i { color: var(--p1); }
+.detail-desc-text { color: #ccc; line-height: 1.8; font-size: 0.98rem; white-space: pre-wrap; }
+
+.detail-download-cta { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+.detail-download-cta .btn { flex: 1; min-width: 220px; padding: 16px 28px; font-size: 1rem; }
+
+/* ═══════════════════════════════════════════════════════════════
+   COMMENTS SECTION
+═══════════════════════════════════════════════════════════════ */
+.comments-box {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 18px; padding: 28px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.comments-title { font-size: 1.15rem; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.comments-title i { color: var(--p1); }
+.comments-title .count-pill {
+    background: rgba(157,0,255,0.14); color: var(--p3); font-size: 0.78rem;
+    padding: 3px 11px; border-radius: 20px; font-family: 'JetBrains Mono', monospace;
+    border: 1px solid rgba(157,0,255,0.3);
+}
+
+.comment-form { display: flex; gap: 12px; margin-bottom: 26px; align-items: flex-start; }
+.comment-avatar {
+    width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--p1), var(--p2));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 1rem;
+    box-shadow: 0 4px 14px rgba(157,0,255,0.35); font-family: 'Orbitron', sans-serif;
+}
+.comment-input-wrap { flex: 1; }
+.comment-input-wrap textarea {
+    width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+    color: #fff; padding: 13px 16px; border-radius: 13px; font-family: 'Inter', sans-serif;
+    font-size: 0.92rem; resize: vertical; min-height: 52px; outline: none;
+    transition: var(--transition);
+}
+.comment-input-wrap textarea:focus { border-color: var(--p1); box-shadow: 0 0 0 3px rgba(157,0,255,0.14); }
+.comment-form-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+.comment-form-actions .btn { width: auto; padding: 9px 22px; font-size: 0.85rem; }
+
+.comment-list { display: flex; flex-direction: column; gap: 16px; }
+.comment-item {
+    display: flex; gap: 12px; animation: commentIn 0.4s var(--ios-spring) both;
+}
+@keyframes commentIn { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+.comment-body {
+    flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 14px; padding: 14px 18px;
+}
+.comment-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; gap: 10px; flex-wrap: wrap; }
+.comment-author { color: #fff; font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 7px; }
+.comment-author .admin-pip {
+    font-size: 0.62rem; background: rgba(157,0,255,0.18); color: var(--p3);
+    padding: 1px 7px; border-radius: 8px; border: 1px solid rgba(157,0,255,0.3);
+    font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px;
+}
+.comment-time { font-size: 0.72rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+.comment-text { color: #ddd; font-size: 0.9rem; line-height: 1.6; word-break: break-word; }
+.comment-actions { display: flex; gap: 8px; margin-top: 8px; }
+.comment-del-btn {
+    background: none; border: none; color: var(--muted); cursor: pointer;
+    font-size: 0.76rem; display: flex; align-items: center; gap: 5px;
+    transition: 0.2s; padding: 2px 6px; border-radius: 6px;
+}
+.comment-del-btn:hover { color: var(--red); background: rgba(255,59,59,0.08); }
+
+.comments-empty { text-align: center; padding: 36px 20px; color: var(--muted); }
+.comments-empty i { font-size: 2.2rem; opacity: 0.35; margin-bottom: 12px; display: block; }
+
+/* Detail loading skeleton */
+.detail-skeleton { display: flex; flex-direction: column; gap: 20px; }
+.skel-block { border-radius: 18px; height: 80px; }
+.skel-block.tall { height: 360px; }
 
 /* ═══════════════════════════════════════════════════════════════
    RESPONSIVE
@@ -915,6 +1206,12 @@ tr:last-child td { border-bottom: none; }
     .scripts-grid { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
     .site-footer { padding: 28px 20px; flex-direction: column; text-align: center; }
+    .gallery-slide { width: 92vw; height: 240px; }
+    .engage-bar { padding: 16px; }
+    .your-rating-prompt { margin-left: 0; width: 100%; justify-content: space-between; }
+    .detail-actions { width: 100%; justify-content: flex-end; }
+    .comment-form { flex-direction: column; }
+    .comment-avatar { display: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1071,6 +1368,7 @@ tr:last-child td { border-bottom: none; }
         </div>
         <div class="nav-links">
             <button onclick="switchTab('home')" id="tab-home" class="nav-btn active"><i class="fas fa-home"></i> Home</button>
+            <button onclick="switchTab('favorites')" id="tab-favorites" class="nav-btn"><i class="fas fa-heart"></i> Favorites</button>
             <button onclick="switchTab('request')" id="tab-request" class="nav-btn"><i class="fas fa-paper-plane"></i> Request Script</button>
             <button onclick="switchTab('admin')" id="tab-admin" class="nav-btn admin-only" style="position:relative;"><i class="fas fa-terminal"></i> Control Panel</button>
             <button class="nav-btn nav-btn-logout" id="logoutBtn" onclick="confirmLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -1122,6 +1420,27 @@ tr:last-child td { border-bottom: none; }
         </div>
         <div class="categories" id="categoryFilters"></div>
         <div class="scripts-grid" id="scriptsGrid"></div>
+    </div>
+
+    <!-- FAVORITES VIEW -->
+    <div id="view-favorites" class="view-section">
+        <section class="hero" style="padding-top:60px; padding-bottom:20px;">
+            <div class="hero-eyebrow">
+                <span class="hero-eyebrow-dot"></span>
+                <span>Your Saved Collection</span>
+                <span class="hero-eyebrow-dot"></span>
+            </div>
+            <h1 style="font-size:clamp(2rem,4vw,3rem);"><span class="line1"><i class="fas fa-heart" style="color:var(--p1); -webkit-text-fill-color:var(--p1); filter:drop-shadow(0 0 20px var(--glow-p));"></i> Favorites</span></h1>
+            <p class="hero-sub" style="margin-bottom:0;">Every script you've saved for quick access, all in one place.</p>
+        </section>
+        <div class="scripts-grid" id="favoritesGrid" style="padding-top:30px;"></div>
+    </div>
+
+    <!-- SCRIPT DETAIL VIEW -->
+    <div id="view-detail" class="view-section">
+        <div id="detailContent" style="max-width:1100px; margin:0 auto; padding:34px 20px 90px;">
+            <!-- populated dynamically by renderScriptDetail() -->
+        </div>
     </div>
 
     <!-- REQUEST VIEW -->
@@ -1185,8 +1504,20 @@ tr:last-child td { border-bottom: none; }
                             <input type="url" id="s-link" class="form-input" placeholder="https://www.mediafire.com/file/..." required>
                         </div>
                         <div class="full">
-                            <label class="form-label">Preview Image Link (optional — direct image URL):</label>
-                            <input type="url" id="s-image-link" class="form-input" placeholder="https://i.imgur.com/...png">
+                            <label class="form-label"><i class="fab fa-youtube" style="color:#ff0000;"></i> YouTube Video Preview (optional — Play Store style):</label>
+                            <input type="url" id="s-video" class="form-input" placeholder="https://www.youtube.com/watch?v=...">
+                        </div>
+                        <div>
+                            <label class="form-label">Preview Image 1 (direct URL):</label>
+                            <input type="url" id="s-image-link" class="form-input" placeholder="https://i.imgur.com/....png">
+                        </div>
+                        <div>
+                            <label class="form-label">Preview Image 2 (optional):</label>
+                            <input type="url" id="s-image2" class="form-input" placeholder="https://i.imgur.com/....png">
+                        </div>
+                        <div class="full">
+                            <label class="form-label">Preview Image 3 (optional):</label>
+                            <input type="url" id="s-image3" class="form-input" placeholder="https://i.imgur.com/....png">
                         </div>
                         <div class="full">
                             <label class="form-label">Detailed Description:</label>
@@ -1234,8 +1565,30 @@ tr:last-child td { border-bottom: none; }
 
     <footer class="site-footer">
         <div class="footer-brand">KaZzA <span>Scripts</span></div>
-        <div class="footer-copy">© 2024 KaZzA Scripts Hub · Developed by _rayynn · All rights reserved.</div>
+        <div class="footer-copy">
+            © 2026 KaZzA Scripts Hub · Developed by _rayynn · All rights reserved.<br>
+            <a href="https://scripts-hub.rayenamri379.workers.dev/" style="color:var(--p3); text-decoration:none;">scripts-hub.rayenamri379.workers.dev</a>
+        </div>
     </footer>
+</div>
+
+<!-- ── STICKY BOTTOM AD BAR ── -->
+<div id="sticky-ad-bar" style="
+    position:fixed; bottom:0; left:0; right:0; z-index:9000;
+    background:rgba(4,1,10,0.96); backdrop-filter:blur(20px);
+    border-top:1px solid rgba(157,0,255,0.2);
+    padding:6px 12px 6px 12px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 -4px 24px rgba(0,0,0,0.5);
+    transition:transform 0.4s cubic-bezier(0.23,1,0.32,1);
+">
+    <button onclick="document.getElementById('sticky-ad-bar').style.transform='translateY(110%)'"
+        style="position:absolute;top:6px;right:10px;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:0.7rem;padding:4px 6px;border-radius:4px;transition:0.2s;"
+        title="Close">✕</button>
+    <div style="width:100%;max-width:860px;">
+        <iframe data-aa='2446304' src='//acceptable.a-ads.com/2446304/?size=Adaptive&background_color=7a00ff&title_color=ffffff&title_hover_color=000000&text_color=ffffff&link_color=000000&link_hover_color=000000'
+            style='border:0;padding:0;width:100%;height:60px;overflow:hidden;display:block;' scrolling='no'></iframe>
+    </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════════
@@ -1264,7 +1617,7 @@ class Particle {
         this.speedX = (Math.random() - 0.5) * 0.5;
         this.speedY = (Math.random() - 0.5) * 0.5;
         this.opacity = Math.random() * 0.5 + 0.1;
-        this.color = Math.random() > 0.6 ? '#9d00ff' : Math.random() > 0.5 ? '#00e5ff' : '#c266ff';
+        this.color = Math.random() > 0.6 ? '#9d00ff' : Math.random() > 0.5 ? '#c266ff' : '#7a1fd6';
         this.life = 0;
         this.maxLife = Math.random() * 300 + 200;
     }
@@ -1411,7 +1764,8 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import {
     getFirestore, collection, addDoc, getDocs, deleteDoc, doc,
-    updateDoc, setDoc, getDoc, increment, query, orderBy, where
+    updateDoc, setDoc, getDoc, increment, query, orderBy, where,
+    arrayUnion, arrayRemove, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1430,11 +1784,16 @@ const db   = getFirestore(app);
 const MAIN_ADMIN_USERNAME = '_rayynn';
 const MAIN_ADMIN_EMAIL    = 'rayenamri379@gmail.com';
 
-let currentUser   = null;
-let isUserAdmin   = false;
-let scriptsDB     = [];
-let currentFilter = 'All';
-const CATEGORIES  = ['UI Customization', 'Admin & Helper Scripts', 'Utility', 'Roleplay Enhancements', 'CLEO Mods'];
+let currentUser     = null;
+let isUserAdmin     = false;
+let scriptsDB       = [];
+let currentFilter   = 'All';
+let activeDetailId  = null;   // currently open script detail ID
+let galleryItems    = [];     // resolved gallery slides for the open detail (video + images)
+let galleryIndex    = 0;      // current slide index in the open gallery
+let userOwnRating   = 0;      // current user's existing star rating for the open script
+const CATEGORIES    = ['UI Customization', 'Admin & Helper Scripts', 'Utility', 'Roleplay Enhancements', 'CLEO Mods'];
+
 
 /* ── TOAST ── */
 window.showToast = (msg, type = 'success') => {
@@ -1614,12 +1973,12 @@ const onAuthHandler = async (user) => {
 
         isUserAdmin = userData.role === 'admin' || userData.username.toLowerCase() === MAIN_ADMIN_USERNAME.toLowerCase();
         document.body.classList.remove('banned-theme');
-        currentUser = userData;
+        currentUser = { ...userData, uid: user.uid, favorites: userData.favorites || [] };
         document.getElementById('auth-overlay').style.display = 'none';
         document.getElementById('banned-screen').style.display = 'none';
         document.getElementById('app-content').classList.add('visible');
 
-        const adminTag = isUserAdmin ? ' <span style="color:var(--green); font-size:0.75rem; font-family:\'JetBrains Mono\',monospace; background:rgba(0,230,184,0.1); padding:2px 7px; border-radius:5px; border:1px solid rgba(0,230,184,0.25);">ADMIN</span>' : '';
+        const adminTag = isUserAdmin ? ' <span style="color:var(--green); font-size:0.75rem; font-family:\'JetBrains Mono\',monospace; background:rgba(157,0,255,0.14); padding:2px 7px; border-radius:5px; border:1px solid rgba(157,0,255,0.32);">ADMIN</span>' : '';
         document.getElementById('logoutBtn').innerHTML = `<i class="fas fa-sign-out-alt"></i> ${userData.username}${adminTag}`;
 
         document.querySelectorAll('.admin-only').forEach(el => {
@@ -1648,6 +2007,7 @@ window.switchTab = (id) => {
     const tabBtn = document.getElementById('tab-' + id);
     if (tabBtn) tabBtn.classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (id === 'favorites') renderFavorites();
     /* reveal re-check */
     setTimeout(() => {
         document.querySelectorAll('.reveal:not(.revealed)').forEach(el => {
@@ -1683,6 +2043,58 @@ window.previewImageModal = (url, title) => {
 };
 
 /* ── RENDER SCRIPTS ── */
+/* ── REUSABLE SCRIPT CARD TEMPLATE ── */
+const buildScriptCard = (script, idx = 0) => {
+    const date    = script.createdAt ? new Date(script.createdAt.seconds * 1000).toLocaleDateString('en-GB') : 'Recent';
+    const imgSrc  = script.imageUrl || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80';
+    const now     = Date.now();
+    const isNew   = script.createdAt && (now - script.createdAt.seconds * 1000) < 604800000; // 7 days
+    const dlBadge = isNew ? '<span class="v-badge new-badge">NEW</span>' : '';
+    const isFav   = !!(currentUser && currentUser.favorites && currentUser.favorites.includes(script.id));
+    const ratingCount = script.ratingCount || 0;
+    const ratingAvg   = ratingCount > 0 ? (script.ratingSum / ratingCount).toFixed(1) : null;
+    const safeTitle   = script.title.replace(/'/g, "\\'");
+    const safeFileUrl = (script.fileUrl || '').replace(/'/g, "\\'");
+
+    return `
+    <div class="script-card" style="animation-delay:${idx * 0.06}s;">
+        <div class="card-img-wrap">
+            <img src="${imgSrc}" class="script-img img-shimmer"
+                onclick="openScriptDetail('${script.id}')"
+                title="View details" alt="${script.title}"
+                onload="this.classList.remove('img-shimmer')"
+                onerror="this.src='https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80'; this.classList.remove('img-shimmer')"/>
+            <button class="card-fav-btn ${isFav ? 'active' : ''}" data-fav-id="${script.id}" onclick="toggleFavorite('${script.id}')" title="${isFav ? 'Remove from favorites' : 'Add to favorites'}">
+                <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+            </button>
+        </div>
+        <div class="script-header">
+            <h3 class="script-title clickable" onclick="openScriptDetail('${script.id}')"><i class="fas fa-terminal"></i> ${script.title}</h3>
+            <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
+                ${dlBadge}
+                <span class="v-badge">${script.version}</span>
+            </div>
+        </div>
+        <div class="script-meta">
+            <span><i class="far fa-calendar-alt"></i> ${date}</span>
+            <span><i class="fas fa-user-shield"></i> ${script.creator || '_rayynn'}</span>
+            <span><i class="fas fa-layer-group"></i> ${script.category}</span>
+            ${ratingAvg ? `<span class="rating-pill"><i class="fas fa-star"></i> ${ratingAvg} <span class="text-muted">(${ratingCount})</span></span>` : ''}
+        </div>
+        <p class="script-desc">${script.desc}</p>
+        <div class="card-footer">
+            <button class="btn" style="flex:1.8;" onclick="downloadFile('${script.id}', '${safeFileUrl}', '${safeTitle}')">
+                <i class="fas fa-cloud-download-alt"></i> Download
+                <span class="dl-count">${(script.downloads || 0).toLocaleString()}</span>
+            </button>
+            <button class="btn btn-ghost btn-icon" title="Copy link" onclick="copyLink('${safeFileUrl}')">
+                <i class="fas fa-link"></i>
+            </button>
+        </div>
+    </div>`;
+};
+
+/* ── RENDER SCRIPTS (Home grid) ── */
 window.renderScripts = (searchTerm = '') => {
     renderCategories();
     const grid = document.getElementById('scriptsGrid');
@@ -1705,45 +2117,38 @@ window.renderScripts = (searchTerm = '') => {
         return;
     }
 
-    const now = Date.now();
-    filtered.forEach((script, idx) => {
-        const date   = script.createdAt ? new Date(script.createdAt.seconds * 1000).toLocaleDateString('en-GB') : 'Recent';
-        const imgSrc = script.imageUrl || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80';
-        const isNew  = script.createdAt && (now - script.createdAt.seconds * 1000) < 604800000; // 7 days
-        const dlBadge = isNew ? '<span class="v-badge new-badge">NEW</span>' : '';
+    const AD_HTML = `<div style="grid-column:1/-1;border-radius:14px;overflow:hidden;border:1px solid rgba(157,0,255,0.15);background:rgba(0,0,0,0.3);margin:4px 0;">
+        <iframe data-aa='2446304' src='//acceptable.a-ads.com/2446304/?size=Adaptive&background_color=7a00ff&title_color=ffffff&title_hover_color=000000&text_color=ffffff&link_color=000000&link_hover_color=000000'
+            style='border:0;padding:0;width:100%;height:auto;overflow:hidden;display:block;' scrolling='no'></iframe>
+    </div>`;
 
-        grid.innerHTML += `
-        <div class="script-card" style="animation-delay:${idx * 0.06}s;">
-            <img src="${imgSrc}" class="script-img img-shimmer"
-                onclick="previewImageModal('${imgSrc.replace(/'/g,"\\'")}', '${script.title.replace(/'/g,"\\'")}')"
-                title="Click to enlarge" alt="${script.title}"
-                onload="this.classList.remove('img-shimmer')"
-                onerror="this.src='https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=600&q=80'; this.classList.remove('img-shimmer')"/>
-            <div class="script-header">
-                <h3 class="script-title"><i class="fas fa-terminal"></i> ${script.title}</h3>
-                <div style="display:flex; gap:6px; align-items:center; flex-shrink:0;">
-                    ${dlBadge}
-                    <span class="v-badge">${script.version}</span>
-                </div>
-            </div>
-            <div class="script-meta">
-                <span><i class="far fa-calendar-alt"></i> ${date}</span>
-                <span><i class="fas fa-user-shield"></i> ${script.creator || '_rayynn'}</span>
-                <span><i class="fas fa-layer-group"></i> ${script.category}</span>
-            </div>
-            <p class="script-desc">${script.desc}</p>
-            <div class="card-footer">
-                <button class="btn" style="flex:1.8;" onclick="downloadFile('${script.id}', '${(script.fileUrl||'').replace(/'/g,"\\'")}', '${script.title.replace(/'/g,"\\'")}')">
-                    <i class="fas fa-cloud-download-alt"></i> Download
-                    <span class="dl-count">${(script.downloads || 0).toLocaleString()}</span>
-                </button>
-                <button class="btn btn-ghost btn-icon" title="Copy link" onclick="copyLink('${(script.fileUrl||'').replace(/'/g,"\\'")}')">
-                    <i class="fas fa-link"></i>
-                </button>
-            </div>
-        </div>`;
+    let html = '';
+    filtered.forEach((script, idx) => {
+        html += buildScriptCard(script, idx);
+        if ((idx + 1) % 4 === 0 && idx < filtered.length - 1) html += AD_HTML;
     });
+    grid.innerHTML = html;
 };
+
+/* ── RENDER FAVORITES VIEW ── */
+window.renderFavorites = () => {
+    const grid = document.getElementById('favoritesGrid');
+    if (!grid) return;
+    const favIds = (currentUser && currentUser.favorites) || [];
+    const favScripts = scriptsDB.filter(s => favIds.includes(s.id));
+
+    if (!favScripts.length) {
+        grid.innerHTML = `
+        <div class="empty-state">
+            <i class="fas fa-heart-crack"></i>
+            <h3>No favorites yet.</h3>
+            <p>Tap the heart icon on any script to save it here.</p>
+        </div>`;
+        return;
+    }
+    grid.innerHTML = favScripts.map((script, idx) => buildScriptCard(script, idx)).join('');
+};
+
 
 document.getElementById('searchInput').addEventListener('input', e => renderScripts(e.target.value.toLowerCase()));
 
@@ -1948,24 +2353,31 @@ window.uploadScript = async (e) => {
     const btn = document.getElementById('uploadBtn');
     if (btn.disabled) return;
     btn.disabled = true;
-
     const title    = document.getElementById('s-title').value.trim();
     const version  = document.getElementById('s-version').value.trim();
     const category = document.getElementById('s-category').value;
     const extLink  = document.getElementById('s-link').value.trim();
     const imgLink  = document.getElementById('s-image-link').value.trim();
+    const img2     = document.getElementById('s-image2').value.trim();
+    const img3     = document.getElementById('s-image3').value.trim();
+    const videoUrl = document.getElementById('s-video').value.trim();
     const desc     = document.getElementById('s-desc').value.trim();
-
     if (!extLink || !extLink.startsWith('http')) {
         showToast('Please enter a valid download link starting with http/https.', 'error');
         btn.disabled = false; return;
     }
     try {
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving to database...';
+        const extraImages = [img2, img3].filter(u => u.startsWith('http'));
         await addDoc(collection(db, "scripts"), {
             title, version, category, desc,
-            fileUrl: extLink, imageUrl: imgLink || '',
-            downloads: 0, creator: '_rayynn', createdAt: new Date()
+            fileUrl: extLink,
+            imageUrl: imgLink || '',
+            extraImages,
+            videoUrl: videoUrl || '',
+            downloads: 0, likes: [], dislikes: [],
+            ratingSum: 0, ratingCount: 0,
+            creator: '_rayynn', createdAt: new Date()
         });
         logToDB("New Script Published", `${title} (${version}) added to library.`, "success");
         showToast('Script published and linked successfully!', 'success');
@@ -2002,6 +2414,492 @@ window.submitRequest = async (e) => {
         btn.disabled  = false;
     }
 };
+
+/* ══════════════════════════════════════════════════════════
+   ── FAVORITES ──
+══════════════════════════════════════════════════════════ */
+window.toggleFavorite = async (scriptId) => {
+    if (!currentUser) { showToast('Sign in to save favorites.', 'error'); return; }
+    const uid     = currentUser.uid;
+    const userRef = doc(db, "users", uid);
+    const isFav   = currentUser.favorites.includes(scriptId);
+
+    try {
+        if (isFav) {
+            await updateDoc(userRef, { favorites: arrayRemove(scriptId) });
+            currentUser.favorites = currentUser.favorites.filter(id => id !== scriptId);
+            showToast('Removed from favorites.', 'success');
+        } else {
+            await updateDoc(userRef, { favorites: arrayUnion(scriptId) });
+            currentUser.favorites = [...currentUser.favorites, scriptId];
+            showToast('Added to favorites! ❤️', 'success');
+        }
+        /* sync all card heart buttons across ALL grids */
+        document.querySelectorAll(`[data-fav-id="${scriptId}"]`).forEach(btn => {
+            const nowFav = currentUser.favorites.includes(scriptId);
+            btn.classList.toggle('active', nowFav);
+            btn.querySelector('i').className = nowFav ? 'fas fa-heart' : 'far fa-heart';
+            if (nowFav) { btn.classList.add('pulse-burst'); setTimeout(() => btn.classList.remove('pulse-burst'), 700); }
+        });
+        /* sync main page detail fav button if open */
+        const detailFav = document.getElementById('detail-fav-btn');
+        if (detailFav && activeDetailId === scriptId) {
+            const nowFav = currentUser.favorites.includes(scriptId);
+            detailFav.classList.toggle('active', nowFav);
+            detailFav.querySelector('i').className = nowFav ? 'fas fa-heart' : 'far fa-heart';
+        }
+    } catch(err) { showToast('Error updating favorites.', 'error'); }
+};
+
+/* ══════════════════════════════════════════════════════════
+   ── GALLERY HELPERS ──
+══════════════════════════════════════════════════════════ */
+const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
+    return m ? `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1` : null;
+};
+
+const buildGallerySlides = (script) => {
+    const slides = [];
+    /* Video first (like Play Store) */
+    if (script.videoUrl) {
+        const embedUrl = getYouTubeEmbedUrl(script.videoUrl);
+        if (embedUrl) slides.push({ type: 'video', src: embedUrl });
+    }
+    /* Primary image */
+    if (script.imageUrl) slides.push({ type: 'image', src: script.imageUrl });
+    /* Extra images */
+    (script.extraImages || []).forEach(u => { if (u) slides.push({ type: 'image', src: u }); });
+    /* Fallback */
+    if (!slides.length) slides.push({ type: 'image', src: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=900&q=80' });
+    return slides;
+};
+
+window.galleryGoTo = (idx) => {
+    galleryIndex = Math.max(0, Math.min(idx, galleryItems.length - 1));
+    const track = document.getElementById('gallery-track');
+    if (!track) return;
+    const slide = track.querySelectorAll('.gallery-slide')[galleryIndex];
+    if (slide) slide.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    document.querySelectorAll('.gallery-dot').forEach((d, i) => d.classList.toggle('active', i === galleryIndex));
+};
+window.galleryPrev = () => galleryGoTo(galleryIndex - 1);
+window.galleryNext = () => galleryGoTo(galleryIndex + 1);
+
+/* ══════════════════════════════════════════════════════════
+   ── LIKE / DISLIKE ──
+══════════════════════════════════════════════════════════ */
+window.handleLike = async (scriptId, type) => {
+    if (!currentUser) { showToast('Sign in to react.', 'error'); return; }
+    const uid = currentUser.uid;
+    const ref = doc(db, "scripts", scriptId);
+    const script = scriptsDB.find(s => s.id === scriptId);
+    if (!script) return;
+
+    const liked    = (script.likes    || []).includes(uid);
+    const disliked = (script.dislikes || []).includes(uid);
+    let upd = {};
+
+    if (type === 'like') {
+        if (liked) { upd = { likes: arrayRemove(uid) }; }
+        else       { upd = { likes: arrayUnion(uid), dislikes: arrayRemove(uid) }; }
+    } else {
+        if (disliked) { upd = { dislikes: arrayRemove(uid) }; }
+        else          { upd = { dislikes: arrayUnion(uid), likes: arrayRemove(uid) }; }
+    }
+
+    try {
+        await updateDoc(ref, upd);
+        /* optimistic local update */
+        if (type === 'like') {
+            script.likes    = liked    ? script.likes.filter(u=>u!==uid) : [...(script.likes||[]),uid];
+            script.dislikes = script.dislikes ? script.dislikes.filter(u=>u!==uid) : [];
+        } else {
+            script.dislikes = disliked ? script.dislikes.filter(u=>u!==uid) : [...(script.dislikes||[]),uid];
+            script.likes    = script.likes ? script.likes.filter(u=>u!==uid) : [];
+        }
+        renderEngageBar(script);
+    } catch(err) { showToast('Error saving reaction.', 'error'); }
+};
+
+/* ══════════════════════════════════════════════════════════
+   ── STAR RATING ──
+══════════════════════════════════════════════════════════ */
+window.hoverStar = (n) => {
+    document.querySelectorAll('.star-picker i').forEach((el, i) => {
+        el.classList.toggle('filled', i < n);
+        el.classList.toggle('hovered', i < n);
+    });
+};
+window.unhoverStar = () => {
+    document.querySelectorAll('.star-picker i').forEach((el, i) => {
+        el.classList.remove('hovered');
+        el.classList.toggle('filled', i < userOwnRating);
+    });
+};
+window.submitRating = async (scriptId, stars) => {
+    if (!currentUser) { showToast('Sign in to rate.', 'error'); return; }
+    const uid = currentUser.uid;
+    const ratingRef = doc(db, "scripts", scriptId, "ratings", uid);
+    const ratingSnap = await getDoc(ratingRef);
+    const scriptRef  = doc(db, "scripts", scriptId);
+
+    try {
+        let oldStars = 0;
+        if (ratingSnap.exists()) oldStars = ratingSnap.data().stars || 0;
+
+        await setDoc(ratingRef, { stars, uid, at: new Date() });
+
+        /* Adjust ratingSum and ratingCount in the script document */
+        if (oldStars === 0) {
+            await updateDoc(scriptRef, { ratingSum: increment(stars), ratingCount: increment(1) });
+        } else {
+            await updateDoc(scriptRef, { ratingSum: increment(stars - oldStars) });
+        }
+
+        userOwnRating = stars;
+        document.querySelectorAll('.star-picker i').forEach((el, i) => {
+            el.classList.toggle('filled', i < stars);
+            el.classList.add('user-rated');
+            setTimeout(() => el.classList.remove('user-rated'), 500);
+        });
+
+        /* Update local scriptsDB entry for immediate re-render consistency */
+        const sc = scriptsDB.find(s => s.id === scriptId);
+        if (sc) {
+            if (oldStars === 0) { sc.ratingSum = (sc.ratingSum||0) + stars; sc.ratingCount = (sc.ratingCount||0) + 1; }
+            else                { sc.ratingSum = (sc.ratingSum||0) + (stars - oldStars); }
+        }
+        showToast(`Rated ${stars} star${stars!==1?'s':''}!`, 'success');
+        renderStarDisplay(sc);
+    } catch(err) { showToast('Error saving rating.', 'error'); }
+};
+
+/* ══════════════════════════════════════════════════════════
+   ── COMMENTS ──
+══════════════════════════════════════════════════════════ */
+window.submitComment = async (scriptId) => {
+    if (!currentUser) { showToast('Sign in to comment.', 'error'); return; }
+    const textarea = document.getElementById('comment-textarea');
+    const text = textarea ? textarea.value.trim() : '';
+    if (!text) { showToast('Comment cannot be empty.', 'error'); return; }
+    if (text.length > 600) { showToast('Comment too long (max 600 chars).', 'error'); return; }
+
+    const btn = document.getElementById('comment-submit-btn');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>'; }
+
+    try {
+        const commentRef = collection(db, "scripts", scriptId, "comments");
+        await addDoc(commentRef, {
+            text, uid: currentUser.uid,
+            author: currentUser.username,
+            isAdmin: isUserAdmin,
+            at: new Date()
+        });
+        if (textarea) textarea.value = '';
+        showToast('Comment posted!', 'success');
+        await loadComments(scriptId);
+    } catch(err) { showToast('Error posting comment.', 'error'); }
+    finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fas fa-paper-plane"></i> Post'; }
+    }
+};
+
+window.deleteComment = async (scriptId, commentId) => {
+    openModal({
+        title: 'Delete Comment', type: 'confirm',
+        desc: 'Remove this comment permanently?',
+        confirmText: 'Delete', confirmClass: 'btn-danger',
+        onConfirm: async () => {
+            try {
+                await deleteDoc(doc(db, "scripts", scriptId, "comments", commentId));
+                showToast('Comment deleted.', 'success');
+                await loadComments(scriptId);
+            } catch(err) { showToast('Error deleting comment.', 'error'); }
+        }
+    });
+};
+
+const loadComments = async (scriptId) => {
+    const list = document.getElementById('comments-list');
+    const countPill = document.getElementById('comments-count');
+    if (!list) return;
+    try {
+        const q    = query(collection(db, "scripts", scriptId, "comments"), orderBy("at", "desc"));
+        const snap = await getDocs(q);
+        if (countPill) countPill.textContent = snap.size;
+
+        if (snap.empty) {
+            list.innerHTML = `<div class="comments-empty"><i class="fas fa-comment-slash"></i><p>Be the first to comment!</p></div>`;
+            return;
+        }
+        list.innerHTML = '';
+        snap.forEach((d, idx) => {
+            const c    = d.data();
+            const time = c.at ? new Date(c.at.seconds * 1000).toLocaleString('en-GB') : '';
+            const initials = (c.author || 'U').slice(0,2).toUpperCase();
+            const canDel = currentUser && (currentUser.uid === c.uid || isUserAdmin);
+            list.innerHTML += `
+            <div class="comment-item" style="animation-delay:${idx*0.05}s">
+                <div class="comment-avatar" style="background:linear-gradient(135deg,${stringToColor(c.uid||'x')},var(--p2));">${initials}</div>
+                <div class="comment-body">
+                    <div class="comment-head">
+                        <span class="comment-author">${c.author}${c.isAdmin?'<span class="admin-pip">ADMIN</span>':''}</span>
+                        <span class="comment-time">${time}</span>
+                    </div>
+                    <div class="comment-text">${escapeHtml(c.text)}</div>
+                    ${canDel ? `<div class="comment-actions"><button class="comment-del-btn" onclick="deleteComment('${scriptId}','${d.id}')"><i class="fas fa-trash"></i> Delete</button></div>` : ''}
+                </div>
+            </div>`;
+        });
+    } catch(err) { if (list) list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:20px;">Could not load comments.</p>'; }
+};
+
+/* Helper: deterministic color from a string */
+const stringToColor = (str) => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    const h = Math.abs(hash) % 360;
+    return `hsl(${h},70%,55%)`;
+};
+const escapeHtml = (str) => str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+/* ── Re-render only the engagement bar (likes/dislikes) ── */
+const renderEngageBar = (script) => {
+    const bar = document.getElementById('engage-bar');
+    if (!bar) return;
+    const uid      = currentUser ? currentUser.uid : null;
+    const likes    = script.likes    || [];
+    const dislikes = script.dislikes || [];
+    const liked    = uid && likes.includes(uid);
+    const disliked = uid && dislikes.includes(uid);
+    const ratingCount = script.ratingCount || 0;
+    const avgRating   = ratingCount > 0 ? (script.ratingSum / ratingCount) : 0;
+
+    bar.innerHTML = `
+        <div class="like-dislike-group">
+            <button class="ld-btn like ${liked?'active':''}" onclick="handleLike('${script.id}','like')">
+                <i class="${liked?'fas':'far'} fa-thumbs-up"></i> <span>${likes.length}</span>
+            </button>
+            <div style="width:1px;height:24px;background:rgba(255,255,255,0.08);"></div>
+            <button class="ld-btn dislike ${disliked?'active':''}" onclick="handleLike('${script.id}','dislike')">
+                <i class="${disliked?'fas':'far'} fa-thumbs-down"></i> <span>${dislikes.length}</span>
+            </button>
+        </div>
+        <div class="divider-v"></div>
+        <div class="star-rating-display">
+            <div class="stars-avg">${renderStarsHTML(avgRating)}</div>
+            <span class="avg-num">${ratingCount>0?avgRating.toFixed(1):'—'}</span>
+            <span class="rating-count">(${ratingCount} rating${ratingCount!==1?'s':''})</span>
+        </div>
+        <div class="divider-v"></div>
+        <span style="color:var(--muted);font-size:0.82rem;font-family:'JetBrains Mono',monospace;">
+            <i class="fas fa-download" style="color:var(--p1);margin-right:5px;"></i>${(script.downloads||0).toLocaleString()} downloads
+        </span>
+        <div class="your-rating-prompt">
+            <span class="label-sm">Your Rating:</span>
+            <div class="star-picker" id="star-picker">
+                ${[1,2,3,4,5].map(n=>`<i class="${userOwnRating>=n?'fas':'far'} fa-star${userOwnRating>=n?' filled':''}" onmouseenter="hoverStar(${n})" onmouseleave="unhoverStar()" onclick="submitRating('${script.id}',${n})"></i>`).join('')}
+            </div>
+        </div>`;
+};
+
+const renderStarsHTML = (avg) => {
+    let html = '';
+    for (let i = 1; i <= 5; i++) {
+        if (avg >= i)       html += '<i class="fas fa-star"></i>';
+        else if (avg >= i-0.5) html += '<i class="fas fa-star-half-alt"></i>';
+        else                html += '<i class="far fa-star" style="opacity:0.3;"></i>';
+    }
+    return html;
+};
+
+/* Re-render only the star display area */
+const renderStarDisplay = (script) => { if (script) renderEngageBar(script); };
+
+/* ══════════════════════════════════════════════════════════
+   ── OPEN SCRIPT DETAIL PAGE ──
+══════════════════════════════════════════════════════════ */
+window.openScriptDetail = async (scriptId) => {
+    activeDetailId = scriptId;
+    userOwnRating  = 0;
+
+    /* Switch to detail view with loading state */
+    switchTab('detail');
+    const container = document.getElementById('detailContent');
+    container.innerHTML = `
+        <button class="back-btn" onclick="switchTab('home')"><i class="fas fa-arrow-left"></i> Back to Library</button>
+        <div class="detail-skeleton">
+            <div class="skel-block tall img-shimmer"></div>
+            <div class="skel-block img-shimmer" style="height:50px;width:60%;"></div>
+            <div class="skel-block img-shimmer" style="height:120px;"></div>
+        </div>`;
+
+    const script = scriptsDB.find(s => s.id === scriptId);
+    if (!script) { container.innerHTML = '<p style="color:var(--muted);text-align:center;padding:60px;">Script not found.</p>'; return; }
+
+    /* Build gallery items */
+    galleryItems = buildGallerySlides(script);
+    galleryIndex = 0;
+
+    /* Check user's existing rating */
+    if (currentUser) {
+        try {
+            const rSnap = await getDoc(doc(db, "scripts", scriptId, "ratings", currentUser.uid));
+            if (rSnap.exists()) userOwnRating = rSnap.data().stars || 0;
+        } catch(_) {}
+    }
+
+    const uid      = currentUser ? currentUser.uid : null;
+    const isFav    = !!(currentUser && currentUser.favorites && currentUser.favorites.includes(scriptId));
+    const date     = script.createdAt ? new Date(script.createdAt.seconds * 1000).toLocaleDateString('en-GB') : 'Unknown';
+    const isNew    = script.createdAt && (Date.now() - script.createdAt.seconds * 1000) < 604800000;
+
+    /* Gallery HTML */
+    const galleryHTML = `
+    <div class="gallery-wrap" id="gallery-wrap">
+        <div class="gallery-track" id="gallery-track">
+            ${galleryItems.map((item, i) => {
+                if (item.type === 'video') {
+                    return `<div class="gallery-slide">
+                        <iframe src="${item.src}" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                        <div class="video-badge"><i class="fab fa-youtube"></i> Video Preview</div>
+                    </div>`;
+                } else {
+                    return `<div class="gallery-slide">
+                        <img src="${item.src}" alt="Preview ${i+1}"
+                            onclick="previewImageModal('${item.src.replace(/'/g,"\\'")}','Preview')"
+                            onerror="this.src='https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=900&q=80'"
+                            onload="this.parentElement.style.background='transparent'"/>
+                    </div>`;
+                }
+            }).join('')}
+        </div>
+        ${galleryItems.length > 1 ? `
+        <button class="gallery-arrow prev" onclick="galleryPrev()"><i class="fas fa-chevron-left"></i></button>
+        <button class="gallery-arrow next" onclick="galleryNext()"><i class="fas fa-chevron-right"></i></button>
+        <div class="gallery-dots">
+            ${galleryItems.map((_,i) => `<button class="gallery-dot ${i===0?'active':''}" onclick="galleryGoTo(${i})"></button>`).join('')}
+        </div>` : ''}
+    </div>`;
+
+    /* AD UNIT — shown above the download CTA (highest-click zone) */
+    const adHTML = `
+    <div style="margin-bottom:24px; border-radius:14px; overflow:hidden; border:1px solid rgba(157,0,255,0.15); background:rgba(0,0,0,0.3);">
+        <iframe data-aa='2446304' src='//acceptable.a-ads.com/2446304/?size=Adaptive&background_color=7a00ff&title_color=ffffff&title_hover_color=000000&text_color=ffffff&link_color=000000&link_hover_color=000000'
+            style='border:0;padding:0;width:100%;height:auto;overflow:hidden;display:block;' scrolling='no'></iframe>
+    </div>`;
+
+    container.innerHTML = `
+    <button class="back-btn ios-press" onclick="switchTab('home')"><i class="fas fa-arrow-left"></i> Back to Library</button>
+
+    ${galleryHTML}
+
+    <div class="detail-header">
+        <div class="detail-title-wrap">
+            <div class="detail-title"><i class="fas fa-terminal"></i>${script.title}</div>
+            <div class="detail-meta-row">
+                <span><i class="far fa-calendar-alt"></i>${date}</span>
+                <span><i class="fas fa-user-shield"></i>${script.creator||'_rayynn'}</span>
+                <span><i class="fas fa-layer-group"></i>${script.category}</span>
+                <span><i class="fas fa-code-branch"></i>${script.version}</span>
+                ${isNew ? '<span style="color:var(--p3);"><i class="fas fa-bolt"></i>NEW</span>' : ''}
+            </div>
+        </div>
+        <div class="detail-actions">
+            <button class="fav-btn ios-press ${isFav?'active':''}" id="detail-fav-btn" data-fav-id="${scriptId}" onclick="toggleFavorite('${scriptId}')" title="${isFav?'Remove from favorites':'Add to favorites'}">
+                <i class="${isFav?'fas':'far'} fa-heart"></i>
+            </button>
+            <button class="share-btn ios-press" onclick="shareScript('${scriptId}')" title="Share this script">
+                <i class="fas fa-share-alt"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="engage-bar" id="engage-bar"></div>
+
+    <div class="detail-desc-box">
+        <h3><i class="fas fa-align-left"></i>Description</h3>
+        <div class="detail-desc-text">${escapeHtml(script.desc)}</div>
+    </div>
+
+    ${adHTML}
+
+    <div class="detail-download-cta">
+        <button class="btn ios-press" style="flex:2;" onclick="downloadFile('${scriptId}','${(script.fileUrl||'').replace(/'/g,"\\'")}','${script.title.replace(/'/g,"\\'")}')">
+            <i class="fas fa-cloud-download-alt"></i> Download Now
+            <span class="dl-count">${(script.downloads||0).toLocaleString()} downloads</span>
+        </button>
+        <button class="btn btn-ghost ios-press" style="flex:0.7;" onclick="copyLink('${(script.fileUrl||'').replace(/'/g,"\\'")}')">
+            <i class="fas fa-link"></i> Copy Link
+        </button>
+    </div>
+
+    <div class="comments-box">
+        <div class="comments-title">
+            <i class="fas fa-comments"></i> Comments
+            <span class="count-pill" id="comments-count">0</span>
+        </div>
+        ${currentUser ? `
+        <div class="comment-form">
+            <div class="comment-avatar" style="background:linear-gradient(135deg,${stringToColor(currentUser.uid||'x')},var(--p2));">
+                ${(currentUser.username||'U').slice(0,2).toUpperCase()}
+            </div>
+            <div class="comment-input-wrap">
+                <textarea id="comment-textarea" placeholder="Write a comment..." maxlength="600"></textarea>
+                <div class="comment-form-actions">
+                    <button id="comment-submit-btn" class="btn ios-press" onclick="submitComment('${scriptId}')">
+                        <i class="fas fa-paper-plane"></i> Post
+                    </button>
+                </div>
+            </div>
+        </div>` : `<p style="color:var(--muted);font-size:0.9rem;margin-bottom:20px;"><i class="fas fa-lock" style="margin-right:6px;"></i>Sign in to comment.</p>`}
+        <div class="comment-list" id="comments-list">
+            <div class="comments-empty"><i class="fas fa-spinner fa-spin"></i></div>
+        </div>
+    </div>`;
+
+    /* Init engagement bar */
+    renderEngageBar(script);
+
+    /* Load comments */
+    await loadComments(scriptId);
+
+    /* Sync gallery scroll → dot indicator */
+    const track = document.getElementById('gallery-track');
+    if (track && galleryItems.length > 1) {
+        track.addEventListener('scroll', () => {
+            const slides = track.querySelectorAll('.gallery-slide');
+            let closest = 0, minDist = Infinity;
+            slides.forEach((sl, i) => {
+                const dist = Math.abs(sl.getBoundingClientRect().left - track.getBoundingClientRect().left);
+                if (dist < minDist) { minDist = dist; closest = i; }
+            });
+            galleryIndex = closest;
+            document.querySelectorAll('.gallery-dot').forEach((d,i) => d.classList.toggle('active', i===closest));
+        }, { passive: true });
+    }
+};
+
+/* Share script (Web Share API + clipboard fallback) */
+window.shareScript = (scriptId) => {
+    const script = scriptsDB.find(s => s.id === scriptId);
+    if (!script) return;
+    const shareData = {
+        title: script.title + ' — KaZzA Scripts',
+        text: script.desc.slice(0, 100) + '…',
+        url: `https://scripts-hub.rayenamri379.workers.dev/#${scriptId}`
+    };
+    if (navigator.share) {
+        navigator.share(shareData).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(shareData.url)
+            .then(() => showToast('Link copied to clipboard!', 'success'));
+    }
+};
+
 </script>
 </body>
 </html>
+
